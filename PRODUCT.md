@@ -435,6 +435,11 @@ A running log of choices made while building. Newest last.
 
 | D40 | 2026-10-30 | Birds appear **only on the home page's first screen**: the flock covers the top 100vh at full width, flies left to right edge to edge, and scrolls away with the hero. No birds on the rest of the page or on any other page. Replaces D39's fixed layer that followed the visitor down. | Owner: "don't include the birds in the whole website… only the home page… fly left to right full screen". |
 
+| D41 | 2026-10-30 | A bird flies through the **nav bar** on its own lane, held inside the 68 px header. | Owner screenshot: "bird should fly in the nav bar". Found and fixed: it first flew above the screen (top −46 px) because its rise and wing-lift pushed it out. |
+| D42 | 2026-10-30 | The home screen gets a **tree with Baya weaver nests**, from the Weaver Bird brand story (D34). Iterated with the owner through several versions: outline tree → single teardrop nest → cluster → filled → one-line "Picasso" nest. | Owner: "add a tree and a weave nest… white… minimal… shouldn't capture attention… make it better… think like Picasso". |
+| D43 | 2026-10-30 | Final form: a **big, soft ink-brush tree** (tapered strokes, 180 leaves, a few honey and coral accents) at low opacity on the right of the hero, and **three small nests** hanging from branches near the trunk. Each nest follows the owner's reference photos: thin woven neck, pear-shaped chamber, long entrance tube dropping from one side, rough woven-grass texture, gentle sway. A tiny weaverbird clings to one nest. Hidden under 1100 px and during scanning; still under reduced motion. | Owner: "add a big tree… nest looking big… small nest… 2 nests… add another nest… place the nest near the tree", with photos of real Baya nests. |
+| D44 | 2026-10-30 | Nest position and nest sway live on separate SVG groups. | Bug found in the browser: the sway animation's `transform` overrode each nest's `translate()`, so all three nests stacked off-screen at the top-left. |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
