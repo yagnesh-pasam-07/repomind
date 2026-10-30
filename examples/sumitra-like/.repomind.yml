@@ -1,0 +1,11 @@
+# Corrections the scanner can't see from code.
+describe:
+  "gcp:run:sumitra-api": "Production API on Cloud Run in tl-sumitra-prod (asia-south1)."
+nodes:
+  - id: "ext:google-sso"
+    label: "Google SSO"
+    kind: external
+    layer: external
+    tech: "Login for employees"
+edges:
+  - { from: "app:apps-web", to: "ext:google-sso", kind: calls, label: "login" }

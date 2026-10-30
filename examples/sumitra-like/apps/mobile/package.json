@@ -1,1 +1,1 @@
-{ "name": "mobile", "dependencies": { "expo": "^51.0.0", "react-native": "^0.74.0" } }
+{ "name": "@sumitra/mobile", "description": "Sumitra mobile app (Expo).", "dependencies": { "expo": "~51.0.0", "react-native": "0.74.0", "expo-router": "~3.5.0", "expo-notifications": "~0.28.0", "@sentry/react-native": "^5.20.0", "@sumitra/shared": "*" } }

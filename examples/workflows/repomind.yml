@@ -1,0 +1,21 @@
+# Copy to .github/workflows/repomind.yml in the repo you want to map (e.g. Sumitra).
+name: RepoMind
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: YOUR-ORG/repomind@main   # change to where you push this repo
+        with:
+          fail-on: critical            # block merges that add critical risks

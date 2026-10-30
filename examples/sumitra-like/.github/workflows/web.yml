@@ -1,0 +1,11 @@
+name: Deploy web
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+        working-directory: apps/web

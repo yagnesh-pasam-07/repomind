@@ -1,0 +1,10 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Employee { id String @id }
+model LeaveRequest { id String @id }
+model LeavePlan { id String @id }
+model Payslip { id String @id }
+model Timesheet { id String @id }
+model Poll { id String @id }

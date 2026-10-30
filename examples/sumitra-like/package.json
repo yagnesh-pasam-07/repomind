@@ -1,1 +1,1 @@
-{ "name": "sumitra-like", "private": true, "workspaces": ["apps/*"] }
+{ "name": "sumitra", "private": true, "workspaces": ["apps/*", "packages/*"], "devDependencies": { "turbo": "^2.0.0" } }

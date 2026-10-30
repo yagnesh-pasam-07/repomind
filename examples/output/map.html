@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>sumitra (example) · RepoMind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;600&family=Kalam:wght@400;700&display=swap" />
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --lane: #eef0f4; --lane-border: #e1e4ea; --card: #ffffff; --card-border: #d9dde5;
+    --text: #0f172a; --muted: #5b6474; --faint: #8a93a3; --accent: #4f46e5; --accent-soft: rgba(79,70,229,.10);
+    --shadow: 0 1px 2px rgba(15,23,42,.06), 0 2px 8px rgba(15,23,42,.05);
+    --l-client: #64748b; --l-app: #4f46e5; --l-module: #7c3aed; --l-data: #0e7490; --l-cloud: #2563eb; --l-external: #a21caf; --l-cicd: #c2410c;
+    --e-data: #0891b2; --e-integration: #a855f7; --e-deploy: #f59e0b; --e-structure: #9aa3b2; --e-security: #10b981; --e-call: #6366f1;
+    --s-critical: #dc2626; --s-high: #ea580c; --s-medium: #ca8a04; --s-low: #94a3b8;
+    --c-added: #16a34a; --c-removed: #dc2626; --c-changed: #d97706;
+  }
+  :root.dark {
+    --bg: #0b0e14; --panel: #121722; --lane: #141a26; --lane-border: #1f2736; --card: #182030; --card-border: #2a3446;
+    --text: #e6e9ef; --muted: #9aa4b5; --faint: #6b7588; --accent: #818cf8; --accent-soft: rgba(129,140,248,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 2px 10px rgba(0,0,0,.25);
+    --l-client: #94a3b8; --l-app: #818cf8; --l-module: #a78bfa; --l-data: #22d3ee; --l-cloud: #60a5fa; --l-external: #e879f9; --l-cicd: #fb923c;
+    --e-data: #22d3ee; --e-integration: #c084fc; --e-deploy: #fbbf24; --e-structure: #5b667a; --e-security: #34d399; --e-call: #818cf8;
+    --s-low: #64748b;
+  }
+  /* v2 sketch palette (PRODUCT.md, "Visual style and colour palette"). --f-* fill, --k-* stroke. */
+  :root {
+    --paper: #FDFBF7; --paper2: #F4F1EA; --paper2-stroke: #D9D3C7; --ink: #1E1E1E; --pencil: #6B6B6B; --brand: #6965DB; --brand-stroke: #5B57D1;
+    --f-client: #A5D8FF; --k-client: #1971C2; --f-app: #D0BFFF; --k-app: #6741D9; --f-module: #EEBEFA; --k-module: #9C36B5;
+    --f-data: #B2F2BB; --k-data: #2F9E44; --f-cloud: #99E9F2; --k-cloud: #0C8599; --f-external: #FFEC99; --k-external: #F08C00;
+    --f-cicd: #FFD8A8; --k-cicd: #E8590C; --f-risk: #FFC9C9; --k-risk: #E03131;
+    --hand: Kalam, "Segoe Print", "Comic Sans MS", cursive; --title: Caveat, Kalam, "Segoe Print", cursive; --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  :root.dark { --paper: #1B1B1F; --paper2: #24242A; --paper2-stroke: #3A3A42; --ink: #E9E7E2; --pencil: #A3A09A; }
+  body.sketch {
+    --bg: var(--paper); --panel: var(--paper); --lane: var(--paper2); --lane-border: var(--paper2-stroke); --card: var(--paper); --card-border: var(--ink);
+    --text: var(--ink); --muted: var(--pencil); --faint: var(--pencil); --accent: var(--brand); --accent-soft: rgba(105,101,219,.16); --shadow: none;
+    --l-client: var(--k-client); --l-app: var(--k-app); --l-module: var(--k-module); --l-data: var(--k-data); --l-cloud: var(--k-cloud); --l-external: var(--k-external); --l-cicd: var(--k-cicd);
+    --e-data: var(--k-data); --e-integration: var(--k-external); --e-deploy: var(--k-cicd); --e-structure: var(--pencil); --e-security: var(--k-cloud); --e-call: var(--brand);
+    --s-critical: #E03131; --s-high: #E8590C; --s-medium: #F08C00; --s-low: var(--pencil);
+    --c-added: #2F9E44; --c-removed: #E03131; --c-changed: #F08C00;
+    font-family: var(--hand); font-size: 14px;
+  }
+  body.sketch #stage { background-color: var(--paper); background-image: radial-gradient(var(--paper2-stroke) 1.1px, transparent 1.3px); background-size: 22px 22px; }
+  body.sketch header, body.sketch aside { border-color: var(--paper2-stroke); }
+  body.sketch .brand h1 { font-family: var(--title); font-size: 26px; line-height: 1; }
+  body.sketch .logo { background: var(--brand); border-radius: 9px 7px 10px 6px; font-family: var(--title); font-size: 20px; }
+  body.sketch .tab { font-weight: 700; font-size: 14px; }
+  body.sketch .btn { border: 1.5px solid var(--ink); border-radius: 10px 8px 11px 7px; font-weight: 700; font-size: 13.5px; }
+  body.sketch .btn.primary { background: var(--brand); border-color: var(--brand-stroke); }
+  body.sketch .card .label { font-family: var(--hand); font-size: 15px; font-weight: 700; }
+  body.sketch .card .tech, body.sketch .card .cost { font-family: var(--hand); font-size: 12.5px; }
+  body.sketch .lane-title { font-family: var(--title); font-size: 24px; font-weight: 700; letter-spacing: 0; fill: var(--ink); }
+  body.sketch .lane-count { font-family: var(--title); font-size: 18px; }
+  body.sketch .mono, body.sketch .ev, body.sketch .finding .f { font-family: var(--mono); }
+  body.sketch aside h2 { font-family: var(--title); font-size: 30px; }
+  body.sketch aside h3 { font-family: var(--title); font-size: 21px; text-transform: none; letter-spacing: 0; color: var(--ink); }
+  body.sketch .stat, body.sketch .chip { border: 1px solid var(--paper2-stroke); }
+  body.sketch #caption .title { font-family: var(--title); font-size: 30px; }
+  .card .ring { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 4; opacity: 0; }
+  body:not(.sketch) .card .ring { display: none; }
+  body.sketch .card:hover .ring { opacity: .5; }
+  body.sketch .card.sel .ring, body.sketch .card.match .ring { opacity: 1; }
+  body.sketch .card rect.body { fill: var(--paper); stroke: none; }
+  .edge .sk { opacity: .6; }
+  .edge.hot .sk { opacity: 1; }
+
+  /* Live mode (served by `repomind serve`). */
+  .live-only { display: none !important; }
+  body.live .live-only { display: inline-flex !important; }
+  body.live #timeline.live-only { display: flex !important; }
+  body.live #exportWrap { display: none; }
+  body.live header { gap: 10px; flex-wrap: wrap; }
+  body.live .search input { width: 150px; }
+  body.live .brand .sub { display: none; }
+  body.live .tabs { margin-left: 0; }
+  .badge { align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); padding: 4px 10px; border-radius: 99px; background: var(--lane); white-space: nowrap; }
+  .badge .pulse { width: 8px; height: 8px; border-radius: 99px; background: var(--pencil); }
+  .badge.on .pulse { background: #2F9E44; box-shadow: 0 0 0 0 rgba(47,158,68,.5); animation: pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 7px rgba(47,158,68,0); } 100% { box-shadow: 0 0 0 0 rgba(47,158,68,0); } }
+  body.live #app { grid-template-rows: auto 1fr auto; }
+  .seg { display: inline-flex; padding: 3px; background: var(--lane); border-radius: 10px; }
+  .seg button { border: 0; background: transparent; padding: 5px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 13.5px; }
+  .seg button.on { background: var(--panel); color: var(--text); font-weight: 700; box-shadow: var(--shadow); }
+  body.sketch .seg button.on { border: 2px solid var(--ink); }
+  #timeline { flex-direction: column; gap: 4px; padding: 10px 20px 12px; background: var(--panel); border-top: 1px solid var(--lane-border); }
+  body.sketch #timeline { border-top: 2.5px solid var(--ink); }
+  .tl-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .tl-head .tl-title { font-family: var(--title); font-size: 26px; font-weight: 700; }
+  .tl-head .tl-sub { font-size: 14px; color: var(--muted); }
+  .tl-head .tl-clear { margin-left: auto; }
+  .tl-track { position: relative; display: flex; align-items: flex-start; gap: 6px; padding: 6px 6px 2px; overflow-x: auto; scrollbar-width: thin; }
+  .tl-track::before { content: ""; position: absolute; left: 6px; right: 6px; top: 22px; border-top: 2.5px dashed var(--paper2-stroke); }
+  .tl-v { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 66px; min-height: 44px; border: 0; background: transparent; cursor: pointer; color: var(--text); font: inherit; padding: 0; }
+  .tl-v .dot { width: 14px; height: 14px; margin-top: 9px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--paper2); }
+  .tl-v.big .dot { width: 22px; height: 22px; margin-top: 5px; }
+  .tl-v .sha { font-family: var(--mono); font-size: 11.5px; }
+  .tl-v.big .sha { font-weight: 700; }
+  .tl-v .when { font-size: 12px; color: var(--muted); }
+  .tl-v.cur .dot { background: var(--brand); box-shadow: 0 0 0 5px #D0CFFB; }
+  .tl-v.base .dot { box-shadow: 0 0 0 4px var(--pencil); }
+  #toast { position: absolute; left: 50%; top: 18px; transform: translate(-50%, -12px) rotate(-0.6deg); display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--panel); color: var(--text); border: 2.5px solid var(--ink); border-radius: 14px 10px 15px 11px; box-shadow: 4px 4px 0 #B2F2BB; font-size: 15px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 20; max-width: 80%; }
+  #toast.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0) rotate(-0.6deg); }
+  #toast .pulse { width: 10px; height: 10px; border-radius: 50%; background: #2F9E44; flex: none; }
+  #toast a { color: var(--accent); font-weight: 700; cursor: pointer; }
+  .deltas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .delta { padding: 10px; border: 2.5px solid; border-radius: 12px 9px 13px 10px; display: flex; flex-direction: column; }
+  .delta b { font-size: 28px; line-height: 1; }
+  .delta span { font-size: 13px; }
+  .delta.add { border-color: #2F9E44; background: #EBFBEE; color: #1E1E1E; }
+  .delta.rem { border-color: #E03131; background: #FFF5F5; color: #1E1E1E; }
+  .delta.risk { border-color: #E8590C; background: #FFF4E6; color: #1E1E1E; }
+  .range { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12.5px; margin-top: 8px; flex-wrap: wrap; }
+  .range span { padding: 4px 10px; border: 2px solid var(--ink); border-radius: 9px 12px 8px 11px; background: var(--paper2); }
+  .range span.to { background: #D0CFFB; color: #1E1E1E; font-weight: 700; }
+  #modal { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; place-items: center; z-index: 30; }
+  #modal.open { display: grid; }
+  #modal .box { position: relative; background: var(--paper); color: var(--ink); border: 2.5px solid var(--ink); border-radius: 22px 15px 24px 17px; box-shadow: 8px 8px 0 var(--ink); padding: 26px 28px; width: min(980px, 94vw); max-height: 92vh; overflow-y: auto; font-family: var(--hand); }
+  #modal .mhead { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  #modal h1 { font-family: var(--title); font-size: 48px; margin: 0; line-height: 1; }
+  #modal h2 { font-family: var(--title); font-size: 30px; margin: 4px 0 8px; }
+  #modal .cols { display: flex; flex-wrap: wrap; gap: 26px; }
+  #modal .col { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  #modal .live-box { padding: 18px; border: 2.5px dashed var(--brand); border-radius: 16px 12px 18px 13px; background: rgba(105,101,219,.06); }
+  #modal .formats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  #modal .fmt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 80px; padding: 12px 14px; text-align: left; border: 2.5px solid var(--ink); border-radius: 14px 10px 15px 11px; background-color: var(--paper); font: inherit; color: var(--ink); cursor: pointer; }
+  #modal .fmt b { font-size: 20px; }
+  #modal .fmt span { font-size: 14px; color: var(--pencil); }
+  #modal .field { display: flex; gap: 8px; align-items: center; }
+  #modal .field input, #modal .field code { flex: 1; min-width: 0; font-family: var(--mono); font-size: 13px; padding: 10px 12px; border-radius: 9px 12px 8px 11px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); overflow-x: auto; white-space: nowrap; }
+  #modal label.k { font-weight: 700; font-size: 14px; }
+  #modal .hint { color: var(--pencil); font-size: 14px; }
+  #modal .close { width: 44px; height: 44px; margin-left: auto; font-size: 22px; justify-content: center; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border: 2px solid #2F9E44; border-radius: 99px; background: #EBFBEE; color: #1E6B30; font-weight: 700; font-size: 14px; }
+  .pill.off { border-color: var(--pencil); background: var(--paper2); color: var(--pencil); }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  button, input { font: inherit; color: inherit; }
+  #app { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+
+  header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--lane-border); position: relative; z-index: 5; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .logo { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #a855f7); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 14px; flex: none; }
+  .brand h1 { font-size: 14px; margin: 0; font-weight: 700; white-space: nowrap; }
+  .brand .sub { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tabs { display: flex; gap: 2px; background: var(--lane); padding: 3px; border-radius: 10px; margin-left: 8px; }
+  .tab { border: 0; background: transparent; padding: 6px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+  .tab:hover { color: var(--text); }
+  .tab.on { background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
+  .tab .count { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 99px; font-size: 11px; background: var(--s-high); color: #fff; }
+  .tab .count.ok { background: var(--c-added); }
+  .spacer { flex: 1; }
+  .search { position: relative; }
+  .search input { width: 220px; padding: 7px 10px 7px 30px; border-radius: 9px; border: 1px solid var(--card-border); background: var(--bg); outline: none; }
+  .search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .search svg { position: absolute; left: 9px; top: 9px; opacity: .55; }
+  .btn { border: 1px solid var(--card-border); background: var(--panel); padding: 6px 11px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .menu { position: relative; }
+  .menu-list { position: absolute; right: 0; top: 36px; background: var(--panel); border: 1px solid var(--card-border); border-radius: 10px; box-shadow: var(--shadow); padding: 4px; display: none; min-width: 170px; }
+  .menu-list.open { display: block; }
+  .menu-list button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 7px; cursor: pointer; }
+  .menu-list button:hover { background: var(--lane); }
+
+  main { display: grid; grid-template-columns: 1fr 380px; min-height: 0; }
+  #stage { position: relative; overflow: hidden; cursor: grab; }
+  #stage.dragging { cursor: grabbing; }
+  #canvas { width: 100%; height: 100%; display: block; user-select: none; }
+  aside { background: var(--panel); border-left: 1px solid var(--lane-border); overflow-y: auto; padding: 18px 18px 40px; }
+
+  .lane-bg { fill: var(--lane); stroke: var(--lane-border); }
+  .lane-title { fill: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+  .lane-count { fill: var(--faint); font-size: 11px; }
+  .card rect.body { fill: var(--card); stroke: var(--card-border); }
+  .card .label { fill: var(--text); font-size: 13px; font-weight: 650; }
+  .card .tech { fill: var(--muted); font-size: 11.5px; }
+  .card .icon-text { fill: #fff; font-size: 9.5px; font-weight: 800; letter-spacing: .02em; }
+  .card .cost { fill: var(--faint); font-size: 11px; font-weight: 700; }
+  .card .manual { fill: var(--faint); font-size: 10px; font-style: italic; }
+  .card { cursor: pointer; transition: opacity .15s; }
+  .card:hover rect.body { stroke: var(--accent); }
+  .card.sel rect.body { stroke: var(--accent); stroke-width: 2; }
+  .card.dim, .edge.dim { opacity: .14; }
+  .card.match rect.body { stroke: var(--accent); stroke-width: 2.5; }
+  .edge path.line { fill: none; stroke-width: 1.4; opacity: .55; }
+  .edge.hot path.line { opacity: 1; stroke-width: 2; }
+  .edge path.hit { fill: none; stroke: transparent; stroke-width: 10; cursor: help; }
+  .edge.removed path.line { stroke-dasharray: 5 4; }
+  .tag { font-size: 9.5px; font-weight: 800; letter-spacing: .04em; }
+
+  #tooltip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); padding: 6px 9px; border-radius: 7px; font-size: 12px; max-width: 360px; display: none; z-index: 10; box-shadow: var(--shadow); }
+  .legend { position: absolute; left: 14px; bottom: 14px; background: var(--panel); border: 1px solid var(--lane-border); border-radius: 10px; padding: 8px 12px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); box-shadow: var(--shadow); max-width: calc(100% - 120px); }
+  .legend i { display: inline-block; width: 16px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+  .legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 99px; margin-right: 5px; vertical-align: middle; }
+  .zoom { position: absolute; right: 14px; bottom: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .zoom .btn { width: 34px; height: 34px; justify-content: center; padding: 0; font-size: 16px; }
+
+  aside h2 { font-size: 18px; margin: 6px 0 2px; }
+  aside h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--faint); margin: 20px 0 8px; }
+  aside p { margin: 6px 0; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .chip { font-size: 11.5px; padding: 2px 8px; border-radius: 99px; background: var(--lane); color: var(--muted); font-weight: 600; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: var(--lane); border-radius: 10px; padding: 10px; }
+  .stat b { display: block; font-size: 20px; line-height: 1.1; }
+  .stat span { color: var(--muted); font-size: 11.5px; }
+  .sevbar { display: flex; height: 8px; border-radius: 99px; overflow: hidden; background: var(--lane); margin: 8px 0; }
+  .finding { border: 1px solid var(--lane-border); border-left: 3px solid; border-radius: 8px; padding: 8px 10px; margin: 8px 0; cursor: pointer; }
+  .finding:hover { background: var(--lane); }
+  .finding .t { font-weight: 650; }
+  .finding .f { color: var(--muted); font-size: 11.5px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+  .finding .fix { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .sev { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; margin-right: 6px; }
+  .rel { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+  .rel:hover { background: var(--lane); }
+  .rel .k { color: var(--faint); font-size: 11px; width: 64px; flex: none; }
+  .rel .n { font-weight: 600; }
+  .rel .tt { color: var(--muted); font-size: 11.5px; margin-left: auto; text-align: right; }
+  .ev { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--muted); padding: 3px 0; word-break: break-all; }
+  .ev a { color: var(--accent); text-decoration: none; }
+  .ev em { font-style: normal; color: var(--faint); }
+  ul.plain { list-style: none; padding: 0; margin: 0; }
+  ul.plain li { padding: 3px 0; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; }
+  .muted { color: var(--muted); }
+  .back { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; font-weight: 600; }
+  .status { display: inline-block; font-size: 10.5px; font-weight: 800; padding: 1px 7px; border-radius: 99px; color: #fff; }
+
+  body.presenting header, body.presenting aside, body.presenting .legend, body.presenting .zoom { display: none; }
+  body.presenting main { grid-template-columns: 1fr; }
+  body.presenting #app { grid-template-rows: 1fr; }
+  #caption { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--lane-border); box-shadow: var(--shadow); border-radius: 14px; padding: 14px 20px; max-width: min(820px, 90%); display: none; }
+  body.presenting #caption { display: block; }
+  #caption .step { color: var(--faint); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  #caption .title { font-size: 20px; font-weight: 750; margin: 2px 0 4px; }
+  #caption .body { color: var(--muted); font-size: 14px; }
+  #caption .nav { color: var(--faint); font-size: 11.5px; margin-top: 8px; }
+  #svg-wrap { transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+  #stage.no-anim #svg-wrap { transition: none; }
+
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } aside { display: none; } .search input { width: 150px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo">R</div>
+      <div style="min-width:0">
+        <h1 id="repoName">RepoMind</h1>
+        <div class="sub" id="repoSub"></div>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+    <div class="spacer"></div>
+    <label class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" placeholder="Search components…  ( / )" autocomplete="off" />
+    </label>
+    <span class="badge live-only" id="liveBadge" title="Live updates"><span class="pulse"></span><span id="liveText">Snapshot</span></span>
+    <button class="btn live-only" id="refreshBtn" title="Check GitHub for a new commit now">↻</button>
+    <div class="seg" id="styleSeg" role="group" aria-label="Drawing style (S)"><button data-s="sketch">Sketch</button><button data-s="clean">Clean</button></div>
+    <button class="btn primary" id="presentBtn" title="Presentation mode (P)">▶ Present</button>
+    <button class="btn live-only" id="downloadBtn">Download</button>
+    <div class="menu" id="exportWrap">
+      <button class="btn" id="exportBtn">Export ▾</button>
+      <div class="menu-list" id="exportMenu">
+        <button data-x="png">PNG image (2×)</button>
+        <button data-x="svg">SVG vector</button>
+        <button data-x="json">Graph JSON</button>
+      </div>
+    </div>
+    <button class="btn" id="themeBtn" title="Toggle theme (T)">Theme</button>
+  </header>
+  <main>
+    <div id="stage">
+      <svg id="canvas" xmlns="http://www.w3.org/2000/svg">
+        <defs id="defs"></defs>
+        <g id="svg-wrap"><g id="lanes"></g><g id="edges"></g><g id="cards"></g></g>
+      </svg>
+      <div id="tooltip"></div>
+      <div class="legend" id="legend"></div>
+      <div class="zoom">
+        <button class="btn" id="zin" title="Zoom in">+</button>
+        <button class="btn" id="zout" title="Zoom out">−</button>
+        <button class="btn" id="zfit" title="Fit (F)">⤢</button>
+      </div>
+      <div id="caption"></div>
+      <div id="toast" role="status"></div>
+    </div>
+    <aside id="panel"></aside>
+  </main>
+  <footer id="timeline" class="live-only" aria-label="Version timeline"></footer>
+</div>
+<div id="modal"><div class="box" id="modalBox"></div></div>
+<script>var rough=function(){"use strict";function t(t,e,s){if(t&&t.length){const[n,o]=e,a=Math.PI/180*s,h=Math.cos(a),r=Math.sin(a);for(const e of t){const[t,s]=e;e[0]=(t-n)*h-(s-o)*r+n,e[1]=(t-n)*r+(s-o)*h+o}}}function e(t,e){return t[0]===e[0]&&t[1]===e[1]}function s(s,n,o,a=1){const h=o,r=Math.max(n,.1),i=s[0]&&s[0][0]&&"number"==typeof s[0][0]?[s]:s,c=[0,0];if(h)for(const e of i)t(e,c,h);const l=function(t,s,n){const o=[];for(const s of t){const t=[...s];e(t[0],t[t.length-1])||t.push([t[0][0],t[0][1]]),t.length>2&&o.push(t)}const a=[];s=Math.max(s,.1);const h=[];for(const t of o)for(let e=0;e<t.length-1;e++){const s=t[e],n=t[e+1];if(s[1]!==n[1]){const t=Math.min(s[1],n[1]);h.push({ymin:t,ymax:Math.max(s[1],n[1]),x:t===s[1]?s[0]:n[0],islope:(n[0]-s[0])/(n[1]-s[1])})}}if(h.sort(((t,e)=>t.ymin<e.ymin?-1:t.ymin>e.ymin?1:t.x<e.x?-1:t.x>e.x?1:t.ymax===e.ymax?0:(t.ymax-e.ymax)/Math.abs(t.ymax-e.ymax))),!h.length)return a;let r=[],i=h[0].ymin,c=0;for(;r.length||h.length;){if(h.length){let t=-1;for(let e=0;e<h.length&&!(h[e].ymin>i);e++)t=e;h.splice(0,t+1).forEach((t=>{r.push({s:i,edge:t})}))}if(r=r.filter((t=>!(t.edge.ymax<=i))),r.sort(((t,e)=>t.edge.x===e.edge.x?0:(t.edge.x-e.edge.x)/Math.abs(t.edge.x-e.edge.x))),(1!==n||c%s==0)&&r.length>1)for(let t=0;t<r.length;t+=2){const e=t+1;if(e>=r.length)break;const s=r[t].edge,n=r[e].edge;a.push([[Math.round(s.x),i],[Math.round(n.x),i]])}i+=n,r.forEach((t=>{t.edge.x=t.edge.x+n*t.edge.islope})),c++}return a}(i,r,a);if(h){for(const e of i)t(e,c,-h);!function(e,s,n){const o=[];e.forEach((t=>o.push(...t))),t(o,s,n)}(l,c,-h)}return l}function n(t,e){var n;const o=e.hachureAngle+90;let a=e.hachureGap;a<0&&(a=4*e.strokeWidth),a=Math.round(Math.max(a,.1));let h=1;return e.roughness>=1&&((null===(n=e.randomizer)||void 0===n?void 0:n.next())||Math.random())>.7&&(h=a),s(t,a,o,h||1)}class o{constructor(t){this.helper=t}fillPolygons(t,e){return this._fillPolygons(t,e)}_fillPolygons(t,e){const s=n(t,e);return{type:"fillSketch",ops:this.renderLines(s,e)}}renderLines(t,e){const s=[];for(const n of t)s.push(...this.helper.doubleLineOps(n[0][0],n[0][1],n[1][0],n[1][1],e));return s}}function a(t){const e=t[0],s=t[1];return Math.sqrt(Math.pow(e[0]-s[0],2)+Math.pow(e[1]-s[1],2))}class h extends o{fillPolygons(t,e){let s=e.hachureGap;s<0&&(s=4*e.strokeWidth),s=Math.max(s,.1);const o=n(t,Object.assign({},e,{hachureGap:s})),h=Math.PI/180*e.hachureAngle,r=[],i=.5*s*Math.cos(h),c=.5*s*Math.sin(h);for(const[t,e]of o)a([t,e])&&r.push([[t[0]-i,t[1]+c],[...e]],[[t[0]+i,t[1]-c],[...e]]);return{type:"fillSketch",ops:this.renderLines(r,e)}}}class r extends o{fillPolygons(t,e){const s=this._fillPolygons(t,e),n=Object.assign({},e,{hachureAngle:e.hachureAngle+90}),o=this._fillPolygons(t,n);return s.ops=s.ops.concat(o.ops),s}}class i{constructor(t){this.helper=t}fillPolygons(t,e){const s=n(t,e=Object.assign({},e,{hachureAngle:0}));return this.dotsOnLines(s,e)}dotsOnLines(t,e){const s=[];let n=e.hachureGap;n<0&&(n=4*e.strokeWidth),n=Math.max(n,.1);let o=e.fillWeight;o<0&&(o=e.strokeWidth/2);const h=n/4;for(const r of t){const t=a(r),i=t/n,c=Math.ceil(i)-1,l=t-c*n,u=(r[0][0]+r[1][0])/2-n/4,p=Math.min(r[0][1],r[1][1]);for(let t=0;t<c;t++){const a=p+l+t*n,r=u-h+2*Math.random()*h,i=a-h+2*Math.random()*h,c=this.helper.ellipse(r,i,o,o,e);s.push(...c.ops)}}return{type:"fillSketch",ops:s}}}class c{constructor(t){this.helper=t}fillPolygons(t,e){const s=n(t,e);return{type:"fillSketch",ops:this.dashedLine(s,e)}}dashedLine(t,e){const s=e.dashOffset<0?e.hachureGap<0?4*e.strokeWidth:e.hachureGap:e.dashOffset,n=e.dashGap<0?e.hachureGap<0?4*e.strokeWidth:e.hachureGap:e.dashGap,o=[];return t.forEach((t=>{const h=a(t),r=Math.floor(h/(s+n)),i=(h+n-r*(s+n))/2;let c=t[0],l=t[1];c[0]>l[0]&&(c=t[1],l=t[0]);const u=Math.atan((l[1]-c[1])/(l[0]-c[0]));for(let t=0;t<r;t++){const a=t*(s+n),h=a+s,r=[c[0]+a*Math.cos(u)+i*Math.cos(u),c[1]+a*Math.sin(u)+i*Math.sin(u)],l=[c[0]+h*Math.cos(u)+i*Math.cos(u),c[1]+h*Math.sin(u)+i*Math.sin(u)];o.push(...this.helper.doubleLineOps(r[0],r[1],l[0],l[1],e))}})),o}}class l{constructor(t){this.helper=t}fillPolygons(t,e){const s=e.hachureGap<0?4*e.strokeWidth:e.hachureGap,o=e.zigzagOffset<0?s:e.zigzagOffset,a=n(t,e=Object.assign({},e,{hachureGap:s+o}));return{type:"fillSketch",ops:this.zigzagLines(a,o,e)}}zigzagLines(t,e,s){const n=[];return t.forEach((t=>{const o=a(t),h=Math.round(o/(2*e));let r=t[0],i=t[1];r[0]>i[0]&&(r=t[1],i=t[0]);const c=Math.atan((i[1]-r[1])/(i[0]-r[0]));for(let t=0;t<h;t++){const o=2*t*e,a=2*(t+1)*e,h=Math.sqrt(2*Math.pow(e,2)),i=[r[0]+o*Math.cos(c),r[1]+o*Math.sin(c)],l=[r[0]+a*Math.cos(c),r[1]+a*Math.sin(c)],u=[i[0]+h*Math.cos(c+Math.PI/4),i[1]+h*Math.sin(c+Math.PI/4)];n.push(...this.helper.doubleLineOps(i[0],i[1],u[0],u[1],s),...this.helper.doubleLineOps(u[0],u[1],l[0],l[1],s))}})),n}}const u={};class p{constructor(t){this.seed=t}next(){return this.seed?(2**31-1&(this.seed=Math.imul(48271,this.seed)))/2**31:Math.random()}}const f=0,d=1,g=2,M={A:7,a:7,C:6,c:6,H:1,h:1,L:2,l:2,M:2,m:2,Q:4,q:4,S:4,s:4,T:2,t:2,V:1,v:1,Z:0,z:0};function k(t,e){return t.type===e}function b(t){const e=[],s=function(t){const e=new Array;for(;""!==t;)if(t.match(/^([ \t\r\n,]+)/))t=t.substr(RegExp.$1.length);else if(t.match(/^([aAcChHlLmMqQsStTvVzZ])/))e[e.length]={type:f,text:RegExp.$1},t=t.substr(RegExp.$1.length);else{if(!t.match(/^(([-+]?[0-9]+(\.[0-9]*)?|[-+]?\.[0-9]+)([eE][-+]?[0-9]+)?)/))return[];e[e.length]={type:d,text:`${parseFloat(RegExp.$1)}`},t=t.substr(RegExp.$1.length)}return e[e.length]={type:g,text:""},e}(t);let n="BOD",o=0,a=s[o];for(;!k(a,g);){let h=0;const r=[];if("BOD"===n){if("M"!==a.text&&"m"!==a.text)return b("M0,0"+t);o++,h=M[a.text],n=a.text}else k(a,d)?h=M[n]:(o++,h=M[a.text],n=a.text);if(!(o+h<s.length))throw new Error("Path data ended short");for(let t=o;t<o+h;t++){const e=s[t];if(!k(e,d))throw new Error("Param not a number: "+n+","+e.text);r[r.length]=+e.text}if("number"!=typeof M[n])throw new Error("Bad segment: "+n);{const t={key:n,data:r};e.push(t),o+=h,a=s[o],"M"===n&&(n="L"),"m"===n&&(n="l")}}return e}function y(t){let e=0,s=0,n=0,o=0;const a=[];for(const{key:h,data:r}of t)switch(h){case"M":a.push({key:"M",data:[...r]}),[e,s]=r,[n,o]=r;break;case"m":e+=r[0],s+=r[1],a.push({key:"M",data:[e,s]}),n=e,o=s;break;case"L":a.push({key:"L",data:[...r]}),[e,s]=r;break;case"l":e+=r[0],s+=r[1],a.push({key:"L",data:[e,s]});break;case"C":a.push({key:"C",data:[...r]}),e=r[4],s=r[5];break;case"c":{const t=r.map(((t,n)=>n%2?t+s:t+e));a.push({key:"C",data:t}),e=t[4],s=t[5];break}case"Q":a.push({key:"Q",data:[...r]}),e=r[2],s=r[3];break;case"q":{const t=r.map(((t,n)=>n%2?t+s:t+e));a.push({key:"Q",data:t}),e=t[2],s=t[3];break}case"A":a.push({key:"A",data:[...r]}),e=r[5],s=r[6];break;case"a":e+=r[5],s+=r[6],a.push({key:"A",data:[r[0],r[1],r[2],r[3],r[4],e,s]});break;case"H":a.push({key:"H",data:[...r]}),e=r[0];break;case"h":e+=r[0],a.push({key:"H",data:[e]});break;case"V":a.push({key:"V",data:[...r]}),s=r[0];break;case"v":s+=r[0],a.push({key:"V",data:[s]});break;case"S":a.push({key:"S",data:[...r]}),e=r[2],s=r[3];break;case"s":{const t=r.map(((t,n)=>n%2?t+s:t+e));a.push({key:"S",data:t}),e=t[2],s=t[3];break}case"T":a.push({key:"T",data:[...r]}),e=r[0],s=r[1];break;case"t":e+=r[0],s+=r[1],a.push({key:"T",data:[e,s]});break;case"Z":case"z":a.push({key:"Z",data:[]}),e=n,s=o}return a}function m(t){const e=[];let s="",n=0,o=0,a=0,h=0,r=0,i=0;for(const{key:c,data:l}of t){switch(c){case"M":e.push({key:"M",data:[...l]}),[n,o]=l,[a,h]=l;break;case"C":e.push({key:"C",data:[...l]}),n=l[4],o=l[5],r=l[2],i=l[3];break;case"L":e.push({key:"L",data:[...l]}),[n,o]=l;break;case"H":n=l[0],e.push({key:"L",data:[n,o]});break;case"V":o=l[0],e.push({key:"L",data:[n,o]});break;case"S":{let t=0,a=0;"C"===s||"S"===s?(t=n+(n-r),a=o+(o-i)):(t=n,a=o),e.push({key:"C",data:[t,a,...l]}),r=l[0],i=l[1],n=l[2],o=l[3];break}case"T":{const[t,a]=l;let h=0,c=0;"Q"===s||"T"===s?(h=n+(n-r),c=o+(o-i)):(h=n,c=o);const u=n+2*(h-n)/3,p=o+2*(c-o)/3,f=t+2*(h-t)/3,d=a+2*(c-a)/3;e.push({key:"C",data:[u,p,f,d,t,a]}),r=h,i=c,n=t,o=a;break}case"Q":{const[t,s,a,h]=l,c=n+2*(t-n)/3,u=o+2*(s-o)/3,p=a+2*(t-a)/3,f=h+2*(s-h)/3;e.push({key:"C",data:[c,u,p,f,a,h]}),r=t,i=s,n=a,o=h;break}case"A":{const t=Math.abs(l[0]),s=Math.abs(l[1]),a=l[2],h=l[3],r=l[4],i=l[5],c=l[6];if(0===t||0===s)e.push({key:"C",data:[n,o,i,c,i,c]}),n=i,o=c;else if(n!==i||o!==c){x(n,o,i,c,t,s,a,h,r).forEach((function(t){e.push({key:"C",data:t})})),n=i,o=c}break}case"Z":e.push({key:"Z",data:[]}),n=a,o=h}s=c}return e}function w(t,e,s){return[t*Math.cos(s)-e*Math.sin(s),t*Math.sin(s)+e*Math.cos(s)]}function x(t,e,s,n,o,a,h,r,i,c){const l=(u=h,Math.PI*u/180);var u;let p=[],f=0,d=0,g=0,M=0;if(c)[f,d,g,M]=c;else{[t,e]=w(t,e,-l),[s,n]=w(s,n,-l);const h=(t-s)/2,c=(e-n)/2;let u=h*h/(o*o)+c*c/(a*a);u>1&&(u=Math.sqrt(u),o*=u,a*=u);const p=o*o,k=a*a,b=p*k-p*c*c-k*h*h,y=p*c*c+k*h*h,m=(r===i?-1:1)*Math.sqrt(Math.abs(b/y));g=m*o*c/a+(t+s)/2,M=m*-a*h/o+(e+n)/2,f=Math.asin(parseFloat(((e-M)/a).toFixed(9))),d=Math.asin(parseFloat(((n-M)/a).toFixed(9))),t<g&&(f=Math.PI-f),s<g&&(d=Math.PI-d),f<0&&(f=2*Math.PI+f),d<0&&(d=2*Math.PI+d),i&&f>d&&(f-=2*Math.PI),!i&&d>f&&(d-=2*Math.PI)}let k=d-f;if(Math.abs(k)>120*Math.PI/180){const t=d,e=s,r=n;d=i&&d>f?f+120*Math.PI/180*1:f+120*Math.PI/180*-1,p=x(s=g+o*Math.cos(d),n=M+a*Math.sin(d),e,r,o,a,h,0,i,[d,t,g,M])}k=d-f;const b=Math.cos(f),y=Math.sin(f),m=Math.cos(d),P=Math.sin(d),v=Math.tan(k/4),S=4/3*o*v,O=4/3*a*v,L=[t,e],T=[t+S*y,e-O*b],D=[s+S*P,n-O*m],A=[s,n];if(T[0]=2*L[0]-T[0],T[1]=2*L[1]-T[1],c)return[T,D,A].concat(p);{p=[T,D,A].concat(p);const t=[];for(let e=0;e<p.length;e+=3){const s=w(p[e][0],p[e][1],l),n=w(p[e+1][0],p[e+1][1],l),o=w(p[e+2][0],p[e+2][1],l);t.push([s[0],s[1],n[0],n[1],o[0],o[1]])}return t}}const P={randOffset:function(t,e){return G(t,e)},randOffsetWithRange:function(t,e,s){return E(t,e,s)},ellipse:function(t,e,s,n,o){const a=T(s,n,o);return D(t,e,o,a).opset},doubleLineOps:function(t,e,s,n,o){return $(t,e,s,n,o,!0)}};function v(t,e,s,n,o){return{type:"path",ops:$(t,e,s,n,o)}}function S(t,e,s){const n=(t||[]).length;if(n>2){const o=[];for(let e=0;e<n-1;e++)o.push(...$(t[e][0],t[e][1],t[e+1][0],t[e+1][1],s));return e&&o.push(...$(t[n-1][0],t[n-1][1],t[0][0],t[0][1],s)),{type:"path",ops:o}}return 2===n?v(t[0][0],t[0][1],t[1][0],t[1][1],s):{type:"path",ops:[]}}function O(t,e,s,n,o){return function(t,e){return S(t,!0,e)}([[t,e],[t+s,e],[t+s,e+n],[t,e+n]],o)}function L(t,e){if(t.length){const s="number"==typeof t[0][0]?[t]:t,n=j(s[0],1*(1+.2*e.roughness),e),o=e.disableMultiStroke?[]:j(s[0],1.5*(1+.22*e.roughness),z(e));for(let t=1;t<s.length;t++){const a=s[t];if(a.length){const t=j(a,1*(1+.2*e.roughness),e),s=e.disableMultiStroke?[]:j(a,1.5*(1+.22*e.roughness),z(e));for(const e of t)"move"!==e.op&&n.push(e);for(const t of s)"move"!==t.op&&o.push(t)}}return{type:"path",ops:n.concat(o)}}return{type:"path",ops:[]}}function T(t,e,s){const n=Math.sqrt(2*Math.PI*Math.sqrt((Math.pow(t/2,2)+Math.pow(e/2,2))/2)),o=Math.ceil(Math.max(s.curveStepCount,s.curveStepCount/Math.sqrt(200)*n)),a=2*Math.PI/o;let h=Math.abs(t/2),r=Math.abs(e/2);const i=1-s.curveFitting;return h+=G(h*i,s),r+=G(r*i,s),{increment:a,rx:h,ry:r}}function D(t,e,s,n){const[o,a]=F(n.increment,t,e,n.rx,n.ry,1,n.increment*E(.1,E(.4,1,s),s),s);let h=q(o,null,s);if(!s.disableMultiStroke&&0!==s.roughness){const[o]=F(n.increment,t,e,n.rx,n.ry,1.5,0,s),a=q(o,null,s);h=h.concat(a)}return{estimatedPoints:a,opset:{type:"path",ops:h}}}function A(t,e,s,n,o,a,h,r,i){const c=t,l=e;let u=Math.abs(s/2),p=Math.abs(n/2);u+=G(.01*u,i),p+=G(.01*p,i);let f=o,d=a;for(;f<0;)f+=2*Math.PI,d+=2*Math.PI;d-f>2*Math.PI&&(f=0,d=2*Math.PI);const g=2*Math.PI/i.curveStepCount,M=Math.min(g/2,(d-f)/2),k=V(M,c,l,u,p,f,d,1,i);if(!i.disableMultiStroke){const t=V(M,c,l,u,p,f,d,1.5,i);k.push(...t)}return h&&(r?k.push(...$(c,l,c+u*Math.cos(f),l+p*Math.sin(f),i),...$(c,l,c+u*Math.cos(d),l+p*Math.sin(d),i)):k.push({op:"lineTo",data:[c,l]},{op:"lineTo",data:[c+u*Math.cos(f),l+p*Math.sin(f)]})),{type:"path",ops:k}}function _(t,e){const s=m(y(b(t))),n=[];let o=[0,0],a=[0,0];for(const{key:t,data:h}of s)switch(t){case"M":a=[h[0],h[1]],o=[h[0],h[1]];break;case"L":n.push(...$(a[0],a[1],h[0],h[1],e)),a=[h[0],h[1]];break;case"C":{const[t,s,o,r,i,c]=h;n.push(...Z(t,s,o,r,i,c,a,e)),a=[i,c];break}case"Z":n.push(...$(a[0],a[1],o[0],o[1],e)),a=[o[0],o[1]]}return{type:"path",ops:n}}function I(t,e){const s=[];for(const n of t)if(n.length){const t=e.maxRandomnessOffset||0,o=n.length;if(o>2){s.push({op:"move",data:[n[0][0]+G(t,e),n[0][1]+G(t,e)]});for(let a=1;a<o;a++)s.push({op:"lineTo",data:[n[a][0]+G(t,e),n[a][1]+G(t,e)]})}}return{type:"fillPath",ops:s}}function C(t,e){return function(t,e){let s=t.fillStyle||"hachure";if(!u[s])switch(s){case"zigzag":u[s]||(u[s]=new h(e));break;case"cross-hatch":u[s]||(u[s]=new r(e));break;case"dots":u[s]||(u[s]=new i(e));break;case"dashed":u[s]||(u[s]=new c(e));break;case"zigzag-line":u[s]||(u[s]=new l(e));break;default:s="hachure",u[s]||(u[s]=new o(e))}return u[s]}(e,P).fillPolygons(t,e)}function z(t){const e=Object.assign({},t);return e.randomizer=void 0,t.seed&&(e.seed=t.seed+1),e}function W(t){return t.randomizer||(t.randomizer=new p(t.seed||0)),t.randomizer.next()}function E(t,e,s,n=1){return s.roughness*n*(W(s)*(e-t)+t)}function G(t,e,s=1){return E(-t,t,e,s)}function $(t,e,s,n,o,a=!1){const h=a?o.disableMultiStrokeFill:o.disableMultiStroke,r=R(t,e,s,n,o,!0,!1);if(h)return r;const i=R(t,e,s,n,o,!0,!0);return r.concat(i)}function R(t,e,s,n,o,a,h){const r=Math.pow(t-s,2)+Math.pow(e-n,2),i=Math.sqrt(r);let c=1;c=i<200?1:i>500?.4:-.0016668*i+1.233334;let l=o.maxRandomnessOffset||0;l*l*100>r&&(l=i/10);const u=l/2,p=.2+.2*W(o);let f=o.bowing*o.maxRandomnessOffset*(n-e)/200,d=o.bowing*o.maxRandomnessOffset*(t-s)/200;f=G(f,o,c),d=G(d,o,c);const g=[],M=()=>G(u,o,c),k=()=>G(l,o,c),b=o.preserveVertices;return a&&(h?g.push({op:"move",data:[t+(b?0:M()),e+(b?0:M())]}):g.push({op:"move",data:[t+(b?0:G(l,o,c)),e+(b?0:G(l,o,c))]})),h?g.push({op:"bcurveTo",data:[f+t+(s-t)*p+M(),d+e+(n-e)*p+M(),f+t+2*(s-t)*p+M(),d+e+2*(n-e)*p+M(),s+(b?0:M()),n+(b?0:M())]}):g.push({op:"bcurveTo",data:[f+t+(s-t)*p+k(),d+e+(n-e)*p+k(),f+t+2*(s-t)*p+k(),d+e+2*(n-e)*p+k(),s+(b?0:k()),n+(b?0:k())]}),g}function j(t,e,s){if(!t.length)return[];const n=[];n.push([t[0][0]+G(e,s),t[0][1]+G(e,s)]),n.push([t[0][0]+G(e,s),t[0][1]+G(e,s)]);for(let o=1;o<t.length;o++)n.push([t[o][0]+G(e,s),t[o][1]+G(e,s)]),o===t.length-1&&n.push([t[o][0]+G(e,s),t[o][1]+G(e,s)]);return q(n,null,s)}function q(t,e,s){const n=t.length,o=[];if(n>3){const a=[],h=1-s.curveTightness;o.push({op:"move",data:[t[1][0],t[1][1]]});for(let e=1;e+2<n;e++){const s=t[e];a[0]=[s[0],s[1]],a[1]=[s[0]+(h*t[e+1][0]-h*t[e-1][0])/6,s[1]+(h*t[e+1][1]-h*t[e-1][1])/6],a[2]=[t[e+1][0]+(h*t[e][0]-h*t[e+2][0])/6,t[e+1][1]+(h*t[e][1]-h*t[e+2][1])/6],a[3]=[t[e+1][0],t[e+1][1]],o.push({op:"bcurveTo",data:[a[1][0],a[1][1],a[2][0],a[2][1],a[3][0],a[3][1]]})}if(e&&2===e.length){const t=s.maxRandomnessOffset;o.push({op:"lineTo",data:[e[0]+G(t,s),e[1]+G(t,s)]})}}else 3===n?(o.push({op:"move",data:[t[1][0],t[1][1]]}),o.push({op:"bcurveTo",data:[t[1][0],t[1][1],t[2][0],t[2][1],t[2][0],t[2][1]]})):2===n&&o.push(...R(t[0][0],t[0][1],t[1][0],t[1][1],s,!0,!0));return o}function F(t,e,s,n,o,a,h,r){const i=[],c=[];if(0===r.roughness){t/=4,c.push([e+n*Math.cos(-t),s+o*Math.sin(-t)]);for(let a=0;a<=2*Math.PI;a+=t){const t=[e+n*Math.cos(a),s+o*Math.sin(a)];i.push(t),c.push(t)}c.push([e+n*Math.cos(0),s+o*Math.sin(0)]),c.push([e+n*Math.cos(t),s+o*Math.sin(t)])}else{const l=G(.5,r)-Math.PI/2;c.push([G(a,r)+e+.9*n*Math.cos(l-t),G(a,r)+s+.9*o*Math.sin(l-t)]);const u=2*Math.PI+l-.01;for(let h=l;h<u;h+=t){const t=[G(a,r)+e+n*Math.cos(h),G(a,r)+s+o*Math.sin(h)];i.push(t),c.push(t)}c.push([G(a,r)+e+n*Math.cos(l+2*Math.PI+.5*h),G(a,r)+s+o*Math.sin(l+2*Math.PI+.5*h)]),c.push([G(a,r)+e+.98*n*Math.cos(l+h),G(a,r)+s+.98*o*Math.sin(l+h)]),c.push([G(a,r)+e+.9*n*Math.cos(l+.5*h),G(a,r)+s+.9*o*Math.sin(l+.5*h)])}return[c,i]}function V(t,e,s,n,o,a,h,r,i){const c=a+G(.1,i),l=[];l.push([G(r,i)+e+.9*n*Math.cos(c-t),G(r,i)+s+.9*o*Math.sin(c-t)]);for(let a=c;a<=h;a+=t)l.push([G(r,i)+e+n*Math.cos(a),G(r,i)+s+o*Math.sin(a)]);return l.push([e+n*Math.cos(h),s+o*Math.sin(h)]),l.push([e+n*Math.cos(h),s+o*Math.sin(h)]),q(l,null,i)}function Z(t,e,s,n,o,a,h,r){const i=[],c=[r.maxRandomnessOffset||1,(r.maxRandomnessOffset||1)+.3];let l=[0,0];const u=r.disableMultiStroke?1:2,p=r.preserveVertices;for(let f=0;f<u;f++)0===f?i.push({op:"move",data:[h[0],h[1]]}):i.push({op:"move",data:[h[0]+(p?0:G(c[0],r)),h[1]+(p?0:G(c[0],r))]}),l=p?[o,a]:[o+G(c[f],r),a+G(c[f],r)],i.push({op:"bcurveTo",data:[t+G(c[f],r),e+G(c[f],r),s+G(c[f],r),n+G(c[f],r),l[0],l[1]]});return i}function Q(t){return[...t]}function H(t,e=0){const s=t.length;if(s<3)throw new Error("A curve must have at least three points.");const n=[];if(3===s)n.push(Q(t[0]),Q(t[1]),Q(t[2]),Q(t[2]));else{const s=[];s.push(t[0],t[0]);for(let e=1;e<t.length;e++)s.push(t[e]),e===t.length-1&&s.push(t[e]);const o=[],a=1-e;n.push(Q(s[0]));for(let t=1;t+2<s.length;t++){const e=s[t];o[0]=[e[0],e[1]],o[1]=[e[0]+(a*s[t+1][0]-a*s[t-1][0])/6,e[1]+(a*s[t+1][1]-a*s[t-1][1])/6],o[2]=[s[t+1][0]+(a*s[t][0]-a*s[t+2][0])/6,s[t+1][1]+(a*s[t][1]-a*s[t+2][1])/6],o[3]=[s[t+1][0],s[t+1][1]],n.push(o[1],o[2],o[3])}}return n}function N(t,e){return Math.pow(t[0]-e[0],2)+Math.pow(t[1]-e[1],2)}function B(t,e,s){const n=N(e,s);if(0===n)return N(t,e);let o=((t[0]-e[0])*(s[0]-e[0])+(t[1]-e[1])*(s[1]-e[1]))/n;return o=Math.max(0,Math.min(1,o)),N(t,J(e,s,o))}function J(t,e,s){return[t[0]+(e[0]-t[0])*s,t[1]+(e[1]-t[1])*s]}function K(t,e,s,n){const o=n||[];if(function(t,e){const s=t[e+0],n=t[e+1],o=t[e+2],a=t[e+3];let h=3*n[0]-2*s[0]-a[0];h*=h;let r=3*n[1]-2*s[1]-a[1];r*=r;let i=3*o[0]-2*a[0]-s[0];i*=i;let c=3*o[1]-2*a[1]-s[1];return c*=c,h<i&&(h=i),r<c&&(r=c),h+r}(t,e)<s){const s=t[e+0];if(o.length){(a=o[o.length-1],h=s,Math.sqrt(N(a,h)))>1&&o.push(s)}else o.push(s);o.push(t[e+3])}else{const n=.5,a=t[e+0],h=t[e+1],r=t[e+2],i=t[e+3],c=J(a,h,n),l=J(h,r,n),u=J(r,i,n),p=J(c,l,n),f=J(l,u,n),d=J(p,f,n);K([a,c,p,d],0,s,o),K([d,f,u,i],0,s,o)}var a,h;return o}function U(t,e){return X(t,0,t.length,e)}function X(t,e,s,n,o){const a=o||[],h=t[e],r=t[s-1];let i=0,c=1;for(let n=e+1;n<s-1;++n){const e=B(t[n],h,r);e>i&&(i=e,c=n)}return Math.sqrt(i)>n?(X(t,e,c+1,n,a),X(t,c,s,n,a)):(a.length||a.push(h),a.push(r)),a}function Y(t,e=.15,s){const n=[],o=(t.length-1)/3;for(let s=0;s<o;s++){K(t,3*s,e,n)}return s&&s>0?X(n,0,n.length,s):n}const tt="none";class et{constructor(t){this.defaultOptions={maxRandomnessOffset:2,roughness:1,bowing:1,stroke:"#000",strokeWidth:1,curveTightness:0,curveFitting:.95,curveStepCount:9,fillStyle:"hachure",fillWeight:-1,hachureAngle:-41,hachureGap:-1,dashOffset:-1,dashGap:-1,zigzagOffset:-1,seed:0,disableMultiStroke:!1,disableMultiStrokeFill:!1,preserveVertices:!1,fillShapeRoughnessGain:.8},this.config=t||{},this.config.options&&(this.defaultOptions=this._o(this.config.options))}static newSeed(){return Math.floor(Math.random()*2**31)}_o(t){return t?Object.assign({},this.defaultOptions,t):this.defaultOptions}_d(t,e,s){return{shape:t,sets:e||[],options:s||this.defaultOptions}}line(t,e,s,n,o){const a=this._o(o);return this._d("line",[v(t,e,s,n,a)],a)}rectangle(t,e,s,n,o){const a=this._o(o),h=[],r=O(t,e,s,n,a);if(a.fill){const o=[[t,e],[t+s,e],[t+s,e+n],[t,e+n]];"solid"===a.fillStyle?h.push(I([o],a)):h.push(C([o],a))}return a.stroke!==tt&&h.push(r),this._d("rectangle",h,a)}ellipse(t,e,s,n,o){const a=this._o(o),h=[],r=T(s,n,a),i=D(t,e,a,r);if(a.fill)if("solid"===a.fillStyle){const s=D(t,e,a,r).opset;s.type="fillPath",h.push(s)}else h.push(C([i.estimatedPoints],a));return a.stroke!==tt&&h.push(i.opset),this._d("ellipse",h,a)}circle(t,e,s,n){const o=this.ellipse(t,e,s,s,n);return o.shape="circle",o}linearPath(t,e){const s=this._o(e);return this._d("linearPath",[S(t,!1,s)],s)}arc(t,e,s,n,o,a,h=!1,r){const i=this._o(r),c=[],l=A(t,e,s,n,o,a,h,!0,i);if(h&&i.fill)if("solid"===i.fillStyle){const h=Object.assign({},i);h.disableMultiStroke=!0;const r=A(t,e,s,n,o,a,!0,!1,h);r.type="fillPath",c.push(r)}else c.push(function(t,e,s,n,o,a,h){const r=t,i=e;let c=Math.abs(s/2),l=Math.abs(n/2);c+=G(.01*c,h),l+=G(.01*l,h);let u=o,p=a;for(;u<0;)u+=2*Math.PI,p+=2*Math.PI;p-u>2*Math.PI&&(u=0,p=2*Math.PI);const f=(p-u)/h.curveStepCount,d=[];for(let t=u;t<=p;t+=f)d.push([r+c*Math.cos(t),i+l*Math.sin(t)]);return d.push([r+c*Math.cos(p),i+l*Math.sin(p)]),d.push([r,i]),C([d],h)}(t,e,s,n,o,a,i));return i.stroke!==tt&&c.push(l),this._d("arc",c,i)}curve(t,e){const s=this._o(e),n=[],o=L(t,s);if(s.fill&&s.fill!==tt)if("solid"===s.fillStyle){const e=L(t,Object.assign(Object.assign({},s),{disableMultiStroke:!0,roughness:s.roughness?s.roughness+s.fillShapeRoughnessGain:0}));n.push({type:"fillPath",ops:this._mergedShape(e.ops)})}else{const e=[],o=t;if(o.length){const t="number"==typeof o[0][0]?[o]:o;for(const n of t)n.length<3?e.push(...n):3===n.length?e.push(...Y(H([n[0],n[0],n[1],n[2]]),10,(1+s.roughness)/2)):e.push(...Y(H(n),10,(1+s.roughness)/2))}e.length&&n.push(C([e],s))}return s.stroke!==tt&&n.push(o),this._d("curve",n,s)}polygon(t,e){const s=this._o(e),n=[],o=S(t,!0,s);return s.fill&&("solid"===s.fillStyle?n.push(I([t],s)):n.push(C([t],s))),s.stroke!==tt&&n.push(o),this._d("polygon",n,s)}path(t,e){const s=this._o(e),n=[];if(!t)return this._d("path",n,s);t=(t||"").replace(/\n/g," ").replace(/(-\s)/g,"-").replace("/(ss)/g"," ");const o=s.fill&&"transparent"!==s.fill&&s.fill!==tt,a=s.stroke!==tt,h=!!(s.simplification&&s.simplification<1),r=function(t,e,s){const n=m(y(b(t))),o=[];let a=[],h=[0,0],r=[];const i=()=>{r.length>=4&&a.push(...Y(r,e)),r=[]},c=()=>{i(),a.length&&(o.push(a),a=[])};for(const{key:t,data:e}of n)switch(t){case"M":c(),h=[e[0],e[1]],a.push(h);break;case"L":i(),a.push([e[0],e[1]]);break;case"C":if(!r.length){const t=a.length?a[a.length-1]:h;r.push([t[0],t[1]])}r.push([e[0],e[1]]),r.push([e[2],e[3]]),r.push([e[4],e[5]]);break;case"Z":i(),a.push([h[0],h[1]])}if(c(),!s)return o;const l=[];for(const t of o){const e=U(t,s);e.length&&l.push(e)}return l}(t,1,h?4-4*(s.simplification||1):(1+s.roughness)/2),i=_(t,s);if(o)if("solid"===s.fillStyle)if(1===r.length){const e=_(t,Object.assign(Object.assign({},s),{disableMultiStroke:!0,roughness:s.roughness?s.roughness+s.fillShapeRoughnessGain:0}));n.push({type:"fillPath",ops:this._mergedShape(e.ops)})}else n.push(I(r,s));else n.push(C(r,s));return a&&(h?r.forEach((t=>{n.push(S(t,!1,s))})):n.push(i)),this._d("path",n,s)}opsToPath(t,e){let s="";for(const n of t.ops){const t="number"==typeof e&&e>=0?n.data.map((t=>+t.toFixed(e))):n.data;switch(n.op){case"move":s+=`M${t[0]} ${t[1]} `;break;case"bcurveTo":s+=`C${t[0]} ${t[1]}, ${t[2]} ${t[3]}, ${t[4]} ${t[5]} `;break;case"lineTo":s+=`L${t[0]} ${t[1]} `}}return s.trim()}toPaths(t){const e=t.sets||[],s=t.options||this.defaultOptions,n=[];for(const t of e){let e=null;switch(t.type){case"path":e={d:this.opsToPath(t),stroke:s.stroke,strokeWidth:s.strokeWidth,fill:tt};break;case"fillPath":e={d:this.opsToPath(t),stroke:tt,strokeWidth:0,fill:s.fill||tt};break;case"fillSketch":e=this.fillSketch(t,s)}e&&n.push(e)}return n}fillSketch(t,e){let s=e.fillWeight;return s<0&&(s=e.strokeWidth/2),{d:this.opsToPath(t),stroke:e.fill||tt,strokeWidth:s,fill:tt}}_mergedShape(t){return t.filter(((t,e)=>0===e||"move"!==t.op))}}class st{constructor(t,e){this.canvas=t,this.ctx=this.canvas.getContext("2d"),this.gen=new et(e)}draw(t){const e=t.sets||[],s=t.options||this.getDefaultOptions(),n=this.ctx,o=t.options.fixedDecimalPlaceDigits;for(const a of e)switch(a.type){case"path":n.save(),n.strokeStyle="none"===s.stroke?"transparent":s.stroke,n.lineWidth=s.strokeWidth,s.strokeLineDash&&n.setLineDash(s.strokeLineDash),s.strokeLineDashOffset&&(n.lineDashOffset=s.strokeLineDashOffset),this._drawToContext(n,a,o),n.restore();break;case"fillPath":{n.save(),n.fillStyle=s.fill||"";const e="curve"===t.shape||"polygon"===t.shape||"path"===t.shape?"evenodd":"nonzero";this._drawToContext(n,a,o,e),n.restore();break}case"fillSketch":this.fillSketch(n,a,s)}}fillSketch(t,e,s){let n=s.fillWeight;n<0&&(n=s.strokeWidth/2),t.save(),s.fillLineDash&&t.setLineDash(s.fillLineDash),s.fillLineDashOffset&&(t.lineDashOffset=s.fillLineDashOffset),t.strokeStyle=s.fill||"",t.lineWidth=n,this._drawToContext(t,e,s.fixedDecimalPlaceDigits),t.restore()}_drawToContext(t,e,s,n="nonzero"){t.beginPath();for(const n of e.ops){const e="number"==typeof s&&s>=0?n.data.map((t=>+t.toFixed(s))):n.data;switch(n.op){case"move":t.moveTo(e[0],e[1]);break;case"bcurveTo":t.bezierCurveTo(e[0],e[1],e[2],e[3],e[4],e[5]);break;case"lineTo":t.lineTo(e[0],e[1])}}"fillPath"===e.type?t.fill(n):t.stroke()}get generator(){return this.gen}getDefaultOptions(){return this.gen.defaultOptions}line(t,e,s,n,o){const a=this.gen.line(t,e,s,n,o);return this.draw(a),a}rectangle(t,e,s,n,o){const a=this.gen.rectangle(t,e,s,n,o);return this.draw(a),a}ellipse(t,e,s,n,o){const a=this.gen.ellipse(t,e,s,n,o);return this.draw(a),a}circle(t,e,s,n){const o=this.gen.circle(t,e,s,n);return this.draw(o),o}linearPath(t,e){const s=this.gen.linearPath(t,e);return this.draw(s),s}polygon(t,e){const s=this.gen.polygon(t,e);return this.draw(s),s}arc(t,e,s,n,o,a,h=!1,r){const i=this.gen.arc(t,e,s,n,o,a,h,r);return this.draw(i),i}curve(t,e){const s=this.gen.curve(t,e);return this.draw(s),s}path(t,e){const s=this.gen.path(t,e);return this.draw(s),s}}const nt="http://www.w3.org/2000/svg";class ot{constructor(t,e){this.svg=t,this.gen=new et(e)}draw(t){const e=t.sets||[],s=t.options||this.getDefaultOptions(),n=this.svg.ownerDocument||window.document,o=n.createElementNS(nt,"g"),a=t.options.fixedDecimalPlaceDigits;for(const h of e){let e=null;switch(h.type){case"path":e=n.createElementNS(nt,"path"),e.setAttribute("d",this.opsToPath(h,a)),e.setAttribute("stroke",s.stroke),e.setAttribute("stroke-width",s.strokeWidth+""),e.setAttribute("fill","none"),s.strokeLineDash&&e.setAttribute("stroke-dasharray",s.strokeLineDash.join(" ").trim()),s.strokeLineDashOffset&&e.setAttribute("stroke-dashoffset",`${s.strokeLineDashOffset}`);break;case"fillPath":e=n.createElementNS(nt,"path"),e.setAttribute("d",this.opsToPath(h,a)),e.setAttribute("stroke","none"),e.setAttribute("stroke-width","0"),e.setAttribute("fill",s.fill||""),"curve"!==t.shape&&"polygon"!==t.shape||e.setAttribute("fill-rule","evenodd");break;case"fillSketch":e=this.fillSketch(n,h,s)}e&&o.appendChild(e)}return o}fillSketch(t,e,s){let n=s.fillWeight;n<0&&(n=s.strokeWidth/2);const o=t.createElementNS(nt,"path");return o.setAttribute("d",this.opsToPath(e,s.fixedDecimalPlaceDigits)),o.setAttribute("stroke",s.fill||""),o.setAttribute("stroke-width",n+""),o.setAttribute("fill","none"),s.fillLineDash&&o.setAttribute("stroke-dasharray",s.fillLineDash.join(" ").trim()),s.fillLineDashOffset&&o.setAttribute("stroke-dashoffset",`${s.fillLineDashOffset}`),o}get generator(){return this.gen}getDefaultOptions(){return this.gen.defaultOptions}opsToPath(t,e){return this.gen.opsToPath(t,e)}line(t,e,s,n,o){const a=this.gen.line(t,e,s,n,o);return this.draw(a)}rectangle(t,e,s,n,o){const a=this.gen.rectangle(t,e,s,n,o);return this.draw(a)}ellipse(t,e,s,n,o){const a=this.gen.ellipse(t,e,s,n,o);return this.draw(a)}circle(t,e,s,n){const o=this.gen.circle(t,e,s,n);return this.draw(o)}linearPath(t,e){const s=this.gen.linearPath(t,e);return this.draw(s)}polygon(t,e){const s=this.gen.polygon(t,e);return this.draw(s)}arc(t,e,s,n,o,a,h=!1,r){const i=this.gen.arc(t,e,s,n,o,a,h,r);return this.draw(i)}curve(t,e){const s=this.gen.curve(t,e);return this.draw(s)}path(t,e){const s=this.gen.path(t,e);return this.draw(s)}}return{canvas:(t,e)=>new st(t,e),svg:(t,e)=>new ot(t,e),generator:t=>new et(t),newSeed:()=>et.newSeed()}}();
+</script>
+
+<script>
+const DATA = {"graph":{"meta":{"tool":"repomind","version":"0.1.0","repo":"sumitra (example)","commit":"ad30b63","scannedAt":"2026-10-30T06:30:39.843Z","stats":{"files":39,"nodes":48,"edges":70,"findings":7,"ms":48}},"nodes":[{"id":"app:apps-api","kind":"service","layer":"app","label":"api","tech":"Express","category":"server","description":"Sumitra HRMS REST API — leave, payroll, timesheets, polls.","evidence":[{"file":"apps/api/package.json","line":1,"note":"@sumitra/api"},{"file":"apps/api/Dockerfile","line":1,"note":"Dockerfile"}],"meta":{"package":"@sumitra/api","dir":"apps/api","role":"server","routes":["GET /health"],"routeCount":1,"container":{"base":"node:20-alpine","ports":["8080"],"user":"root"}}},{"id":"app:apps-mobile","kind":"app","layer":"app","label":"mobile","tech":"Expo / React Native","category":"mobile","description":"Sumitra mobile app (Expo).","evidence":[{"file":"apps/mobile/package.json","line":1,"note":"@sumitra/mobile"}],"meta":{"package":"@sumitra/mobile","dir":"apps/mobile","role":"mobile"}},{"id":"app:apps-web","kind":"app","layer":"app","label":"web","tech":"Next.js","category":"fullstack","description":"Sumitra HRMS web app for employees and HR.","evidence":[{"file":"apps/web/package.json","line":1,"note":"@sumitra/web"}],"meta":{"package":"@sumitra/web","dir":"apps/web","role":"fullstack","routeCount":1}},{"id":"app:packages-shared","kind":"library","layer":"app","label":"shared","tech":"Shared package","category":"library","description":"Types and validation shared by api, web and mobile.","evidence":[{"file":"packages/shared/package.json","line":1,"note":"@sumitra/shared"}],"meta":{"package":"@sumitra/shared","dir":"packages/shared","role":"library"}},{"id":"ci:deploy-api","kind":"pipeline","layer":"cicd","label":"Deploy API","tech":"GitHub Actions","category":"CI/CD","cost":{"tier":"low","model":"per runner-minute"},"description":"Workflow \"Deploy API\" — runs on push.","evidence":[{"file":".github/workflows/deploy-api.yml","line":1}],"meta":{"triggers":["push"],"jobs":["deploy"]}},{"id":"ci:mobile","kind":"pipeline","layer":"cicd","label":"Mobile build","tech":"GitHub Actions","category":"CI/CD","cost":{"tier":"low","model":"per runner-minute"},"description":"Workflow \"Mobile build\" — runs on workflow_dispatch.","evidence":[{"file":".github/workflows/mobile.yml","line":1}],"meta":{"triggers":["workflow_dispatch"],"jobs":["build"]}},{"id":"ci:web","kind":"pipeline","layer":"cicd","label":"Deploy web","tech":"GitHub Actions","category":"CI/CD","cost":{"tier":"low","model":"per runner-minute"},"description":"Workflow \"Deploy web\" — runs on push.","evidence":[{"file":".github/workflows/web.yml","line":1}],"meta":{"triggers":["push"],"jobs":["deploy"]}},{"id":"client:mobile","kind":"client","layer":"client","label":"Mobile users","tech":"iOS · Android","description":"People using the mobile app.","evidence":[{"file":"apps/mobile/package.json"}]},{"id":"client:web","kind":"client","layer":"client","label":"Web users","tech":"Browser","description":"People using the web app.","evidence":[{"file":"apps/web/package.json"}]},{"id":"data:postgres","kind":"database","layer":"data","label":"PostgreSQL","tech":"Prisma","description":"PostgreSQL accessed through Prisma — 6 models.","evidence":[{"file":"apps/api/prisma/schema.prisma","line":1,"note":"6 models"},{"file":"apps/api/src/db.ts","line":1,"note":"Prisma"},{"file":"apps/api/prisma/schema.prisma","line":1,"note":"6 models"}],"meta":{"models":["Employee","LeaveRequest","LeavePlan","Payslip","Timesheet","Poll"]}},{"id":"data:queue","kind":"queue","layer":"data","label":"Job queue (BullMQ)","tech":"bullmq","description":"Job queue (BullMQ) used by the app.","evidence":[{"file":"apps/api/src/modules/payroll/queue.ts","line":1,"note":"bullmq"}]},{"id":"data:redis","kind":"cache","layer":"data","label":"Redis","tech":"ioredis","description":"Redis used by the app.","evidence":[{"file":"apps/api/src/modules/auth/routes.ts","line":2,"note":"ioredis"}]},{"id":"ext:app-stores","kind":"external","layer":"external","label":"App Store · Play Store","tech":"Mobile distribution","category":"Mobile distribution","cost":{"tier":"low","model":"yearly developer fee"},"description":"App Store · Play Store — Mobile distribution.","evidence":[{"file":"apps/mobile/eas.json","line":1}]},{"id":"ext:eas","kind":"external","layer":"external","label":"Expo EAS","tech":"Mobile build & updates","category":"Mobile build & updates","cost":{"tier":"medium","model":"per build + MAU"},"description":"Expo EAS — Mobile build & updates.","evidence":[{"file":".github/workflows/mobile.yml","line":9,"note":"job build"}]},{"id":"ext:expo-push","kind":"external","layer":"external","label":"Expo Push","tech":"Push notifications","category":"Push notifications","cost":{"tier":"free","model":"free tier"},"description":"Expo Push — Push notifications. Billing: free tier.","evidence":[{"file":"apps/api/src/modules/notifications/push.ts","line":1,"note":"expo-server-sdk"}]},{"kind":"external","layer":"external","id":"ext:google-sso","label":"Google SSO","tech":"Login for employees","manual":true,"evidence":[{"file":".repomind.yml","note":"added by hand"}]},{"id":"ext:keka","kind":"external","layer":"external","label":"Keka","tech":"HR platform","category":"HR platform","cost":{"tier":"medium","model":"per employee (subscription)"},"description":"Keka — HR platform. Billing: per employee (subscription).","evidence":[{"file":"apps/api/src/modules/auth/keka.ts","line":3,"note":"keka.com"}]},{"id":"ext:posthog","kind":"external","layer":"external","label":"PostHog","tech":"Product analytics","category":"Product analytics","cost":{"tier":"low","model":"per event"},"description":"PostHog — Product analytics. Billing: per event.","evidence":[{"file":"apps/web/package.json","line":1,"note":"dependency"}]},{"id":"ext:sentry","kind":"external","layer":"external","label":"Sentry","tech":"Error tracking","category":"Error tracking","cost":{"tier":"low","model":"per event"},"description":"Sentry — Error tracking. Billing: per event.","evidence":[{"file":"apps/api/src/index.ts","line":3,"note":"@sentry/node"}]},{"id":"ext:slack","kind":"external","layer":"external","label":"Slack","tech":"Chat & notifications","category":"Chat & notifications","cost":{"tier":"free","model":"API free"},"description":"Slack — Chat & notifications. Billing: API free.","evidence":[{"file":"apps/api/src/modules/notifications/slack.ts","line":1,"note":"@slack/web-api"}]},{"id":"ext:smtp","kind":"external","layer":"external","label":"SMTP server","tech":"Email","category":"Email","cost":{"tier":"low","model":"depends on host"},"description":"SMTP server — Email. Billing: depends on host.","evidence":[{"file":"apps/api/src/modules/notifications/email.ts","line":1,"note":"nodemailer"}]},{"id":"ext:twilio","kind":"external","layer":"external","label":"Twilio","tech":"SMS & voice","category":"SMS & voice","cost":{"tier":"medium","model":"per SMS / call"},"description":"Twilio — SMS & voice. Billing: per SMS / call.","evidence":[{"file":"apps/api/src/modules/auth/otp.ts","line":1,"note":"twilio"}]},{"id":"gcp:artifact-registry","kind":"cloud","layer":"cloud","label":"Artifact Registry","tech":"Container images","cost":{"tier":"low","model":"per GB stored"},"evidence":[{"file":".github/workflows/deploy-api.yml","line":13,"note":"job deploy"}]},{"id":"gcp:kms","kind":"secret","layer":"cloud","label":"Cloud KMS","tech":"GCP · encryption keys","category":"GCP · encryption keys","cost":{"tier":"low","model":"per key version + operation"},"description":"Cloud KMS — GCP · encryption keys. Billing: per key version + operation.","evidence":[{"file":"apps/api/src/modules/payroll/crypto.ts","line":1,"note":"@google-cloud/kms"}]},{"id":"gcp:run:sumitra-api","kind":"cloud","layer":"cloud","label":"sumitra-api","tech":"Cloud Run","category":"GCP · serverless containers","cost":{"tier":"medium","model":"per vCPU-second + requests"},"description":"Production API on Cloud Run in tl-sumitra-prod (asia-south1).","evidence":[{"file":".github/workflows/deploy-api.yml","line":13,"note":"job deploy"},{"file":"infra/terraform/main.tf","line":1}]},{"id":"gcp:storage","kind":"bucket","layer":"cloud","label":"Cloud Storage","tech":"GCP · object storage","category":"GCP · object storage","cost":{"tier":"low","model":"per GB + operations"},"description":"Cloud Storage — GCP · object storage. Billing: per GB + operations.","evidence":[{"file":"apps/api/src/modules/payroll/storage.ts","line":1,"note":"@google-cloud/storage"}]},{"id":"host:vercel","kind":"cloud","layer":"cloud","label":"Vercel","tech":"Hosting","category":"Hosting","cost":{"tier":"medium","model":"per seat + usage"},"description":"Vercel — Hosting.","evidence":[{"file":".github/workflows/web.yml","line":10,"note":"job deploy"}]},{"id":"mod:apps-api/auth","kind":"module","layer":"module","label":"auth","tech":"3 files","parent":"app:apps-api","description":"Feature module in apps/api.","evidence":[{"file":"apps/api/src/modules/auth/keka.ts"}],"meta":{"dir":"apps/api/src/modules/auth","files":3}},{"id":"mod:apps-api/leave","kind":"module","layer":"module","label":"leave","tech":"1 file","parent":"app:apps-api","description":"Feature module in apps/api.","evidence":[{"file":"apps/api/src/modules/leave/routes.ts"}],"meta":{"dir":"apps/api/src/modules/leave","files":1}},{"id":"mod:apps-api/notifications","kind":"module","layer":"module","label":"notifications","tech":"3 files","parent":"app:apps-api","description":"Feature module in apps/api.","evidence":[{"file":"apps/api/src/modules/notifications/email.ts"}],"meta":{"dir":"apps/api/src/modules/notifications","files":3}},{"id":"mod:apps-api/payroll","kind":"module","layer":"module","label":"payroll","tech":"4 files","parent":"app:apps-api","description":"Feature module in apps/api.","evidence":[{"file":"apps/api/src/modules/payroll/crypto.ts"}],"meta":{"dir":"apps/api/src/modules/payroll","files":4}},{"id":"mod:apps-api/polls","kind":"module","layer":"module","label":"polls","tech":"1 file","parent":"app:apps-api","description":"Feature module in apps/api.","evidence":[{"file":"apps/api/src/modules/polls/routes.ts"}],"meta":{"dir":"apps/api/src/modules/polls","files":1}},{"id":"mod:apps-api/timesheet","kind":"module","layer":"module","label":"timesheet","tech":"1 file","parent":"app:apps-api","description":"Feature module in apps/api.","evidence":[{"file":"apps/api/src/modules/timesheet/routes.ts"}],"meta":{"dir":"apps/api/src/modules/timesheet","files":1}},{"id":"mod:apps-mobile/home","kind":"module","layer":"module","label":"home","tech":"2 files","parent":"app:apps-mobile","description":"Feature module in apps/mobile.","evidence":[{"file":"apps/mobile/app/home/api.ts"}],"meta":{"dir":"apps/mobile/app/home","files":2}},{"id":"mod:apps-mobile/leave","kind":"module","layer":"module","label":"leave","tech":"1 file","parent":"app:apps-mobile","description":"Feature module in apps/mobile.","evidence":[{"file":"apps/mobile/app/leave/index.tsx"}],"meta":{"dir":"apps/mobile/app/leave","files":1}},{"id":"mod:apps-mobile/profile","kind":"module","layer":"module","label":"profile","tech":"1 file","parent":"app:apps-mobile","description":"Feature module in apps/mobile.","evidence":[{"file":"apps/mobile/app/profile/index.tsx"}],"meta":{"dir":"apps/mobile/app/profile","files":1}},{"id":"mod:apps-web/api","kind":"module","layer":"module","label":"api","tech":"1 file","parent":"app:apps-web","description":"Feature module in apps/web.","evidence":[{"file":"apps/web/src/app/api/health/route.ts"}],"meta":{"dir":"apps/web/src/app/api","files":1,"routes":["GET /api/health"],"routeCount":1}},{"id":"mod:apps-web/dashboard","kind":"module","layer":"module","label":"dashboard","tech":"1 file","parent":"app:apps-web","description":"Feature module in apps/web.","evidence":[{"file":"apps/web/src/app/dashboard/page.tsx"}],"meta":{"dir":"apps/web/src/app/dashboard","files":1}},{"id":"mod:apps-web/leave","kind":"module","layer":"module","label":"leave","tech":"2 files","parent":"app:apps-web","description":"Feature module in apps/web.","evidence":[{"file":"apps/web/src/app/leave/api.ts"}],"meta":{"dir":"apps/web/src/app/leave","files":2}},{"id":"mod:apps-web/payroll","kind":"module","layer":"module","label":"payroll","tech":"1 file","parent":"app:apps-web","description":"Feature module in apps/web.","evidence":[{"file":"apps/web/src/app/payroll/page.tsx"}],"meta":{"dir":"apps/web/src/app/payroll","files":1}},{"id":"tf:google_access_context_manager_service_perimeter.payroll","kind":"network","layer":"cloud","label":"payroll-fence","tech":"VPC Service Controls perimeter","category":"GCP · VPC Service Controls perimeter","cost":{"tier":"free","model":"free"},"description":"VPC Service Controls perimeter defined in Terraform (google_access_context_manager_service_perimeter.payroll).","evidence":[{"file":"infra/terraform/main.tf","line":69,"note":"google_access_context_manager_service_perimeter.payroll"}],"meta":{"terraform":"google_access_context_manager_service_perimeter.payroll"}},{"id":"tf:google_compute_network.vpc","kind":"network","layer":"cloud","label":"sumitra-vpc","tech":"VPC network","category":"GCP · VPC network","cost":{"tier":"free","model":"free"},"description":"VPC network defined in Terraform (google_compute_network.vpc).","evidence":[{"file":"infra/terraform/main.tf","line":55,"note":"google_compute_network.vpc"}],"meta":{"terraform":"google_compute_network.vpc"}},{"id":"tf:google_kms_crypto_key.payroll","kind":"secret","layer":"cloud","label":"payroll-key","tech":"KMS key","category":"GCP · KMS key","cost":{"tier":"low","model":"per key version + operation"},"description":"KMS key defined in Terraform (google_kms_crypto_key.payroll).","evidence":[{"file":"infra/terraform/main.tf","line":50,"note":"google_kms_crypto_key.payroll"}],"meta":{"terraform":"google_kms_crypto_key.payroll"}},{"id":"tf:google_kms_key_ring.payroll","kind":"secret","layer":"cloud","label":"payroll-ring","tech":"KMS key ring","category":"GCP · KMS key ring","cost":{"tier":"free","model":"free"},"description":"KMS key ring defined in Terraform (google_kms_key_ring.payroll). Region: asia-south1.","evidence":[{"file":"infra/terraform/main.tf","line":45,"note":"google_kms_key_ring.payroll"}],"meta":{"terraform":"google_kms_key_ring.payroll"}},{"id":"tf:google_secret_manager_secret.slack","kind":"secret","layer":"cloud","label":"slack-bot-token","tech":"Secret","category":"GCP · Secret","cost":{"tier":"low","model":"per secret version"},"description":"Secret defined in Terraform (google_secret_manager_secret.slack).","evidence":[{"file":"infra/terraform/main.tf","line":64,"note":"google_secret_manager_secret.slack"}],"meta":{"terraform":"google_secret_manager_secret.slack"}},{"id":"tf:google_sql_database_instance.main","kind":"database","layer":"data","label":"sumitra-db","tech":"Cloud SQL","category":"GCP · Cloud SQL","cost":{"tier":"high","model":"per instance-hour + storage"},"description":"Cloud SQL defined in Terraform (google_sql_database_instance.main). Region: asia-south1. Tier: db-custom-2-7680. Version: POSTGRES_15.","evidence":[{"file":"infra/terraform/main.tf","line":23,"note":"google_sql_database_instance.main"}],"meta":{"terraform":"google_sql_database_instance.main"}},{"id":"tf:google_storage_bucket.payslips","kind":"bucket","layer":"cloud","label":"sumitra-payslips","tech":"Cloud Storage bucket","category":"GCP · Cloud Storage bucket","cost":{"tier":"low","model":"per GB + operations"},"description":"Cloud Storage bucket defined in Terraform (google_storage_bucket.payslips). Region: ASIA-SOUTH1.","evidence":[{"file":"infra/terraform/main.tf","line":38,"note":"google_storage_bucket.payslips"}],"meta":{"terraform":"google_storage_bucket.payslips"}},{"id":"tf:google_vpc_access_connector.main","kind":"network","layer":"cloud","label":"sumitra-connector","tech":"Serverless VPC connector","category":"GCP · Serverless VPC connector","cost":{"tier":"medium","model":"per instance-hour"},"description":"Serverless VPC connector defined in Terraform (google_vpc_access_connector.main).","evidence":[{"file":"infra/terraform/main.tf","line":59,"note":"google_vpc_access_connector.main"}],"meta":{"terraform":"google_vpc_access_connector.main"}}],"edges":[{"from":"app:apps-api","to":"app:packages-shared","kind":"depends","evidence":[{"file":"apps/api/package.json","line":16}]},{"from":"app:apps-api","to":"data:postgres","kind":"reads","evidence":[{"file":"apps/api/src/db.ts","line":1,"note":"Prisma"}]},{"from":"app:apps-api","to":"data:queue","kind":"sends","evidence":[{"file":"apps/api/src/modules/payroll/queue.ts","line":1,"note":"bullmq"}]},{"from":"app:apps-api","to":"data:redis","kind":"reads","evidence":[{"file":"apps/api/src/modules/auth/routes.ts","line":2,"note":"ioredis"}]},{"from":"app:apps-api","to":"ext:expo-push","kind":"sends","evidence":[{"file":"apps/api/src/modules/notifications/push.ts","line":1,"note":"expo-server-sdk"},{"file":"apps/api/src/modules/notifications/push.ts","line":2,"note":"EXPO_ACCESS_TOKEN"}]},{"from":"app:apps-api","to":"ext:keka","kind":"calls","evidence":[{"file":"apps/api/src/modules/auth/keka.ts","line":3,"note":"keka.com"}]},{"from":"app:apps-api","to":"ext:sentry","kind":"calls","evidence":[{"file":"apps/api/src/index.ts","line":3,"note":"@sentry/node"},{"file":"apps/api/src/index.ts","line":10,"note":"SENTRY_DSN"},{"file":"apps/api/.env.example","line":9,"note":"SENTRY_DSN"}]},{"from":"app:apps-api","to":"ext:slack","kind":"sends","evidence":[{"file":"apps/api/src/modules/notifications/slack.ts","line":1,"note":"@slack/web-api"},{"file":"apps/api/src/modules/notifications/slack.ts","line":2,"note":"SLACK_BOT_TOKEN"},{"file":"apps/api/.env.example","line":3,"note":"SLACK_BOT_TOKEN"}]},{"from":"app:apps-api","to":"ext:smtp","kind":"sends","evidence":[{"file":"apps/api/src/modules/notifications/email.ts","line":1,"note":"nodemailer"},{"file":"apps/api/src/modules/notifications/email.ts","line":2,"note":"SMTP_HOST"},{"file":"apps/api/.env.example","line":4,"note":"SMTP_HOST"},{"file":"apps/api/.env.example","line":5,"note":"SMTP_USER"},{"file":"apps/api/.env.example","line":6,"note":"SMTP_PASS"}]},{"from":"app:apps-api","to":"ext:twilio","kind":"sends","evidence":[{"file":"apps/api/src/modules/auth/otp.ts","line":1,"note":"twilio"},{"file":"apps/api/src/modules/auth/otp.ts","line":2,"note":"TWILIO_ACCOUNT_SID"},{"file":"apps/api/src/modules/auth/otp.ts","line":4,"note":"TWILIO_FROM"}]},{"from":"app:apps-api","to":"gcp:kms","kind":"uses","evidence":[{"file":"apps/api/src/modules/payroll/crypto.ts","line":1,"note":"@google-cloud/kms"},{"file":"apps/api/src/modules/payroll/crypto.ts","line":3,"note":"KMS_KEY_NAME"},{"file":"apps/api/.env.example","line":8,"note":"KMS_KEY_NAME"}]},{"from":"app:apps-api","to":"gcp:run:sumitra-api","kind":"runs-on","evidence":[{"file":".github/workflows/deploy-api.yml","note":"deployed by deploy"},{"file":"infra/terraform/main.tf","line":1,"note":"asia-south1-docker.pkg.dev/tl-sumitra-prod/sumitra/sumitra-api:latest"}]},{"from":"app:apps-api","to":"gcp:storage","kind":"writes","evidence":[{"file":"apps/api/src/modules/payroll/storage.ts","line":1,"note":"@google-cloud/storage"},{"file":"apps/api/src/modules/payroll/storage.ts","line":3,"note":"GCS_PAYSLIP_BUCKET"},{"file":"apps/api/.env.example","line":7,"note":"GCS_PAYSLIP_BUCKET"}]},{"from":"app:apps-api","to":"mod:apps-api/auth","kind":"contains","evidence":[{"file":"apps/api/src/modules/auth"}]},{"from":"app:apps-api","to":"mod:apps-api/leave","kind":"contains","evidence":[{"file":"apps/api/src/modules/leave"}]},{"from":"app:apps-api","to":"mod:apps-api/notifications","kind":"contains","evidence":[{"file":"apps/api/src/modules/notifications"}]},{"from":"app:apps-api","to":"mod:apps-api/payroll","kind":"contains","evidence":[{"file":"apps/api/src/modules/payroll"}]},{"from":"app:apps-api","to":"mod:apps-api/polls","kind":"contains","evidence":[{"file":"apps/api/src/modules/polls"}]},{"from":"app:apps-api","to":"mod:apps-api/timesheet","kind":"contains","evidence":[{"file":"apps/api/src/modules/timesheet"}]},{"from":"app:apps-mobile","to":"app:apps-api","kind":"calls","evidence":[{"file":"apps/mobile/app/home/api.ts","line":1,"note":"EXPO_PUBLIC_API_URL"}],"label":"HTTP"},{"from":"app:apps-mobile","to":"app:packages-shared","kind":"depends","evidence":[{"file":"apps/mobile/package.json","line":1}]},{"from":"app:apps-mobile","to":"ext:expo-push","kind":"sends","evidence":[{"file":"apps/mobile/package.json","line":1,"note":"dependency"}]},{"from":"app:apps-mobile","to":"ext:sentry","kind":"calls","evidence":[{"file":"apps/mobile/package.json","line":1,"note":"dependency"}]},{"from":"app:apps-mobile","to":"mod:apps-mobile/home","kind":"contains","evidence":[{"file":"apps/mobile/app/home"}]},{"from":"app:apps-mobile","to":"mod:apps-mobile/leave","kind":"contains","evidence":[{"file":"apps/mobile/app/leave"}]},{"from":"app:apps-mobile","to":"mod:apps-mobile/profile","kind":"contains","evidence":[{"file":"apps/mobile/app/profile"}]},{"from":"app:apps-web","to":"app:apps-api","kind":"calls","evidence":[{"file":"apps/web/src/app/leave/api.ts","line":1,"note":"NEXT_PUBLIC_API_URL"}],"label":"HTTP"},{"from":"app:apps-web","to":"app:packages-shared","kind":"depends","evidence":[{"file":"apps/web/package.json","line":1}]},{"from":"app:apps-web","to":"ext:google-sso","kind":"calls","evidence":[{"file":".repomind.yml","note":"added by hand"}],"label":"login"},{"from":"app:apps-web","to":"ext:posthog","kind":"calls","evidence":[{"file":"apps/web/package.json","line":1,"note":"dependency"}]},{"from":"app:apps-web","to":"ext:sentry","kind":"calls","evidence":[{"file":"apps/web/package.json","line":1,"note":"dependency"}]},{"from":"app:apps-web","to":"host:vercel","kind":"runs-on","evidence":[{"file":".github/workflows/web.yml","note":"deployed by deploy"}]},{"from":"app:apps-web","to":"mod:apps-web/api","kind":"contains","evidence":[{"file":"apps/web/src/app/api"}]},{"from":"app:apps-web","to":"mod:apps-web/dashboard","kind":"contains","evidence":[{"file":"apps/web/src/app/dashboard"}]},{"from":"app:apps-web","to":"mod:apps-web/leave","kind":"contains","evidence":[{"file":"apps/web/src/app/leave"}]},{"from":"app:apps-web","to":"mod:apps-web/payroll","kind":"contains","evidence":[{"file":"apps/web/src/app/payroll"}]},{"from":"ci:deploy-api","to":"gcp:artifact-registry","kind":"deploys","evidence":[{"file":".github/workflows/deploy-api.yml","line":13,"note":"job deploy"}],"label":"pushes image"},{"from":"ci:deploy-api","to":"gcp:run:sumitra-api","kind":"deploys","evidence":[{"file":".github/workflows/deploy-api.yml","line":13,"note":"job deploy"}]},{"from":"ci:mobile","to":"ext:eas","kind":"deploys","evidence":[{"file":".github/workflows/mobile.yml","line":9,"note":"job build"}],"label":"triggers"},{"from":"ci:web","to":"host:vercel","kind":"deploys","evidence":[{"file":".github/workflows/web.yml","line":10,"note":"job deploy"}]},{"from":"client:mobile","to":"app:apps-mobile","kind":"uses","evidence":[{"file":"apps/mobile/package.json"}]},{"from":"client:web","to":"app:apps-web","kind":"uses","evidence":[{"file":"apps/web/package.json"}]},{"from":"data:postgres","to":"tf:google_sql_database_instance.main","kind":"runs-on","evidence":[{"file":"infra/terraform/main.tf","line":23}]},{"from":"ext:eas","to":"app:apps-mobile","kind":"deploys","evidence":[{"file":"apps/mobile/eas.json"}],"label":"builds"},{"from":"ext:eas","to":"ext:app-stores","kind":"deploys","evidence":[{"file":"apps/mobile/eas.json","line":1}],"label":"submits"},{"from":"gcp:kms","to":"tf:google_kms_crypto_key.payroll","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":50}]},{"from":"gcp:run:sumitra-api","to":"tf:google_sql_database_instance.main","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":13}]},{"from":"gcp:run:sumitra-api","to":"tf:google_vpc_access_connector.main","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":9}]},{"from":"gcp:storage","to":"tf:google_storage_bucket.payslips","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":38}]},{"from":"mod:apps-api/auth","to":"data:redis","kind":"reads","evidence":[{"file":"apps/api/src/modules/auth/routes.ts","line":2,"note":"ioredis"}]},{"from":"mod:apps-api/auth","to":"ext:keka","kind":"calls","evidence":[{"file":"apps/api/src/modules/auth/keka.ts","line":3,"note":"keka.com"}]},{"from":"mod:apps-api/auth","to":"ext:twilio","kind":"sends","evidence":[{"file":"apps/api/src/modules/auth/otp.ts","line":1,"note":"twilio"},{"file":"apps/api/src/modules/auth/otp.ts","line":2,"note":"TWILIO_ACCOUNT_SID"},{"file":"apps/api/src/modules/auth/otp.ts","line":4,"note":"TWILIO_FROM"}]},{"from":"mod:apps-api/leave","to":"data:postgres","kind":"reads","evidence":[{"file":"apps/api/src/modules/leave/routes.ts","line":2,"note":"via apps/api/src/db.ts"}]},{"from":"mod:apps-api/leave","to":"mod:apps-api/notifications","kind":"depends","evidence":[{"file":"apps/api/src/modules/leave/routes.ts","line":3},{"file":"apps/api/src/modules/leave/routes.ts","line":4}]},{"from":"mod:apps-api/notifications","to":"ext:expo-push","kind":"sends","evidence":[{"file":"apps/api/src/modules/notifications/push.ts","line":1,"note":"expo-server-sdk"},{"file":"apps/api/src/modules/notifications/push.ts","line":2,"note":"EXPO_ACCESS_TOKEN"}]},{"from":"mod:apps-api/notifications","to":"ext:slack","kind":"sends","evidence":[{"file":"apps/api/src/modules/notifications/slack.ts","line":1,"note":"@slack/web-api"},{"file":"apps/api/src/modules/notifications/slack.ts","line":2,"note":"SLACK_BOT_TOKEN"}]},{"from":"mod:apps-api/notifications","to":"ext:smtp","kind":"sends","evidence":[{"file":"apps/api/src/modules/notifications/email.ts","line":1,"note":"nodemailer"},{"file":"apps/api/src/modules/notifications/email.ts","line":2,"note":"SMTP_HOST"}]},{"from":"mod:apps-api/payroll","to":"data:postgres","kind":"reads","evidence":[{"file":"apps/api/src/modules/payroll/routes.ts","line":2,"note":"via apps/api/src/db.ts"}]},{"from":"mod:apps-api/payroll","to":"data:queue","kind":"sends","evidence":[{"file":"apps/api/src/modules/payroll/queue.ts","line":1,"note":"bullmq"}]},{"from":"mod:apps-api/payroll","to":"gcp:kms","kind":"uses","evidence":[{"file":"apps/api/src/modules/payroll/crypto.ts","line":1,"note":"@google-cloud/kms"},{"file":"apps/api/src/modules/payroll/crypto.ts","line":3,"note":"KMS_KEY_NAME"}]},{"from":"mod:apps-api/payroll","to":"gcp:storage","kind":"writes","evidence":[{"file":"apps/api/src/modules/payroll/storage.ts","line":1,"note":"@google-cloud/storage"},{"file":"apps/api/src/modules/payroll/storage.ts","line":3,"note":"GCS_PAYSLIP_BUCKET"}]},{"from":"mod:apps-api/polls","to":"mod:apps-api/notifications","kind":"depends","evidence":[{"file":"apps/api/src/modules/polls/routes.ts","line":2}]},{"from":"mod:apps-api/timesheet","to":"data:postgres","kind":"reads","evidence":[{"file":"apps/api/src/modules/timesheet/routes.ts","line":2,"note":"via apps/api/src/db.ts"}]},{"from":"tf:google_access_context_manager_service_perimeter.payroll","to":"tf:google_kms_crypto_key.payroll","kind":"protects","evidence":[{"file":"infra/terraform/main.tf","line":75,"note":"cloudkms.googleapis.com"}]},{"from":"tf:google_access_context_manager_service_perimeter.payroll","to":"tf:google_kms_key_ring.payroll","kind":"protects","evidence":[{"file":"infra/terraform/main.tf","line":75,"note":"cloudkms.googleapis.com"}]},{"from":"tf:google_access_context_manager_service_perimeter.payroll","to":"tf:google_storage_bucket.payslips","kind":"protects","evidence":[{"file":"infra/terraform/main.tf","line":75,"note":"storage.googleapis.com"}]},{"from":"tf:google_kms_crypto_key.payroll","to":"tf:google_kms_key_ring.payroll","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":52}]},{"from":"tf:google_sql_database_instance.main","to":"tf:google_compute_network.vpc","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":32}]},{"from":"tf:google_storage_bucket.payslips","to":"tf:google_kms_crypto_key.payroll","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":42}]},{"from":"tf:google_vpc_access_connector.main","to":"tf:google_compute_network.vpc","kind":"uses","evidence":[{"file":"infra/terraform/main.tf","line":61}]}],"findings":[{"id":"run-public-invoke:infra/terraform/main.tf:public","rule":"run-public-invoke","severity":"high","title":"Cloud Run service allows unauthenticated calls","file":"infra/terraform/main.tf","line":20,"node":"gcp:run:sumitra-api","fix":"If this is not a public API, remove allUsers and put it behind IAP or a load balancer with auth."},{"id":"cors-wildcard:apps/api/src/index.ts:root","rule":"cors-wildcard","severity":"medium","title":"CORS allows any origin","file":"apps/api/src/index.ts","line":12,"node":"app:apps-api","fix":"List allowed origins explicitly."},{"id":"docker-root:apps/api/Dockerfile:root","rule":"docker-root","severity":"medium","title":"Container runs as root","file":"apps/api/Dockerfile","line":1,"node":"app:apps-api","fix":"Add a non-root USER (e.g. USER node) before CMD."},{"id":"env-undocumented:apps/api/src/modules/auth/keka.ts:keka-api-token","rule":"env-undocumented","severity":"low","title":"Secret missing from .env.example: KEKA_API_TOKEN","file":"apps/api/src/modules/auth/keka.ts","line":3,"node":"mod:apps-api/auth","fix":"Add them to .env.example so new deploys and teammates know they are needed."},{"id":"env-undocumented:apps/api/src/modules/auth/otp.ts:twilio-account-sid-twilio-auth-token-twilio-from","rule":"env-undocumented","severity":"low","title":"3 secrets missing from .env.example: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM","file":"apps/api/src/modules/auth/otp.ts","line":2,"node":"mod:apps-api/auth","fix":"Add them to .env.example so new deploys and teammates know they are needed."},{"id":"env-undocumented:apps/api/src/modules/notifications/push.ts:expo-access-token","rule":"env-undocumented","severity":"low","title":"Secret missing from .env.example: EXPO_ACCESS_TOKEN","file":"apps/api/src/modules/notifications/push.ts","line":2,"node":"mod:apps-api/notifications","fix":"Add them to .env.example so new deploys and teammates know they are needed."},{"id":"vpcsc-dry-run:infra/terraform/main.tf:payroll","rule":"vpcsc-dry-run","severity":"low","title":"VPC Service Controls perimeter is in dry-run (not enforced)","file":"infra/terraform/main.tf","line":73,"node":"tf:google_access_context_manager_service_perimeter.payroll","fix":"Review dry-run violation logs, then enforce the perimeter."}]},"base":null,"diff":null,"blobBase":null,"live":null};
+
+(function () {
+  'use strict';
+  // Model state is `let` so live mode can swap in another version without a reload (see setData).
+  let G, DIFF, BASE;
+  const BLOB = DATA.blobBase;
+  const LIVE = DATA.live || null;
+  const $ = (s) => document.querySelector(s);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) if (v != null) e.setAttribute(k, v);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
+  // ---------- Model ----------
+  const LAYERS = [
+    ['client', 'Users'],
+    ['app', 'Apps & services'],
+    ['module', 'Modules'],
+    ['data', 'Data'],
+    ['cloud', 'Cloud'],
+    ['external', 'External services'],
+    ['cicd', 'CI / CD'],
+  ];
+  const LAYER_NAME = Object.fromEntries(LAYERS);
+  const SEV = ['critical', 'high', 'medium', 'low'];
+  const TIER = { free: 'free', low: '$', medium: '$$', high: '$$$' };
+  const ICON = {
+    client: 'USR', app: 'APP', service: 'API', library: 'LIB', module: 'MOD', database: 'DB', cache: 'KV', queue: 'Q',
+    bucket: 'OBJ', cloud: 'CLD', network: 'NET', secret: 'KEY', external: 'EXT', pipeline: 'CI',
+  };
+  const TECH_ICON = { 'Cloud Run': 'RUN', 'Cloud SQL': 'SQL', 'Next.js': 'NXT', 'Expo / React Native': 'RN', Express: 'API', 'GitHub Actions': 'GHA', Hosting: 'WEB', 'Cloud Build': 'GCB' };
+  const EDGE_GROUP = { reads: 'data', writes: 'data', sends: 'integration', calls: 'call', uses: 'call', deploys: 'deploy', 'runs-on': 'deploy', depends: 'structure', contains: 'structure', protects: 'security' };
+  const EDGE_GROUP_NAME = { data: 'Data access', integration: 'Messages out', call: 'Calls / uses', deploy: 'Deploy / hosting', structure: 'Code structure', security: 'Protection' };
+
+  const ekey = (e) => `${e.from}|${e.kind}|${e.to}`;
+  let nodesById, baseOnly, allNodes, removedEdges, addedEdges, allEdges, findingsByNode, newFindings;
+  function setData(d) {
+    G = d.graph;
+    DIFF = d.diff;
+    BASE = d.base;
+    nodesById = new Map(G.nodes.map((n) => [n.id, n]));
+    baseOnly = new Map();
+    if (BASE && DIFF) for (const n of BASE.nodes) if (!nodesById.has(n.id)) baseOnly.set(n.id, { ...n, _removed: true });
+    allNodes = new Map([...nodesById, ...baseOnly]);
+    removedEdges = new Set(DIFF ? DIFF.removedEdges : []);
+    addedEdges = new Set(DIFF ? DIFF.addedEdges : []);
+    allEdges = [...G.edges];
+    if (BASE && DIFF) for (const e of BASE.edges) if (removedEdges.has(ekey(e))) allEdges.push({ ...e, _removed: true });
+    findingsByNode = new Map();
+    for (const f of G.findings) {
+      if (!f.node) continue;
+      if (!findingsByNode.has(f.node)) findingsByNode.set(f.node, []);
+      findingsByNode.get(f.node).push(f);
+    }
+    newFindings = new Set(DIFF ? DIFF.newFindings : []);
+    if (DIFF) VIEWS.changes = changesView();
+    else delete VIEWS.changes;
+  }
+  const worstSev = (id) => {
+    const fs = findingsByNode.get(id);
+    return fs ? SEV.find((s) => fs.some((f) => f.severity === s)) : null;
+  };
+  const changeOf = (id) => {
+    if (!DIFF) return null;
+    if (baseOnly.has(id)) return 'removed';
+    if (DIFF.added.includes(id)) return 'added';
+    if (DIFF.changed.some((c) => c.id === id)) return 'changed';
+    return null;
+  };
+
+  // ---------- Views ----------
+  const isModuleEdge = (e) => allNodes.get(e.from)?.kind === 'module' || allNodes.get(e.to)?.kind === 'module';
+  const VIEWS = {
+    overview: {
+      name: 'Overview',
+      blurb: 'Everything the repo builds, uses and runs on. Cloud-internal wiring is in Infrastructure.',
+      nodes: (n) => n.kind !== 'module' && !n._removed,
+      edges: (e) => !isModuleEdge(e) && e.kind !== 'contains' && !e._removed && !(allNodes.get(e.from)?.layer === 'cloud' && allNodes.get(e.to)?.layer === 'cloud'),
+    },
+    code: {
+      name: 'Code',
+      blurb: 'Apps, their feature modules, and what each module touches.',
+      nodes: (n, touched) => !n._removed && (n.layer === 'app' || n.kind === 'module' || touched.has(n.id)),
+      edges: (e) => !e._removed && (isModuleEdge(e) || (e.kind === 'depends' && allNodes.get(e.from)?.layer === 'app' && allNodes.get(e.to)?.layer === 'app')),
+      touched: () => {
+        const s = new Set();
+        for (const e of G.edges) if (allNodes.get(e.from)?.kind === 'module') s.add(e.to);
+        return s;
+      },
+    },
+    infra: {
+      name: 'Infrastructure',
+      blurb: 'Where each app runs, where data is stored, how it is deployed and what protects it.',
+      nodes: (n, touched) => !n._removed && n.kind !== 'module' && (['data', 'cloud', 'cicd'].includes(n.layer) || (n.layer === 'app' && n.kind !== 'library') || touched.has(n.id)),
+      edges: (e) => !e._removed && !isModuleEdge(e) && ['deploys', 'runs-on', 'uses', 'protects', 'reads', 'writes', 'sends'].includes(e.kind) && allNodes.get(e.to)?.layer !== 'external',
+      touched: () => {
+        const s = new Set();
+        for (const e of G.edges) if (e.kind === 'deploys' || e.kind === 'runs-on') { s.add(e.from); s.add(e.to); }
+        return s;
+      },
+    },
+    integrations: {
+      name: 'Integrations',
+      blurb: 'Third-party and cloud services the code talks to, and who calls them.',
+      nodes: (n, touched) => !n._removed && n.kind !== 'module' && n.layer !== 'cicd' && (n.layer === 'external' || (n.layer === 'app' && n.kind !== 'library') || touched.has(n.id)),
+      edges: (e) => !e._removed && !isModuleEdge(e) && ['calls', 'sends', 'reads', 'writes', 'uses'].includes(e.kind) && allNodes.get(e.from)?.layer === 'app',
+      touched: () => {
+        const s = new Set();
+        for (const e of G.edges) {
+          const f = allNodes.get(e.from), t = allNodes.get(e.to);
+          if (f?.layer === 'app' && t && (t.layer === 'cloud' || t.layer === 'data') && !String(t.id).startsWith('tf:') && e.kind !== 'runs-on') s.add(t.id);
+        }
+        return s;
+      },
+    },
+    risks: {
+      name: 'Risks',
+      blurb: 'Security findings placed on the components they affect.',
+      nodes: (n) => n.kind !== 'module' && !n._removed,
+      edges: (e) => !isModuleEdge(e) && e.kind !== 'contains' && !e._removed,
+      focus: (id) => findingsByNode.has(id),
+    },
+  };
+  function changesView() {
+    return {
+      name: 'Changes',
+      blurb: `What this change adds, removes and modifies${DIFF.baseCommit ? ` (${DIFF.baseCommit} → ${DIFF.headCommit})` : ''}.`,
+      nodes: (n) => n.kind !== 'module',
+      edges: (e) => !isModuleEdge(e) && e.kind !== 'contains',
+      focus: (id) => !!changeOf(id) || (findingsByNode.get(id) || []).some((f) => newFindings.has(f.id)) || allEdges.some((e) => (e.from === id || e.to === id) && (addedEdges.has(ekey(e)) || e._removed)),
+    };
+  }
+  setData(DATA);
+
+  // ---------- Layout ----------
+  const CARD_W = 214, CARD_H = 62, GAP_Y = 14, LANE_PAD = 18, LANE_GAP = 84, HEAD = 46;
+  const LANE_W = CARD_W + LANE_PAD * 2;
+  const kindRank = (n) => ['client', 'app', 'service', 'library', 'module', 'database', 'cache', 'queue', 'cloud', 'bucket', 'secret', 'network', 'external', 'pipeline'].indexOf(n.kind);
+
+  function layout(viewKey) {
+    const v = VIEWS[viewKey];
+    const touched = v.touched ? v.touched() : new Set();
+    const nodes = [...allNodes.values()].filter((n) => v.nodes(n, touched));
+    const ids = new Set(nodes.map((n) => n.id));
+    const edges = allEdges.filter((e) => ids.has(e.from) && ids.has(e.to) && v.edges(e));
+    const lanes = LAYERS.map(([k]) => k).filter((k) => nodes.some((n) => n.layer === k));
+    const laneOf = new Map(nodes.map((n) => [n.id, lanes.indexOf(n.layer)]));
+    const cols = lanes.map((k) =>
+      nodes.filter((n) => n.layer === k).sort((a, b) => (a.parent || '').localeCompare(b.parent || '') || kindRank(a) - kindRank(b) || a.label.localeCompare(b.label)),
+    );
+    // Barycenter ordering: put each card near the cards it connects to.
+    const nbrs = new Map(nodes.map((n) => [n.id, []]));
+    for (const e of edges) {
+      nbrs.get(e.from).push(e.to);
+      nbrs.get(e.to).push(e.from);
+    }
+    const pos = new Map();
+    cols.forEach((c) => c.forEach((n, i) => pos.set(n.id, (i + 0.5) / c.length)));
+    for (let iter = 0; iter < 8; iter++) {
+      const order = iter % 2 ? [...cols.keys()].reverse() : [...cols.keys()];
+      for (const ci of order) {
+        const c = cols[ci];
+        const bc = new Map(
+          c.map((n) => {
+            const ns = nbrs.get(n.id).filter((x) => laneOf.get(x) !== ci);
+            return [n.id, ns.length ? ns.reduce((s, x) => s + pos.get(x), 0) / ns.length : pos.get(n.id)];
+          }),
+        );
+        c.sort((a, b) => bc.get(a.id) - bc.get(b.id) || a.label.localeCompare(b.label));
+        c.forEach((n, i) => pos.set(n.id, (i + 0.5) / c.length));
+      }
+    }
+    const maxRows = Math.max(1, ...cols.map((c) => c.length));
+    const inner = maxRows * (CARD_H + GAP_Y) - GAP_Y;
+    const laneH = HEAD + inner + LANE_PAD + 4;
+    const place = new Map();
+    cols.forEach((c, ci) => {
+      const x = ci * (LANE_W + LANE_GAP) + LANE_PAD;
+      const colH = c.length * (CARD_H + GAP_Y) - GAP_Y;
+      const y0 = HEAD + (inner - colH) / 2;
+      c.forEach((n, i) => place.set(n.id, { x, y: y0 + i * (CARD_H + GAP_Y), col: ci }));
+    });
+    return { nodes, edges, lanes, cols, place, laneH, width: Math.max(LANE_W, lanes.length * (LANE_W + LANE_GAP) - LANE_GAP) };
+  }
+
+  // ---------- Render ----------
+  const state = { view: 'overview', selected: null, query: '', L: null };
+  const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const truncate = (s, max) => {
+    s = String(s ?? '');
+    return s.length > max ? s.slice(0, max - 1) + '…' : s;
+  };
+
+  function markers() {
+    const defs = $('#defs');
+    defs.innerHTML = '';
+    for (const g of Object.keys(EDGE_GROUP_NAME).concat(['added', 'removed'])) {
+      const m = el('marker', { id: `arr-${g}`, viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' }, defs);
+      const color = g === 'added' ? 'var(--c-added)' : g === 'removed' ? 'var(--c-removed)' : `var(--e-${g})`;
+      el('path', { d: 'M0 0L10 5L0 10z', fill: color }, m);
+    }
+    const f = el('filter', { id: 'shadow', x: '-10%', y: '-10%', width: '120%', height: '140%' }, defs);
+    el('feDropShadow', { dx: '0', dy: '1', stdDeviation: '1.5', 'flood-color': '#0f172a', 'flood-opacity': '0.08' }, f);
+  }
+
+  // ---------- Sketch (rough.js) ----------
+  const sketchOn = () => document.body.classList.contains('sketch') && typeof rough !== 'undefined';
+  // Stable seed per id, so the same commit always gives the same wobble (PRD v2, R2).
+  const seedOf = (s) => {
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+    return (h >>> 0) % 2147483646 + 1;
+  };
+  let rc = null;
+  const SEVERE = new Set(['critical', 'high']);
+  function sketchFill(n) {
+    const ch = changeOf(n.id);
+    if (state.view === 'changes' && ch) return { added: '--f-data', changed: '--f-external', removed: '--f-risk' }[ch];
+    if (state.view === 'risks' && (findingsByNode.get(n.id) || []).some((f) => SEVERE.has(f.severity))) return '--f-risk';
+    return `--f-${n.layer}`;
+  }
+
+  function render() {
+    const L = layout(state.view);
+    state.L = L;
+    const lanesG = $('#lanes'), edgesG = $('#edges'), cardsG = $('#cards');
+    lanesG.innerHTML = edgesG.innerHTML = cardsG.innerHTML = '';
+
+    const sk = sketchOn();
+    rc = sk ? rough.svg($('#canvas')) : null;
+    const ink = cssVar('--ink'), pencil = cssVar('--pencil');
+
+    L.lanes.forEach((k, i) => {
+      const x = i * (LANE_W + LANE_GAP);
+      if (sk) {
+        lanesG.appendChild(rc.rectangle(x, 0, LANE_W, L.laneH, { seed: seedOf('lane:' + k), stroke: pencil, strokeWidth: 1.3, roughness: 1.4, strokeLineDash: [8, 7] }));
+        el('text', { x: x + LANE_PAD, y: 32, class: 'lane-title' }, lanesG).textContent = LAYER_NAME[k];
+        el('text', { x: x + LANE_W - LANE_PAD, y: 32, class: 'lane-count', 'text-anchor': 'end' }, lanesG).textContent = L.cols[i].length;
+        return;
+      }
+      el('rect', { x, y: 0, width: LANE_W, height: L.laneH, rx: 16, class: 'lane-bg' }, lanesG);
+      el('rect', { x: x + LANE_PAD, y: 17, width: 4, height: 14, rx: 2, fill: `var(--l-${k})` }, lanesG);
+      el('text', { x: x + LANE_PAD + 12, y: 28.5, class: 'lane-title' }, lanesG).textContent = LAYER_NAME[k].toUpperCase();
+      el('text', { x: x + LANE_W - LANE_PAD, y: 28.5, class: 'lane-count', 'text-anchor': 'end' }, lanesG).textContent = L.cols[i].length;
+    });
+
+    // Ports: spread edge ends along each card side, ordered by where the other end sits.
+    const sides = [];
+    const portLists = new Map();
+    for (const e of L.edges) {
+      const a = L.place.get(e.from), b = L.place.get(e.to);
+      const sa = a.col <= b.col ? 'r' : 'l';
+      const sb = a.col < b.col ? 'l' : 'r';
+      const item = { e, sa, sb };
+      sides.push(item);
+      for (const [id, side, other, role] of [[e.from, sa, b, 'a'], [e.to, sb, a, 'b']]) {
+        const k = `${id}|${side}`;
+        if (!portLists.has(k)) portLists.set(k, []);
+        portLists.get(k).push({ item, role, oy: other.y });
+      }
+    }
+    for (const [k, list] of portLists) {
+      const id = k.split('|')[0];
+      const p = L.place.get(id);
+      list.sort((u, w) => u.oy - w.oy);
+      const n = list.length;
+      const span = Math.min(CARD_H - 18, (n - 1) * 8);
+      list.forEach((entry, i) => {
+        entry.item[entry.role === 'a' ? 'y1' : 'y2'] = p.y + CARD_H / 2 - span / 2 + (n === 1 ? 0 : (i * span) / (n - 1));
+      });
+    }
+
+    for (const it of sides) {
+      const { e, sa, sb, y1, y2 } = it;
+      const a = L.place.get(e.from), b = L.place.get(e.to);
+      const x1 = sa === 'r' ? a.x + CARD_W : a.x;
+      const x2 = sb === 'r' ? b.x + CARD_W : b.x;
+      let d;
+      if (sa === 'r' && sb === 'r') {
+        const bulge = 30 + Math.min(44, Math.abs(y2 - y1) / 5);
+        d = `M${x1} ${y1} C${x1 + bulge} ${y1}, ${x2 + bulge} ${y2}, ${x2 + 2} ${y2}`;
+      } else {
+        const dx = Math.max(40, Math.abs(x2 - x1) * 0.45);
+        const s = sa === 'r' ? 1 : -1;
+        d = `M${x1} ${y1} C${x1 + s * dx} ${y1}, ${x2 - s * dx} ${y2}, ${x2 - s * 2} ${y2}`;
+      }
+      const grp = EDGE_GROUP[e.kind] || 'call';
+      const isAdded = DIFF && addedEdges.has(ekey(e)) && state.view === 'changes';
+      const tone = e._removed ? 'removed' : isAdded ? 'added' : grp;
+      const gEl = el('g', { class: `edge${e._removed ? ' removed' : ''}`, 'data-from': e.from, 'data-to': e.to }, edgesG);
+      const stroke = tone === 'added' ? 'var(--c-added)' : tone === 'removed' ? 'var(--c-removed)' : `var(--e-${grp})`;
+      if (sk) {
+        const color = cssVar(stroke.slice(4, -1));
+        const r = rc.path(d, { seed: seedOf(ekey(e)), stroke: color, strokeWidth: 1.6, roughness: 0.9, bowing: 1.2, strokeLineDash: e._removed ? [6, 5] : undefined });
+        r.setAttribute('class', 'sk');
+        const paths = r.querySelectorAll('path');
+        if (paths.length) paths[paths.length - 1].setAttribute('marker-end', `url(#arr-${tone})`);
+        gEl.appendChild(r);
+      } else el('path', { d, class: 'line', stroke, 'marker-end': `url(#arr-${tone})` }, gEl);
+      const hit = el('path', { d, class: 'hit' }, gEl);
+      hit.addEventListener('mousemove', (ev) => showTip(ev, edgeTip(e)));
+      hit.addEventListener('mouseleave', hideTip);
+    }
+
+    for (const n of L.nodes) {
+      const p = L.place.get(n.id);
+      const g = el('g', { class: 'card', transform: `translate(${p.x},${p.y})`, 'data-id': n.id }, cardsG);
+      const ch = changeOf(n.id);
+      if (sk) {
+        // Opaque paper underneath so the hatching never shows lines through it; ring is the selection outline.
+        el('rect', { class: 'body', width: CARD_W, height: CARD_H, rx: 6 }, g);
+        const seed = seedOf(n.id);
+        // Chalkboard mode: same fills at lower strength (PRD v2 style rules).
+        const fill = cssVar(sketchFill(n)) + (document.documentElement.classList.contains('dark') ? '59' : '');
+        g.appendChild(rc.rectangle(1, 1, CARD_W - 2, CARD_H - 2, { seed, fill, fillStyle: 'hachure', hachureGap: 6, fillWeight: 1.1, hachureAngle: -41, stroke: ink, strokeWidth: 1.8, roughness: 1.1, strokeLineDash: ch === 'removed' ? [7, 5] : undefined }));
+        el('rect', { class: 'ring', x: -5, y: -5, width: CARD_W + 10, height: CARD_H + 10, rx: 10 }, g);
+        g.appendChild(rc.circle(27, 31, 32, { seed: seed + 1, fill: cssVar(`--k-${n.layer}`), fillStyle: 'solid', stroke: ink, strokeWidth: 1.4, roughness: 0.9 }));
+      } else {
+        el('rect', { class: 'body', width: CARD_W, height: CARD_H, rx: 10, filter: 'url(#shadow)', 'stroke-dasharray': ch === 'removed' ? '5 4' : null }, g);
+        if (ch) el('rect', { x: 0, y: 10, width: 4, height: CARD_H - 20, rx: 2, fill: `var(--c-${ch})` }, g);
+        el('rect', { x: 12, y: 16, width: 30, height: 30, rx: 8, fill: `var(--l-${n.layer})` }, g);
+      }
+      el('text', { x: 27, y: 34.5, class: 'icon-text', 'text-anchor': 'middle' }, g).textContent = TECH_ICON[n.tech] || ICON[n.kind] || 'NOD';
+      el('text', { x: 52, y: 28, class: 'label' }, g).textContent = truncate(n.label, 21);
+      const parent = n.parent ? allNodes.get(n.parent)?.label : null;
+      el('text', { x: 52, y: 45, class: 'tech' }, g).textContent = truncate(parent ? `${parent} · ${n.tech || ''}` : n.tech || LAYER_NAME[n.layer], n.cost && n.cost.tier !== 'free' ? 21 : 26);
+      if (n.cost && n.cost.tier !== 'free') el('text', { x: CARD_W - 10, y: 45, class: 'cost', 'text-anchor': 'end' }, g).textContent = TIER[n.cost.tier];
+      const sev = worstSev(n.id);
+      if (sev) {
+        el('circle', { cx: CARD_W - 4, cy: 4, r: 10, fill: `var(--s-${sev})`, stroke: 'var(--bg)', 'stroke-width': 2 }, g);
+        el('text', { x: CARD_W - 4, y: 8, 'text-anchor': 'middle', fill: '#fff', 'font-size': '10.5', 'font-weight': '800' }, g).textContent = findingsByNode.get(n.id).length;
+      }
+      if (ch) {
+        const w = ch === 'added' ? 38 : 64;
+        el('rect', { x: CARD_W - w - 20, y: -8, width: w, height: 16, rx: 8, fill: `var(--c-${ch})` }, g);
+        el('text', { x: CARD_W - w / 2 - 20, y: 3.5, 'text-anchor': 'middle', fill: '#fff', class: 'tag' }, g).textContent = ch === 'added' ? 'NEW' : ch.toUpperCase();
+      }
+      if (n.manual) el('text', { x: CARD_W - 10, y: 26, class: 'manual', 'text-anchor': 'end' }, g).textContent = 'manual';
+      g.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        if (!document.body.classList.contains('presenting')) select(n.id);
+      });
+      g.addEventListener('mouseenter', () => hover(n.id));
+      g.addEventListener('mouseleave', () => hover(null));
+    }
+    applyHighlight();
+    renderLegend();
+  }
+
+  function edgeTip(e) {
+    const a = allNodes.get(e.from), b = allNodes.get(e.to);
+    const ev = e.evidence?.[0];
+    return `<b>${esc(a?.label)}</b> → <b>${esc(b?.label)}</b> · ${esc(e.label || e.kind)}${e._removed ? ' <i>(removed)</i>' : ''}${ev ? `<br><span style="opacity:.75">${esc(ev.file)}${ev.line ? ':' + ev.line : ''}${ev.note ? ' · ' + esc(ev.note) : ''}</span>` : ''}`;
+  }
+  function showTip(ev, html) {
+    const t = $('#tooltip');
+    t.innerHTML = html;
+    t.style.display = 'block';
+    const r = $('#stage').getBoundingClientRect();
+    t.style.left = Math.max(8, Math.min(ev.clientX - r.left + 14, r.width - 370)) + 'px';
+    t.style.top = ev.clientY - r.top + 14 + 'px';
+  }
+  function hideTip() {
+    $('#tooltip').style.display = 'none';
+  }
+
+  let hoverId = null;
+  function hover(id) {
+    if (document.body.classList.contains('presenting')) return;
+    hoverId = id;
+    applyHighlight();
+  }
+  const matches = (n, q) => !!n && [n.label, n.tech, n.id, n.category, n.description].some((s) => String(s ?? '').toLowerCase().includes(q));
+
+  function applyHighlight() {
+    const focusId = hoverId || state.selected;
+    const v = VIEWS[state.view];
+    const q = state.query.toLowerCase();
+    let near = null;
+    if (focusId && state.L.place.has(focusId)) {
+      near = new Set([focusId]);
+      for (const e of state.L.edges) {
+        if (e.from === focusId) near.add(e.to);
+        if (e.to === focusId) near.add(e.from);
+      }
+    }
+    document.querySelectorAll('.card').forEach((c) => {
+      const id = c.dataset.id;
+      const n = allNodes.get(id);
+      let dim = false;
+      if (near) dim = !near.has(id);
+      else if (q) dim = !matches(n, q);
+      else if (v.focus) dim = !v.focus(id);
+      c.classList.toggle('dim', dim);
+      c.classList.toggle('sel', id === state.selected);
+      c.classList.toggle('match', !!q && matches(n, q));
+    });
+    document.querySelectorAll('.edge').forEach((g) => {
+      const f = g.dataset.from, t = g.dataset.to;
+      let hot = false, dim = false;
+      if (near) {
+        hot = f === focusId || t === focusId;
+        dim = !hot;
+      } else if (q) dim = true;
+      else if (v.focus) dim = !(v.focus(f) && v.focus(t)) && !g.classList.contains('removed');
+      g.classList.toggle('hot', hot);
+      g.classList.toggle('dim', dim);
+    });
+  }
+
+  function renderLegend() {
+    const groups = new Set(state.L.edges.map((e) => EDGE_GROUP[e.kind] || 'call'));
+    let h = [...groups].map((g) => `<span><i style="border-color:var(--e-${g})"></i>${EDGE_GROUP_NAME[g]}</span>`).join('');
+    if (G.findings.length) h += SEV.map((s) => `<span><span class="dot" style="background:var(--s-${s})"></span>${s}</span>`).join('');
+    if (state.view === 'changes') h += ['added', 'changed', 'removed'].map((s) => `<span><span class="dot" style="background:var(--c-${s})"></span>${s}</span>`).join('');
+    h += `<span>$ · $$ · $$$ cost tier</span>`;
+    $('#legend').innerHTML = h;
+  }
+
+
+  // ---------- Panel ----------
+  const evLink = (ev) => {
+    const label = `${esc(ev.file)}${ev.line ? ':' + ev.line : ''}`;
+    const href = BLOB && ev.file && !ev.file.startsWith('.repomind') ? `${BLOB}/${ev.file}${ev.line ? '#L' + ev.line : ''}` : null;
+    return `<div class="ev">${href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${label}</a>` : label}${ev.note ? ` <em>· ${esc(ev.note)}</em>` : ''}</div>`;
+  };
+  const findingHtml = (f) =>
+    `<div class="finding" style="border-left-color:var(--s-${f.severity})" data-node="${esc(f.node || '')}"><div class="t"><span class="sev" style="color:var(--s-${f.severity})">${f.severity}</span>${esc(f.title)}${newFindings.has(f.id) ? ' <span class="status" style="background:var(--c-added)">NEW</span>' : ''}</div><div class="f">${esc(f.file || '')}${f.line ? ':' + f.line : ''}</div>${f.fix ? `<div class="fix">↳ ${esc(f.fix)}</div>` : ''}</div>`;
+  const statusPill = (c) => `<span class="status" style="background:var(--c-${c})">${c === 'added' ? 'NEW' : c.toUpperCase()}</span>`;
+
+  function panelSummary() {
+    const P = $('#panel');
+    const count = (l) => G.nodes.filter((n) => n.layer === l).length;
+    const sevCount = Object.fromEntries(SEV.map((s) => [s, G.findings.filter((f) => f.severity === s).length]));
+    const total = G.findings.length || 1;
+    const rank = { high: 0, medium: 1, low: 2 };
+    const paid = G.nodes
+      .filter((n) => n.cost && n.cost.tier !== 'free' && ['external', 'cloud', 'data'].includes(n.layer))
+      .sort((a, b) => rank[a.cost.tier] - rank[b.cost.tier] || a.label.localeCompare(b.label));
+    const v = VIEWS[state.view];
+    let h = `<div class="chips"><span class="chip">${esc(v.name)} view</span></div><p>${esc(v.blurb)}</p>`;
+
+    if (state.view === 'changes' && DIFF) {
+      const comps0 = (ids) => ids.map((id) => allNodes.get(id)).filter((n) => n && n.kind !== 'module');
+      const nNew = G.findings.filter((f) => newFindings.has(f.id)).length;
+      if (DIFF.baseCommit) h += `<div class="range"><span>${esc(DIFF.baseCommit)}</span>→<span class="to">${esc(DIFF.headCommit || 'now')}</span></div>`;
+      h += `<div class="deltas"><div class="delta add"><b>+${comps0(DIFF.added).length}</b><span>added</span></div><div class="delta rem"><b>−${comps0(DIFF.removed).length}</b><span>removed</span></div><div class="delta risk"><b>${nNew}</b><span>new risks</span></div></div>`;
+      const list = (ids, c) =>
+        ids.map((id) => allNodes.get(id)).filter((n) => n && n.kind !== 'module')
+          .map((n) => `<div class="rel" data-go="${esc(n.id)}">${statusPill(c)}<span class="n">${esc(n.label)}</span><span class="tt">${esc(n.tech || '')}</span></div>`).join('');
+      const comps = list(DIFF.added, 'added') + list(DIFF.changed.map((c) => c.id), 'changed') + list(DIFF.removed, 'removed');
+      h += `<h3>Components</h3>${comps || '<p>No component changes.</p>'}`;
+      const nf = G.findings.filter((f) => newFindings.has(f.id));
+      h += `<h3>New risks · ${nf.length}</h3>${nf.map(findingHtml).join('') || '<p>None.</p>'}`;
+      if (DIFF.resolvedFindings.length) h += `<h3>Fixed risks</h3><ul class="plain">${DIFF.resolvedFindings.map((f) => `<li><s>${esc(f.title)}</s> <span class="mono muted">${esc(f.file || '')}</span></li>`).join('')}</ul>`;
+      const paidOf = (ids) => comps0(ids).filter((n) => n.cost && n.cost.tier !== 'free');
+      const cost = [...paidOf(DIFF.added).map((n) => `↑ ${esc(n.label)} · ${TIER[n.cost.tier]} ${esc(n.cost.model)}`), ...paidOf(DIFF.removed).map((n) => `↓ ${esc(n.label)} · ${TIER[n.cost.tier]} ${esc(n.cost.model)}`)];
+      if (cost.length) h += `<h3>Cost</h3><p>${cost.join('<br>')}</p>`;
+      P.innerHTML = h;
+      return wirePanel();
+    }
+
+    h += `<h3>At a glance</h3><div class="stats">
+      <div class="stat"><b>${count('app')}</b><span>apps & services</span></div>
+      <div class="stat"><b>${count('module')}</b><span>modules</span></div>
+      <div class="stat"><b>${count('data')}</b><span>data stores</span></div>
+      <div class="stat"><b>${count('cloud')}</b><span>cloud resources</span></div>
+      <div class="stat"><b>${count('external')}</b><span>external services</span></div>
+      <div class="stat"><b>${count('cicd')}</b><span>pipelines</span></div></div>`;
+    h += `<h3>Open risks · ${G.findings.length}</h3><div class="sevbar">${SEV.map((s) => `<div style="width:${(sevCount[s] / total) * 100}%;background:var(--s-${s})"></div>`).join('')}</div>
+      <div class="chips">${SEV.map((s) => `<span class="chip">${sevCount[s]} ${s}</span>`).join('')}</div>`;
+    const shown = state.view === 'risks' ? G.findings : G.findings.slice(0, 3);
+    h += shown.map(findingHtml).join('');
+    if (state.view !== 'risks' && G.findings.length > 3) h += `<button class="back" data-view="risks">See all ${G.findings.length} risks →</button>`;
+    if (state.view !== 'risks') {
+      h += `<h3>Paid services · ${paid.length}</h3>${paid.map((n) => `<div class="rel" data-go="${esc(n.id)}"><span class="k">${TIER[n.cost.tier]}</span><span class="n">${esc(n.label)}</span><span class="tt">${esc(n.cost.model)}</span></div>`).join('') || '<p>None detected.</p>'}`;
+    }
+    h += `<h3>Scan</h3><p class="mono">${esc(G.meta.repo)}${G.meta.commit ? ' @ ' + esc(G.meta.commit) : ''}<br>${G.meta.stats.files} files · ${G.meta.stats.ms} ms<br>${esc(new Date(G.meta.scannedAt).toLocaleString())}</p>`;
+    h += `<h3>Shortcuts</h3><p class="mono">/ search · 1–6 views · F fit · P present · T theme</p>`;
+    P.innerHTML = h;
+    wirePanel();
+  }
+
+  function panelNode(id) {
+    const n = allNodes.get(id);
+    if (!n) return panelSummary();
+    const P = $('#panel');
+    const ch = changeOf(id);
+    let h = `<button class="back" id="backBtn">← ${esc(VIEWS[state.view].name)}</button>
+      <h2>${esc(n.label)}</h2>
+      <div class="chips"><span class="chip" style="color:var(--l-${n.layer})">${esc(LAYER_NAME[n.layer] || n.layer)}</span>${n.tech ? `<span class="chip">${esc(n.tech)}</span>` : ''}${n.cost ? `<span class="chip">${TIER[n.cost.tier]} · ${esc(n.cost.model)}</span>` : ''}${n.manual ? '<span class="chip">added by hand</span>' : ''}${ch ? statusPill(ch) : ''}</div>`;
+    if (n.description) h += `<p>${esc(n.description)}</p>`;
+    if (ch === 'changed') h += `<p><b>Changed:</b> ${esc(DIFF.changed.find((x) => x.id === id).fields.join(', '))}</p>`;
+    const fs = findingsByNode.get(id) || [];
+    if (fs.length) h += `<h3>Risks · ${fs.length}</h3>${fs.map(findingHtml).join('')}`;
+    const out = allEdges.filter((e) => e.from === id && e.kind !== 'contains');
+    const inc = allEdges.filter((e) => e.to === id && e.kind !== 'contains');
+    const kids = allEdges.filter((e) => e.from === id && e.kind === 'contains');
+    const rel = (e, other) => {
+      const o = allNodes.get(other);
+      return o ? `<div class="rel" data-go="${esc(o.id)}"><span class="k">${esc(e.label || e.kind)}</span><span class="n">${esc(o.label)}</span><span class="tt">${esc(o.tech || '')}</span></div>` : '';
+    };
+    if (out.length) h += `<h3>Uses · ${out.length}</h3>${out.map((e) => rel(e, e.to)).join('')}`;
+    if (inc.length) h += `<h3>Used by · ${inc.length}</h3>${inc.map((e) => rel(e, e.from)).join('')}`;
+    if (kids.length) h += `<h3>Modules · ${kids.length}</h3>${kids.map((e) => rel(e, e.to)).join('')}`;
+    const m = n.meta || {};
+    if (m.routes?.length) h += `<h3>API routes · ${m.routeCount}</h3><ul class="plain mono">${m.routes.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`;
+    else if (m.routeCount) h += `<h3>API routes</h3><p>${m.routeCount} routes across its modules.</p>`;
+    if (m.models?.length) h += `<h3>Data models · ${m.models.length}</h3><div class="chips">${m.models.map((x) => `<span class="chip">${esc(x)}</span>`).join('')}</div>`;
+    if (m.container) h += `<h3>Container</h3><p class="mono">base ${esc(m.container.base || '?')}<br>ports ${esc((m.container.ports || []).join(', ') || '–')}<br>user ${esc(m.container.user)}</p>`;
+    if (m.triggers?.length) h += `<h3>Triggered by</h3><div class="chips">${m.triggers.map((t) => `<span class="chip">${esc(t)}</span>`).join('')}</div>`;
+    if (n.evidence?.length) h += `<h3>Evidence</h3>${n.evidence.map(evLink).join('')}`;
+    h += `<h3>Id</h3><p class="mono">${esc(n.id)}</p>`;
+    P.innerHTML = h;
+    $('#backBtn').onclick = () => select(null);
+    wirePanel();
+  }
+
+  function wirePanel() {
+    document.querySelectorAll('#panel [data-go]').forEach((x) => (x.onclick = () => goTo(x.dataset.go)));
+    document.querySelectorAll('#panel .finding').forEach((x) => (x.onclick = () => x.dataset.node && goTo(x.dataset.node)));
+    document.querySelectorAll('#panel [data-view]').forEach((x) => (x.onclick = () => setView(x.dataset.view)));
+  }
+
+  function select(id) {
+    state.selected = id;
+    applyHighlight();
+    id ? panelNode(id) : panelSummary();
+  }
+
+  function goTo(id) {
+    if (!state.L.place.has(id)) {
+      const n = allNodes.get(id);
+      setView(n?.kind === 'module' ? 'code' : 'overview');
+    }
+    select(id);
+    const p = state.L.place.get(id);
+    if (p) zoomTo({ x: p.x - 200, y: p.y - 160, w: CARD_W + 400, h: CARD_H + 320 }, 1);
+  }
+
+  // ---------- Pan / zoom ----------
+  const view = { x: 0, y: 0, k: 1 };
+  const wrap = $('#svg-wrap');
+  const stage = $('#stage');
+  function applyView(anim) {
+    stage.classList.toggle('no-anim', !anim);
+    wrap.style.transform = `translate(${view.x}px,${view.y}px) scale(${view.k})`;
+  }
+  const contentBox = () => ({ x: -20, y: -20, w: state.L.width + 40, h: state.L.laneH + 40 });
+  function zoomTo(box, minK) {
+    const r = stage.getBoundingClientRect();
+    const padB = document.body.classList.contains('presenting') ? 170 : 70;
+    let k = Math.min(r.width / box.w, (r.height - padB) / box.h);
+    if (minK) k = Math.max(k, Math.min(minK, 1.4));
+    k = Math.max(0.12, Math.min(k, 1.4));
+    view.k = k;
+    view.x = r.width / 2 - (box.x + box.w / 2) * k;
+    view.y = (r.height - padB) / 2 + 8 - (box.y + box.h / 2) * k;
+    applyView(true);
+  }
+  const fit = () => zoomTo(contentBox());
+  stage.addEventListener('wheel', (ev) => {
+    ev.preventDefault();
+    const r = stage.getBoundingClientRect();
+    const mx = ev.clientX - r.left, my = ev.clientY - r.top;
+    if (!ev.ctrlKey && Math.abs(ev.deltaX) > Math.abs(ev.deltaY)) {
+      view.x -= ev.deltaX;
+      return applyView(false);
+    }
+    const f = Math.exp(-ev.deltaY * (ev.ctrlKey ? 0.01 : 0.0018));
+    const k = Math.max(0.12, Math.min(3, view.k * f));
+    view.x = mx - ((mx - view.x) * k) / view.k;
+    view.y = my - ((my - view.y) * k) / view.k;
+    view.k = k;
+    applyView(false);
+  }, { passive: false });
+  let drag = null;
+  stage.addEventListener('pointerdown', (ev) => {
+    if (ev.target.closest('.card, .legend, .zoom, #caption') || ev.button !== 0) return;
+    drag = { x: ev.clientX, y: ev.clientY, vx: view.x, vy: view.y, moved: false };
+    stage.classList.add('dragging');
+  });
+  window.addEventListener('pointermove', (ev) => {
+    if (!drag) return;
+    const dx = ev.clientX - drag.x, dy = ev.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+    view.x = drag.vx + dx;
+    view.y = drag.vy + dy;
+    applyView(false);
+  });
+  window.addEventListener('pointerup', () => {
+    if (drag && !drag.moved) {
+      if (document.body.classList.contains('presenting')) showStep(stepIdx + 1);
+      else select(null);
+    }
+    drag = null;
+    stage.classList.remove('dragging');
+  });
+  function zoomBy(f) {
+    const r = stage.getBoundingClientRect();
+    const mx = r.width / 2, my = r.height / 2;
+    const k = Math.max(0.12, Math.min(3, view.k * f));
+    view.x = mx - ((mx - view.x) * k) / view.k;
+    view.y = my - ((my - view.y) * k) / view.k;
+    view.k = k;
+    applyView(true);
+  }
+  $('#zin').onclick = () => zoomBy(1.25);
+  $('#zout').onclick = () => zoomBy(0.8);
+  $('#zfit').onclick = fit;
+
+  // ---------- Tabs / search ----------
+  function renderTabs() {
+    const tabs = $('#tabs');
+    tabs.innerHTML = '';
+    Object.entries(VIEWS).forEach(([k, v], i) => {
+      const b = document.createElement('button');
+      b.className = 'tab' + (state.view === k ? ' on' : '');
+      b.title = `${v.blurb} (${i + 1})`;
+      b.textContent = v.name;
+      if (k === 'risks' && G.findings.length) b.innerHTML += `<span class="count">${G.findings.length}</span>`;
+      if (k === 'changes' && DIFF) b.innerHTML += `<span class="count ok">${DIFF.added.length + DIFF.removed.length + DIFF.changed.length}</span>`;
+      b.onclick = () => setView(k);
+      tabs.appendChild(b);
+    });
+  }
+  function setView(k) {
+    state.view = k;
+    state.selected = null;
+    hoverId = null;
+    renderTabs();
+    render();
+    panelSummary();
+    requestAnimationFrame(fit);
+    try { history.replaceState(null, '', '#' + k); } catch (e) {}
+  }
+  $('#q').addEventListener('input', (ev) => {
+    state.query = ev.target.value.trim();
+    applyHighlight();
+  });
+  $('#q').addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') {
+      const q = state.query.toLowerCase();
+      const hit = [...state.L.nodes, ...allNodes.values()].find((n) => matches(n, q));
+      if (hit) goTo(hit.id);
+    }
+    if (ev.key === 'Escape') {
+      ev.target.value = '';
+      state.query = '';
+      applyHighlight();
+      ev.target.blur();
+    }
+  });
+
+  // ---------- Theme ----------
+  const setTheme = (dark) => {
+    document.documentElement.classList.toggle('dark', dark);
+    try { localStorage.setItem('repomind-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  };
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem('repomind-theme'); } catch (e) {}
+  setTheme(savedTheme ? savedTheme === 'dark' : !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches));
+  $('#themeBtn').onclick = () => setTheme(!document.documentElement.classList.contains('dark'));
+
+  // ---------- Export ----------
+  $('#exportBtn').onclick = (ev) => {
+    ev.stopPropagation();
+    $('#exportMenu').classList.toggle('open');
+  };
+  document.addEventListener('click', () => $('#exportMenu').classList.remove('open'));
+  $('#exportMenu').addEventListener('click', (ev) => {
+    const x = ev.target.dataset.x;
+    if (x === 'svg') download(new Blob([exportSvg()], { type: 'image/svg+xml' }), `${fileBase()}.svg`);
+    if (x === 'json') download(new Blob([JSON.stringify(G, null, 2)], { type: 'application/json' }), `${fileBase()}.graph.json`);
+    if (x === 'png') exportPng();
+  });
+  function exportAs(x) {
+    if (x === 'svg') download(new Blob([exportSvg()], { type: 'image/svg+xml' }), `${fileBase()}.svg`);
+    if (x === 'json') download(new Blob([JSON.stringify(G, null, 2)], { type: 'application/json' }), `${fileBase()}.graph.json`);
+    if (x === 'png') exportPng();
+  }
+  const fileBase = () => `${String(G.meta.repo).replace(/[^\w-]+/g, '-')}-${state.view}`;
+  function exportSvg() {
+    const src = $('#canvas');
+    const clone = src.cloneNode(true);
+    const props = ['fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'opacity', 'font-size', 'font-weight', 'font-family', 'font-style', 'letter-spacing', 'fill-opacity', 'stroke-opacity'];
+    const a = src.querySelectorAll('*'), b = clone.querySelectorAll('*');
+    a.forEach((node, i) => {
+      const cs = getComputedStyle(node);
+      for (const p of props) {
+        const val = cs.getPropertyValue(p);
+        if (val) b[i].setAttribute(p, val);
+      }
+      b[i].removeAttribute('class');
+    });
+    clone.querySelectorAll('path').forEach((p) => p.getAttribute('stroke') === 'rgba(0, 0, 0, 0)' && p.remove());
+    const w = clone.querySelector('#svg-wrap');
+    w.removeAttribute('style');
+    const box = contentBox();
+    const titleH = 64;
+    clone.setAttribute('viewBox', `${box.x} ${box.y - titleH} ${box.w} ${box.h + titleH}`);
+    clone.setAttribute('width', box.w);
+    clone.setAttribute('height', box.h + titleH);
+    const bg = document.createElementNS(NS, 'rect');
+    Object.entries({ x: box.x, y: box.y - titleH, width: box.w, height: box.h + titleH, fill: cssVar('--bg') }).forEach(([k, v]) => bg.setAttribute(k, v));
+    clone.insertBefore(bg, clone.firstChild);
+    const t = document.createElementNS(NS, 'text');
+    Object.entries({ x: box.x + 24, y: box.y - titleH + 40, fill: cssVar('--text'), 'font-size': 22, 'font-weight': 700, 'font-family': 'system-ui, -apple-system, Segoe UI, sans-serif' }).forEach(([k, v]) => t.setAttribute(k, v));
+    t.textContent = `${G.meta.repo} — ${VIEWS[state.view].name}`;
+    clone.insertBefore(t, bg.nextSibling);
+    return new XMLSerializer().serializeToString(clone);
+  }
+  function exportPng() {
+    const svg = exportSvg();
+    const box = contentBox();
+    const img = new Image();
+    const scale = 2;
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = box.w * scale;
+      c.height = (box.h + 64) * scale;
+      const ctx = c.getContext('2d');
+      ctx.scale(scale, scale);
+      ctx.drawImage(img, 0, 0);
+      c.toBlob((blob) => download(blob, `${fileBase()}.png`));
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  function download(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // ---------- Presentation ----------
+  let steps = [], stepIdx = 0;
+  function buildSteps() {
+    const s = [];
+    const L = layout('overview');
+    const n = (l) => G.nodes.filter((x) => x.layer === l);
+    const names = (arr, max = 6) => arr.slice(0, max).map((x) => x.label).join(', ') + (arr.length > max ? ` and ${arr.length - max} more` : '');
+    s.push({ view: 'overview', title: `${G.meta.repo} at a glance`, body: `${n('app').length} apps and services, ${n('data').length} data stores, ${n('cloud').length} cloud resources and ${n('external').length} external services${G.findings.length ? ` — ${G.findings.length} open risks` : ''}.` });
+    const lines = {
+      client: (a) => `Who uses it: ${names(a)}.`,
+      app: (a) => `What we build: ${a.slice(0, 6).map((x) => `${x.label} (${x.tech || 'package'})`).join(', ')}.`,
+      data: (a) => `Where data lives: ${names(a)}.`,
+      cloud: (a) => `Where it runs: ${names(a, 8)}.`,
+      external: (a) => `Services we depend on: ${names(a, 8)}. ${a.filter((x) => x.cost && x.cost.tier !== 'free').length} of them are paid.`,
+      cicd: (a) => `How it ships: ${names(a)}.`,
+    };
+    L.lanes.forEach((k, i) => s.push({ view: 'overview', lane: i, title: LAYER_NAME[k], body: (lines[k] || ((a) => names(a)))(L.cols[i]) }));
+    if (G.nodes.some((x) => x.kind === 'module')) s.push({ view: 'code', title: 'Inside the code', body: `${n('module').length} feature modules, and the data and services each one touches.` });
+    s.push({ view: 'infra', title: 'Infrastructure', body: 'How each app is built, deployed and hosted, and what protects the data.' });
+    if (G.findings.length) s.push({ view: 'risks', title: `${G.findings.length} open risks`, body: G.findings.slice(0, 3).map((f) => `${f.severity}: ${f.title}`).join(' · ') });
+    if (DIFF) s.push({ view: 'changes', title: 'What changed', body: `${DIFF.added.length} added, ${DIFF.changed.length} changed, ${DIFF.removed.length} removed, ${DIFF.newFindings.length} new risks.` });
+    return s;
+  }
+  function showStep(i) {
+    stepIdx = Math.max(0, Math.min(steps.length - 1, i));
+    const st = steps[stepIdx];
+    if (state.view !== st.view) {
+      state.view = st.view;
+      state.selected = null;
+      renderTabs();
+      render();
+    }
+    const L = state.L;
+    if (st.lane != null) {
+      const x = st.lane * (LANE_W + LANE_GAP);
+      zoomTo({ x: x - 90, y: -10, w: LANE_W + 180, h: L.laneH + 20 }, 0.55);
+      document.querySelectorAll('.card').forEach((c) => c.classList.toggle('dim', L.place.get(c.dataset.id)?.col !== st.lane));
+      document.querySelectorAll('.edge').forEach((g) => {
+        const on = L.place.get(g.dataset.from)?.col === st.lane || L.place.get(g.dataset.to)?.col === st.lane;
+        g.classList.toggle('dim', !on);
+        g.classList.toggle('hot', on);
+      });
+    } else {
+      applyHighlight();
+      setTimeout(fit, 30);
+    }
+    $('#caption').innerHTML = `<div class="step">${stepIdx + 1} / ${steps.length}</div><div class="title">${esc(st.title)}</div><div class="body">${esc(st.body)}</div><div class="nav">← → or click to move · Esc to exit</div>`;
+  }
+  function startPresent() {
+    steps = buildSteps();
+    document.body.classList.add('presenting');
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+    setTimeout(() => showStep(0), 80);
+  }
+  function stopPresent() {
+    document.body.classList.remove('presenting');
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+    setView(state.view);
+  }
+  $('#presentBtn').onclick = startPresent;
+
+  document.addEventListener('keydown', (ev) => {
+    if (ev.target.tagName === 'INPUT') return;
+    if (document.body.classList.contains('presenting')) {
+      if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(ev.key)) { ev.preventDefault(); showStep(stepIdx + 1); }
+      if (['ArrowLeft', 'PageUp', 'Backspace'].includes(ev.key)) { ev.preventDefault(); showStep(stepIdx - 1); }
+      if (ev.key === 'Escape') stopPresent();
+      return;
+    }
+    if (ev.key === '/') { ev.preventDefault(); $('#q').focus(); }
+    if (ev.key === 'f' || ev.key === 'F') fit();
+    if (ev.key === 'p' || ev.key === 'P') startPresent();
+    if (ev.key === 't' || ev.key === 'T') $('#themeBtn').click();
+    if (ev.key === 's' || ev.key === 'S') setStyle(!document.body.classList.contains('sketch'));
+    if (ev.key === 'Escape') select(null);
+    const keys = Object.keys(VIEWS);
+    if (/^[1-9]$/.test(ev.key) && keys[+ev.key - 1]) setView(keys[+ev.key - 1]);
+  });
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && document.body.classList.contains('presenting')) stopPresent();
+  });
+  window.addEventListener('hashchange', () => {
+    const k = (location.hash || '').slice(1);
+    if (VIEWS[k] && k !== state.view) setView(k);
+  });
+  window.addEventListener('resize', () => { if (!document.body.classList.contains('presenting')) fit(); });
+
+  // ---------- Sketch / Clean (PRD v2, R3) ----------
+  function setStyle(sketch) {
+    document.body.classList.toggle('sketch', sketch);
+    document.querySelectorAll('#styleSeg button').forEach((b) => b.classList.toggle('on', (b.dataset.s === 'sketch') === sketch));
+    try { localStorage.setItem('repomind-style', sketch ? 'sketch' : 'clean'); } catch (e) {}
+    if (state.L) render();
+  }
+  document.querySelectorAll('#styleSeg button').forEach((b) => (b.onclick = () => setStyle(b.dataset.s === 'sketch')));
+  let savedStyle = null;
+  try { savedStyle = localStorage.getItem('repomind-style'); } catch (e) {}
+  setStyle(savedStyle ? savedStyle === 'sketch' : typeof rough !== 'undefined');
+  // Theme changes the ink colour baked into rough.js strokes, so redraw.
+  new MutationObserver(() => state.L && render()).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  // Hand fonts change text widths; redraw once they arrive.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => state.L && render());
+
+  // ---------- Boot ----------
+  function header() {
+    $('#repoName').textContent = G.meta.repo;
+    $('#repoSub').textContent = `RepoMind map${G.meta.commit ? ' · ' + G.meta.commit : ''} · ${G.nodes.filter((n) => n.kind !== 'module').length} components · ${G.edges.length} links`;
+  }
+  header();
+  markers();
+  const initial = (location.hash || '').slice(1);
+  // Live pages always have a previous version to diff against, so open on Overview unless a compare was asked for.
+  setView(VIEWS[initial] ? initial : DIFF && (!LIVE || LIVE.base) ? 'changes' : 'overview');
+
+  // ---------- Live mode (served by `repomind serve`, PRD v2) ----------
+  if (LIVE) {
+    document.body.classList.add('live');
+    const api = (p, opts) => fetch(p, opts).then(async (r) => {
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || r.statusText);
+      return j;
+    });
+    const repoPath = `${encodeURIComponent(LIVE.owner)}/${encodeURIComponent(LIVE.repo)}`;
+    const live = { versions: [], sha: G.meta.commit, base: null, pinned: !!LIVE.pinned, info: LIVE.info || {} };
+    const ago = (t) => {
+      const s = Math.max(0, (Date.now() - new Date(t).getTime()) / 1000);
+      if (s < 60) return 'just now';
+      if (s < 3600) return `${Math.round(s / 60)} min ago`;
+      if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+      return `${Math.round(s / 86400)} days ago`;
+    };
+    const shortDate = (t) => new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+    function badge() {
+      const on = !!live.info.connected;
+      const latest = live.versions[0];
+      $('#liveBadge').classList.toggle('on', on);
+      $('#liveText').textContent = on ? `Live · ${live.info.branch || ''} · updated ${latest ? ago(latest.scannedAt) : ''}` : `Snapshot${latest ? ' · ' + ago(latest.scannedAt) : ''}`;
+    }
+
+    function timeline() {
+      const T = $('#timeline');
+      const vs = [...live.versions].reverse();
+      const changed = vs.filter((v) => v.changes > 0).length;
+      T.innerHTML = `<div class="tl-head"><span class="tl-title">Versions</span><span class="tl-sub">${vs.length} commit${vs.length === 1 ? '' : 's'} · big dots changed the map · shift-click a second dot to compare</span>${live.base ? '<button class="back tl-clear" id="tlClear">Clear compare</button>' : ''}</div><div class="tl-track" id="tlTrack"></div>`;
+      const track = $('#tlTrack');
+      vs.forEach((v, i) => {
+        const b = document.createElement('button');
+        const big = v.changes > 0 || i === 0;
+        const color = v.newRisks > 0 ? 'var(--f-risk)' : v.removed > 0 && !v.added ? 'var(--f-risk)' : v.changed > 0 && !v.added ? 'var(--f-external)' : 'var(--f-data)';
+        b.className = `tl-v${big ? ' big' : ''}${v.sha === live.sha ? ' cur' : ''}${v.sha === live.base ? ' base' : ''}`;
+        b.title = `${v.sha} · ${v.message || ''}${v.author ? ' · ' + v.author : ''}\n${v.changes ? `${v.added} added, ${v.removed} removed, ${v.changed} changed, ${v.newRisks} new risks` : 'no map change'}`;
+        b.setAttribute('aria-label', `Version ${v.sha}, ${shortDate(v.committedAt || v.scannedAt)}`);
+        b.innerHTML = `<span class="dot" style="${big && v.sha !== live.sha && i > 0 ? `background:${color}` : ''}"></span><span class="sha">${esc(v.sha)}</span><span class="when">${i === vs.length - 1 ? 'latest' : esc(shortDate(v.committedAt || v.scannedAt))}</span>`;
+        b.onclick = (ev) => {
+          if (ev.shiftKey && v.sha !== live.sha) return load(live.sha, v.sha, true);
+          load(v.sha, null, true);
+        };
+        track.appendChild(b);
+      });
+      track.scrollLeft = track.scrollWidth;
+      const c = $('#tlClear');
+      if (c) c.onclick = () => load(live.sha, null, true);
+    }
+
+    async function refreshVersions() {
+      const r = await api(`/api/repos/${repoPath}/versions`);
+      const prevTop = live.versions[0]?.sha;
+      live.versions = r.versions;
+      live.info = r.repo;
+      badge();
+      timeline();
+      return prevTop;
+    }
+
+    // Swap the graph in place: keeps zoom, selection and view (PRD v2, R5).
+    async function load(sha, base, explicit) {
+      const q = new URLSearchParams();
+      if (sha) q.set('sha', sha);
+      if (base) q.set('base', base);
+      const d = await api(`/api/repos/${repoPath}/graph?${q}`);
+      const keepSel = state.selected, keepView = state.view, keepXf = { ...view };
+      setData(d);
+      live.sha = d.graph.meta.commit;
+      live.base = base || null;
+      if (explicit) live.pinned = live.versions[0]?.sha !== live.sha || !!base;
+      header();
+      renderTabs();
+      state.view = VIEWS[keepView] ? keepView : 'overview';
+      if (base && VIEWS.changes) state.view = 'changes';
+      render();
+      Object.assign(view, keepXf);
+      applyView(false);
+      if (keepSel && allNodes.has(keepSel)) select(keepSel);
+      else panelSummary();
+      renderTabs();
+      timeline();
+      const u = new URL(location.href);
+      live.pinned ? u.searchParams.set('sha', live.sha) : u.searchParams.delete('sha');
+      base ? u.searchParams.set('base', base) : u.searchParams.delete('base');
+      try { history.replaceState(null, '', u.pathname + u.search + '#' + state.view); } catch (e) {}
+      if (explicit && state.view !== keepView) requestAnimationFrame(fit);
+    }
+
+    let toastTimer = null;
+    function toast(html) {
+      const t = $('#toast');
+      t.innerHTML = `<span class="pulse"></span><span>${html}</span>`;
+      t.classList.add('show');
+      const a = t.querySelector('[data-changes]');
+      if (a) a.onclick = () => { setView('changes'); t.classList.remove('show'); };
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 9000);
+    }
+
+    async function poll() {
+      try {
+        const prevTop = await refreshVersions();
+        const top = live.versions[0];
+        if (top && prevTop && top.sha !== prevTop) {
+          const parts = [];
+          if (top.added) parts.push(`+${top.added} added`);
+          if (top.removed) parts.push(`−${top.removed} removed`);
+          if (top.newRisks) parts.push(`${top.newRisks} new risk${top.newRisks > 1 ? 's' : ''}`);
+          if (!live.pinned) await load(top.sha, null, false);
+          toast(`<b>New commit ${esc(top.sha)}</b> — ${parts.length ? 'map updated: ' + esc(parts.join(', ')) : 'no map change'}${top.changes && !live.pinned ? ' · <a data-changes>See changes</a>' : ''}`);
+        }
+      } catch (e) {}
+    }
+    setInterval(poll, (LIVE.pollSeconds || 30) * 1000);
+    setInterval(badge, 30000);
+
+    $('#refreshBtn').onclick = async () => {
+      $('#refreshBtn').disabled = true;
+      try {
+        const r = await api(`/api/repos/${repoPath}/refresh`, { method: 'POST' });
+        if (r.job) await waitJob(r.job);
+        await poll();
+        if (!r.job) toast('Up to date — no new commit on ' + esc(live.info.branch || 'the branch'));
+      } catch (e) { toast(esc(e.message)); }
+      $('#refreshBtn').disabled = false;
+    };
+    async function waitJob(id) {
+      for (let i = 0; i < 240; i++) {
+        const j = await api(`/api/jobs/${id}`);
+        if (j.status !== 'running') return j;
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+    }
+
+    // ---------- Share & download dialog (design: Share) ----------
+    const modal = $('#modal');
+    const closeModal = () => modal.classList.remove('open');
+    modal.addEventListener('click', (ev) => { if (ev.target === modal) closeModal(); });
+    document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+    const copy = (text, btn) => {
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(
+        () => { const o = btn.textContent; btn.textContent = 'Copied'; setTimeout(() => (btn.textContent = o), 1400); },
+        () => {},
+      );
+    };
+    function openShare(secret) {
+      const origin = location.origin;
+      const link = `${origin}/r/${repoPath}`;
+      const on = !!live.info.connected;
+      const fields = [
+        ['Payload URL', `${origin}/api/webhook/github`],
+        ['Content type', 'application/json · events: push'],
+        ['Secret', secret || (on ? '•••••••• (shown once when you connected)' : 'generated when you connect')],
+      ];
+      $('#modalBox').innerHTML = `
+        <div class="mhead"><h1 id="share-title">Take it with you</h1><span class="mono muted">${esc(G.meta.repo)} @ ${esc(live.sha || '')}</span><button class="btn close" id="mClose" aria-label="Close">×</button></div>
+        <div class="cols">
+          <div class="col">
+            <h2>Download</h2>
+            <div class="formats">
+              <button class="fmt" data-f="png" style="background-image:repeating-linear-gradient(-41deg,var(--f-client) 0 2px,transparent 2px 9px)"><b>PNG</b><span>for slides · 2× sharp</span></button>
+              <button class="fmt" data-f="svg" style="background-image:repeating-linear-gradient(-41deg,var(--f-app) 0 2px,transparent 2px 9px)"><b>SVG</b><span>scales to any size</span></button>
+              <button class="fmt" data-f="html" style="background-image:repeating-linear-gradient(-41deg,var(--f-data) 0 2px,transparent 2px 9px)"><b>HTML map</b><span>interactive, works offline</span></button>
+              <button class="fmt" data-f="json" style="background-image:repeating-linear-gradient(-41deg,var(--f-external) 0 2px,transparent 2px 9px)"><b>Graph JSON</b><span>for scripts and CI</span></button>
+            </div>
+            <span class="hint">PNG and SVG export the current view (${esc(VIEWS[state.view].name)}).</span>
+            <h2>Share a link</h2>
+            <div class="field"><input readonly id="shareLink" value="${esc(link)}" aria-label="Share link"><button class="btn primary" id="copyLink">Copy link</button></div>
+            <span class="hint">Always opens the latest version. Add <span class="mono">?sha=${esc(live.sha || '')}</span> to pin this one.</span>
+          </div>
+          <div class="col live-box">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">Keep it live</h2><span class="pill ${on ? '' : 'off'}"><span class="pulse" style="width:8px;height:8px;border-radius:50%;background:currentColor"></span>${on ? `Polling every ${Math.round((live.info.pollMinutes || 5))} min` : 'Not connected'}</span></div>
+            <p style="margin:0">For instant updates on every push, add this webhook in GitHub → Settings → Webhooks.</p>
+            ${fields.map(([k, v], i) => `<div><label class="k">${k}</label><div class="field"><code>${esc(v)}</code><button class="btn" data-copy="${i}">Copy</button></div></div>`).join('')}
+            ${on ? '' : `<label style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="backfill" checked style="width:20px;height:20px;accent-color:#6965DB">Scan the last 10 commits for history</label><button class="btn primary" id="doConnect" style="align-self:flex-start">Connect for live updates</button>`}
+          </div>
+        </div>`;
+      modal.classList.add('open');
+      $('#mClose').onclick = closeModal;
+      $('#copyLink').onclick = (ev) => copy(link, ev.target);
+      document.querySelectorAll('#modalBox [data-copy]').forEach((b) => (b.onclick = () => copy(fields[+b.dataset.copy][1], b)));
+      document.querySelectorAll('#modalBox .fmt').forEach((b) => (b.onclick = () => {
+        const f = b.dataset.f;
+        if (f === 'html') location.href = `/r/${repoPath}/download.html?sha=${encodeURIComponent(live.sha)}`;
+        else exportAs(f);
+      }));
+      const c = $('#doConnect');
+      if (c) c.onclick = async () => {
+        c.disabled = true;
+        try {
+          const r = await api(`/api/repos/${repoPath}/connect`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ backfill: $('#backfill').checked }) });
+          live.info = r.repo;
+          badge();
+          openShare(r.secret);
+          toast('Connected — backfilling history; new dots will appear on the timeline.');
+          setTimeout(poll, 4000);
+        } catch (e) { toast(esc(e.message)); c.disabled = false; }
+      };
+    }
+    $('#downloadBtn').onclick = () => openShare();
+
+    refreshVersions().then(() => {
+      if (LIVE.base) load(live.sha, LIVE.base, true);
+    }).catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>

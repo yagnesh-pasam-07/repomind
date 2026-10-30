@@ -1,30 +1,45 @@
 {
   "name": "repomind",
   "version": "0.1.0",
-  "description": "One live map of your repo's code, infra, integrations and apps, with a PR comment on every change.",
-  "license": "MIT",
-  "type": "module",
-  "bin": { "repomind": "dist/cli.js" },
+  "description": "Live map of your codebase, infrastructure and integrations \u2014 with PR diffs, security and cost flags.",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": ["dist"],
-  "engines": { "node": ">=20" },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsx src/cli.ts",
-    "scan:example": "tsx src/cli.ts scan examples/sumitra-like",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "build": "tsc && node scripts/copy-viewer.mjs",
+    "demo": "npm run build && node scripts/demo.mjs",
+    "test": "npm run build && node scripts/test.mjs",
+    "serve": "npm run build && node bin/repomind.js serve"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "commander": "^12.1.0",
-    "fast-glob": "^3.3.2",
-    "yaml": "^2.5.0"
+    "roughjs": "^4.6.6",
+    "tar": "^7.5.22",
+    "yaml": "^2.9.1"
   },
-  "devDependencies": {
-    "@types/node": "^22.7.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
-  }
+  "type": "module",
+  "bin": {
+    "repomind": "bin/repomind.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "action.yml",
+    "README.md",
+    "PRODUCT.md"
+  ],
+  "keywords": [
+    "architecture",
+    "diagram",
+    "visualizer",
+    "github-action",
+    "security",
+    "devops"
+  ]
 }

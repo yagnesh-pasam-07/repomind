@@ -165,7 +165,178 @@ Overrides from `.repomind.yml` are applied after the detectors and before the ru
 
 ### Open questions
 
-- [ ] Final product name (RepoMind is the working name).
-- [ ] Should the viewer be hosted for the team or stay a CI artifact?
+- [x] Final product name: **RepoMind** (see D1).
+- [x] Should the viewer be hosted for the team or stay a CI artifact? **Both** (see D7).
 - [ ] Which Sumitra infrastructure lives only in the GCP console and needs manual nodes?
 - [ ] Open-source from day one, or after v0.3?
+
+---
+
+# v2 — RepoMind web app
+
+## Summary
+
+v2 turns RepoMind into a web app: paste a GitHub URL, get a hand-drawn map of the whole project in under a minute, download it, and connect the repo so the map redraws itself on every commit with a full version history.
+
+### What changes from v1
+
+- **Input:** a GitHub URL in a browser instead of a CLI in CI.
+- **Look:** an Excalidraw-style sketch (wobbly lines, hachure fills, handwriting) instead of clean boxes. It reads like a whiteboard drawing, which lands better in presentations and onboarding.
+- **Live:** a connected repo is re-scanned on every push (webhook) or every few minutes (polling fallback).
+- **Versions:** every scanned commit is kept; a timeline lets you step through them and see what changed between any two.
+- **Output:** download as PNG, SVG, a self-contained HTML map, or the graph JSON; share a link that always shows the latest commit.
+
+Out of scope for v2: user accounts and billing, private repos without a token, editing the drawing by hand (v3 could export to Excalidraw).
+
+## User flow
+
+```
+First visit:   paste URL ──► scanning (download → read files → detect → draw) ──► map ──► download / share
+Live loop:     push to GitHub ──► webhook (or 5-min poll) ──► scan new commit ──► new version dot ──► open maps redraw
+```
+
+A snapshot needs no setup. Live updates need one click ("Connect") plus a webhook in the repo settings, or they fall back to polling.
+
+## Visual style and colour palette
+
+The map looks drawn by hand on paper: one ink colour for every outline and word, soft pastel fills that tell you the layer, and violet as the only brand colour.
+
+### Style rules
+
+- Shapes and arrows are drawn with rough.js: slightly wobbly strokes, hachure (diagonal hatch) fills, 2 px ink outlines.
+- Words are handwritten: Kalam for labels, Caveat for big titles and notes, JetBrains Mono for file paths and commit ids.
+- The canvas is warm paper with a faint dot grid. Lanes are dashed pencil boxes with a handwritten title.
+- Colour only carries meaning: layer fill, risk, or change. Everything else is ink or pencil grey.
+- Dark mode is "chalkboard": dark slate paper, chalk-white ink, the same fills at lower strength.
+
+### Palette
+
+| Token | Fill | Stroke | Used for |
+|---|---|---|---|
+| Paper | `#FDFBF7` | — | Canvas background |
+| Paper 2 | `#F4F1EA` | `#D9D3C7` | Lanes, panels, cards in the UI |
+| Ink | `#1E1E1E` | — | Outlines, labels, main text |
+| Pencil | `#6B6B6B` | — | Secondary text, tech line under a label |
+| Brand violet | `#6965DB` | `#5B57D1` | Buttons, links, selection, logo |
+| Users · Sky | `#A5D8FF` | `#1971C2` | Mobile, web and desktop users |
+| Apps · Lavender | `#D0BFFF` | `#6741D9` | Apps and services |
+| Modules · Grape | `#EEBEFA` | `#9C36B5` | Feature modules |
+| Data · Mint | `#B2F2BB` | `#2F9E44` | Databases, caches, queues |
+| Cloud · Aqua | `#99E9F2` | `#0C8599` | GCP and hosting |
+| External · Butter | `#FFEC99` | `#F08C00` | Third-party services |
+| CI/CD · Peach | `#FFD8A8` | `#E8590C` | Pipelines |
+| Risk · Coral | `#FFC9C9` | `#E03131` | Critical and high risks, removed items |
+| Added | `#B2F2BB` | `#2F9E44` | New in this version |
+| Changed | `#FFEC99` | `#F08C00` | Modified in this version |
+| Chalkboard | `#1B1B1F` | `#E9E7E2` | Dark-mode paper and ink |
+
+The fills and strokes follow Excalidraw's open colour scale, so a map exported later into Excalidraw keeps its colours.
+
+## Live sync and versioning
+
+Every commit on the tracked branch becomes a version: RepoMind scans it, stores its graph, and diffs it against the version before.
+
+### How updates arrive
+
+- **Webhook (preferred).** The repo owner adds a GitHub webhook for push events pointing at `/api/webhook/github`. The payload is checked with the shared secret (HMAC SHA-256); the new head commit is queued and scanned.
+- **Polling (fallback).** For repos without a webhook, the server checks the branch head every 5 minutes through the GitHub API and scans any new commit.
+- **Backfill.** On first connect, the last 10 commits are scanned so the timeline isn't empty on day one.
+
+### Version timeline
+
+- A strip along the bottom of the map: one dot per commit (short sha, message, author, time).
+- Dots that changed the architecture are bigger and coloured; commits with no map change are small grey dots.
+- Clicking a dot loads that version; the Changes view compares it with the one before. Two dots can be picked to compare any range.
+- While you watch, a new commit adds a dot and shows a note: "New commit a1b2c3d — map updated, 1 component added."
+
+### Storage
+
+- One JSON graph per commit, stored by owner/repo/sha, plus an index of versions per repo.
+- v2 stores on disk; a Postgres or Cloud Storage backend can replace it without changing the API.
+
+### Limits
+
+- Public repos work with no setup. Private repos need a GitHub token with read access, kept on the server only.
+- Repos up to 20,000 files and 200 MB tarball; larger repos are refused with a clear message.
+
+## Screens and requirements
+
+| Screen | Job | Must have |
+|---|---|---|
+| Landing | Paste a URL and go | One big input ("github.com/owner/repo"), branch picker, optional token for private repos, recent maps, a sketched example map behind it |
+| Scanning | Show progress | Steps ticked off in handwriting: download → read files → detect → draw; under 60 s for a Sumitra-size repo |
+| Map | Understand the project | Sketch canvas with lanes; view tabs (Overview, Code, Infra, Integrations, Risks, Changes); side panel with details and evidence; search; present mode; live badge; version timeline at the bottom |
+| Download & share | Take it somewhere | PNG (2×), SVG, HTML map, graph JSON; "always latest" share link; "Connect for live updates" with webhook URL and secret to copy |
+
+### Requirements
+
+- **R1.** Accept `https://github.com/owner/repo`, `github.com/owner/repo`, `owner/repo`, and URLs with `/tree/<branch>`.
+- **R2.** Same commit gives the same drawing (fixed random seed per node), so screenshots don't jump between visits.
+- **R3.** Toggle between Sketch and Clean styles; Sketch is the default.
+- **R4.** Live badge shows "Live · updated 2 min ago" when connected, "Snapshot" otherwise.
+- **R5.** A map page polls for new versions every 30 s and redraws without losing zoom or selection.
+- **R6.** Downloads work offline: the HTML map embeds its data and the drawing library.
+
+## Architecture, API and build plan
+
+One Node server wraps the v1 scanner: it downloads a commit's tarball from GitHub, scans it, stores the graph per commit, and serves the sketch map.
+
+### API
+
+| Method | Path | Does |
+|---|---|---|
+| POST | `/api/maps` | `{url, branch?, token?, backfill?}` → starts a scan of the head commit (and backfill), returns `{job, owner, repo}` |
+| GET | `/api/jobs/:id` | Scan progress: steps done, error, and `sha` when finished |
+| GET | `/api/repos` | Recent maps for the landing page |
+| GET | `/api/repos/:owner/:repo/versions` | List of scanned commits, newest first, with change counts |
+| GET | `/api/repos/:owner/:repo/graph?sha=&base=` | Graph JSON for a commit (latest if no sha) plus diff vs the previous version (or vs `base`) |
+| POST | `/api/repos/:owner/:repo/refresh` | Check GitHub now and scan a new head |
+| POST | `/api/repos/:owner/:repo/connect` | Turn on live updates; returns the webhook URL and secret, starts backfill |
+| POST | `/api/webhook/github` | GitHub push webhook, HMAC-verified |
+| GET | `/r/:owner/:repo` | The live map page |
+| GET | `/r/:owner/:repo/download.html?sha=` | Self-contained HTML map for one version |
+
+### Build plan
+
+1. Sketch renderer in the viewer: rough.js inlined, hand fonts, palette tokens, Sketch/Clean toggle.
+2. Server: URL parsing, GitHub API client, tarball download and safe extraction, scan, file store.
+3. Versions: index per repo, diff per version, backfill, polling loop, webhook.
+4. Map page in live mode: timeline strip, live badge, polling, toast on new commit.
+5. Landing page and download/share panel.
+6. Test on public repos, then on Sumitra with a token.
+
+---
+
+# Decisions
+
+A running log of choices made while building. Newest last.
+
+| # | Date | Decision | Why |
+|---|---|---|---|
+| D1 | 2026-10-30 | Product name is **RepoMind**. | Short, carries the "brain that understands your repo" idea, reads well in a PR bot ("RepoMind found 2 risks"). |
+| D2 | 2026-10-30 | Repo lives at `github.com/yagnesh-pasam-07/repomind`, private, single `main` branch. | Owner's request; one branch until there is a team. |
+| D3 | 2026-10-30 | The working v0.1 build (scanner, viewer, PR diff, security/cost rules, Action) is the base; the earlier empty scaffold was replaced. | v0.1 was already tested end to end on the example repo (10 checks pass). |
+| D4 | 2026-10-30 | v0.1 has no runtime dependencies beyond `yaml`; the v2 server adds only `roughjs` (inlined into the HTML) and `tar` (safe extraction). Web server is plain `node:http`. | Keeps installs small and the CLI usable in CI without a framework. |
+| D5 | 2026-10-30 | Graph schema is the v0.1 one (`src/types.ts`): layers `client, app, module, data, cloud, external, cicd` and extra edge kinds `uses, contains, runs-on, protects`. | Modules need their own lane, and "runs on" / "protects" are what make the infra view readable. Supersedes the shorter list in the v1 schema table. |
+| D6 | 2026-10-30 | CLI commands are `scan`, `view`, `diff`, `map` (v1) and `serve` (v2). Output folder is `.repomind/`. | One command per job; `map` covers the common case. |
+| D7 | 2026-10-30 | The viewer is **both** a CI artifact (v1, single HTML file) and hosted (v2 server, `/r/:owner/:repo`). | Same template serves both; live features switch on only when the server injects live settings. |
+| D8 | 2026-10-30 | `POST /api/maps` returns a job id immediately; progress comes from `GET /api/jobs/:id`. Added `/api/repos`, `/connect` and `?base=` to the v2 API. | The Scanning screen needs real step-by-step progress; a single blocking call can't show it. |
+| D9 | 2026-10-30 | Versions are stored on disk under `.repomind-data/<owner>/<repo>/` (`index.json` + `graphs/<sha>.json`). Tokens and webhook secrets are stored there only, never returned by read endpoints, and the files are written with mode 0600. | Matches "v2 stores on disk"; swap the store module for Postgres/GCS later. |
+| D10 | 2026-10-30 | Tarball extraction refuses symlinks, absolute paths and `..`, and stops at 20,000 files or 200 MB. | Untrusted input from any public repo. |
+| D11 | 2026-10-30 | Hand fonts (Kalam, Caveat, JetBrains Mono) load from Google Fonts with a system handwriting fallback; rough.js and the data are inlined. | R6 asks for data and drawing library offline; fonts degrade gracefully offline. |
+| D12 | 2026-10-30 | Sketch seed per node = hash of the node id (and of the edge key for arrows). | R2: same commit, same drawing. |
+| D13 | 2026-10-30 | A version's change count = added + removed + changed components + new risks vs the previous version on the timeline. | Decides whether the timeline dot is big/coloured or small/grey. |
+| D14 | 2026-10-30 | Screens follow the **"RepoMind — v2 designs"** artifact (Landing, Scanning, Map, Changes, Share). Landing and Scanning are one page (`src/web/landing.html`); Map, Changes and Share live in the viewer (`src/viewer/parts/`). | One source of truth for the look; the viewer already had views and panels to extend. |
+| D15 | 2026-10-30 | The Changes screen is the Changes view of the map, not a separate page: range chips (`base → head`), +added / −removed / new-risk cards, components, new risks, cost. Opened by `?base=<sha>`, by shift-clicking a second timeline dot, or by "See changes" in the toast. | Keeps zoom and selection; same data as the PR comment. |
+| D16 | 2026-10-30 | The Share screen is a dialog opened by **Download** on the map. Secret is shown once on Connect, then masked. | Matches the design; secret never sits in page data (D9). |
+| D17 | 2026-10-30 | Live map opens on **Overview** even though a diff vs the previous version exists; it opens on Changes only when `?base=` is set. | Every live version has a previous one, so defaulting to Changes would hide the map. |
+| D18 | 2026-10-30 | Dark mode in Sketch style uses the layer fills at ~35% strength. | Full-strength hatching on dark paper made labels unreadable (seen in browser test). |
+| D19 | 2026-10-30 | Repo names that are only dots (e.g. `..`) are rejected when parsing URLs. | Found by test: `..` passed the GitHub name pattern and could reach the store path. |
+| D20 | 2026-10-30 | Landing page "Try" chips: vercel/commerce, expo/examples, calcom/cal.com. Example map on Landing is drawn live with rough.js instead of an image. | No image assets to ship; stays on-palette. |
+
+### Verified (2026-10-30)
+
+- `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
+- Mapped `expressjs/express` from its URL: scan ~1 s, 10 versions backfilled, map page with no console errors.
+- Webhook: bad signature → 401; valid HMAC → accepted. Token/secret absent from all API responses; `index.json` is mode 0600.
+- Browser: Landing, Scanning (→ redirect to map), Map (sketch, timeline, live badge), Changes (`?base=`), Share dialog, live toast on a new version all render as designed.

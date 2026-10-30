@@ -1,0 +1,1998 @@
+{
+  "meta": {
+    "tool": "repomind",
+    "version": "0.1.0",
+    "repo": "sumitra (example)",
+    "commit": "ad30b63",
+    "scannedAt": "2026-10-30T06:30:39.843Z",
+    "stats": {
+      "files": 39,
+      "nodes": 48,
+      "edges": 70,
+      "findings": 7,
+      "ms": 48
+    }
+  },
+  "nodes": [
+    {
+      "id": "app:apps-api",
+      "kind": "service",
+      "layer": "app",
+      "label": "api",
+      "tech": "Express",
+      "category": "server",
+      "description": "Sumitra HRMS REST API — leave, payroll, timesheets, polls.",
+      "evidence": [
+        {
+          "file": "apps/api/package.json",
+          "line": 1,
+          "note": "@sumitra/api"
+        },
+        {
+          "file": "apps/api/Dockerfile",
+          "line": 1,
+          "note": "Dockerfile"
+        }
+      ],
+      "meta": {
+        "package": "@sumitra/api",
+        "dir": "apps/api",
+        "role": "server",
+        "routes": [
+          "GET /health"
+        ],
+        "routeCount": 1,
+        "container": {
+          "base": "node:20-alpine",
+          "ports": [
+            "8080"
+          ],
+          "user": "root"
+        }
+      }
+    },
+    {
+      "id": "app:apps-mobile",
+      "kind": "app",
+      "layer": "app",
+      "label": "mobile",
+      "tech": "Expo / React Native",
+      "category": "mobile",
+      "description": "Sumitra mobile app (Expo).",
+      "evidence": [
+        {
+          "file": "apps/mobile/package.json",
+          "line": 1,
+          "note": "@sumitra/mobile"
+        }
+      ],
+      "meta": {
+        "package": "@sumitra/mobile",
+        "dir": "apps/mobile",
+        "role": "mobile"
+      }
+    },
+    {
+      "id": "app:apps-web",
+      "kind": "app",
+      "layer": "app",
+      "label": "web",
+      "tech": "Next.js",
+      "category": "fullstack",
+      "description": "Sumitra HRMS web app for employees and HR.",
+      "evidence": [
+        {
+          "file": "apps/web/package.json",
+          "line": 1,
+          "note": "@sumitra/web"
+        }
+      ],
+      "meta": {
+        "package": "@sumitra/web",
+        "dir": "apps/web",
+        "role": "fullstack",
+        "routeCount": 1
+      }
+    },
+    {
+      "id": "app:packages-shared",
+      "kind": "library",
+      "layer": "app",
+      "label": "shared",
+      "tech": "Shared package",
+      "category": "library",
+      "description": "Types and validation shared by api, web and mobile.",
+      "evidence": [
+        {
+          "file": "packages/shared/package.json",
+          "line": 1,
+          "note": "@sumitra/shared"
+        }
+      ],
+      "meta": {
+        "package": "@sumitra/shared",
+        "dir": "packages/shared",
+        "role": "library"
+      }
+    },
+    {
+      "id": "ci:deploy-api",
+      "kind": "pipeline",
+      "layer": "cicd",
+      "label": "Deploy API",
+      "tech": "GitHub Actions",
+      "category": "CI/CD",
+      "cost": {
+        "tier": "low",
+        "model": "per runner-minute"
+      },
+      "description": "Workflow \"Deploy API\" — runs on push.",
+      "evidence": [
+        {
+          "file": ".github/workflows/deploy-api.yml",
+          "line": 1
+        }
+      ],
+      "meta": {
+        "triggers": [
+          "push"
+        ],
+        "jobs": [
+          "deploy"
+        ]
+      }
+    },
+    {
+      "id": "ci:mobile",
+      "kind": "pipeline",
+      "layer": "cicd",
+      "label": "Mobile build",
+      "tech": "GitHub Actions",
+      "category": "CI/CD",
+      "cost": {
+        "tier": "low",
+        "model": "per runner-minute"
+      },
+      "description": "Workflow \"Mobile build\" — runs on workflow_dispatch.",
+      "evidence": [
+        {
+          "file": ".github/workflows/mobile.yml",
+          "line": 1
+        }
+      ],
+      "meta": {
+        "triggers": [
+          "workflow_dispatch"
+        ],
+        "jobs": [
+          "build"
+        ]
+      }
+    },
+    {
+      "id": "ci:web",
+      "kind": "pipeline",
+      "layer": "cicd",
+      "label": "Deploy web",
+      "tech": "GitHub Actions",
+      "category": "CI/CD",
+      "cost": {
+        "tier": "low",
+        "model": "per runner-minute"
+      },
+      "description": "Workflow \"Deploy web\" — runs on push.",
+      "evidence": [
+        {
+          "file": ".github/workflows/web.yml",
+          "line": 1
+        }
+      ],
+      "meta": {
+        "triggers": [
+          "push"
+        ],
+        "jobs": [
+          "deploy"
+        ]
+      }
+    },
+    {
+      "id": "client:mobile",
+      "kind": "client",
+      "layer": "client",
+      "label": "Mobile users",
+      "tech": "iOS · Android",
+      "description": "People using the mobile app.",
+      "evidence": [
+        {
+          "file": "apps/mobile/package.json"
+        }
+      ]
+    },
+    {
+      "id": "client:web",
+      "kind": "client",
+      "layer": "client",
+      "label": "Web users",
+      "tech": "Browser",
+      "description": "People using the web app.",
+      "evidence": [
+        {
+          "file": "apps/web/package.json"
+        }
+      ]
+    },
+    {
+      "id": "data:postgres",
+      "kind": "database",
+      "layer": "data",
+      "label": "PostgreSQL",
+      "tech": "Prisma",
+      "description": "PostgreSQL accessed through Prisma — 6 models.",
+      "evidence": [
+        {
+          "file": "apps/api/prisma/schema.prisma",
+          "line": 1,
+          "note": "6 models"
+        },
+        {
+          "file": "apps/api/src/db.ts",
+          "line": 1,
+          "note": "Prisma"
+        },
+        {
+          "file": "apps/api/prisma/schema.prisma",
+          "line": 1,
+          "note": "6 models"
+        }
+      ],
+      "meta": {
+        "models": [
+          "Employee",
+          "LeaveRequest",
+          "LeavePlan",
+          "Payslip",
+          "Timesheet",
+          "Poll"
+        ]
+      }
+    },
+    {
+      "id": "data:queue",
+      "kind": "queue",
+      "layer": "data",
+      "label": "Job queue (BullMQ)",
+      "tech": "bullmq",
+      "description": "Job queue (BullMQ) used by the app.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/queue.ts",
+          "line": 1,
+          "note": "bullmq"
+        }
+      ]
+    },
+    {
+      "id": "data:redis",
+      "kind": "cache",
+      "layer": "data",
+      "label": "Redis",
+      "tech": "ioredis",
+      "description": "Redis used by the app.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/routes.ts",
+          "line": 2,
+          "note": "ioredis"
+        }
+      ]
+    },
+    {
+      "id": "ext:app-stores",
+      "kind": "external",
+      "layer": "external",
+      "label": "App Store · Play Store",
+      "tech": "Mobile distribution",
+      "category": "Mobile distribution",
+      "cost": {
+        "tier": "low",
+        "model": "yearly developer fee"
+      },
+      "description": "App Store · Play Store — Mobile distribution.",
+      "evidence": [
+        {
+          "file": "apps/mobile/eas.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "ext:eas",
+      "kind": "external",
+      "layer": "external",
+      "label": "Expo EAS",
+      "tech": "Mobile build & updates",
+      "category": "Mobile build & updates",
+      "cost": {
+        "tier": "medium",
+        "model": "per build + MAU"
+      },
+      "description": "Expo EAS — Mobile build & updates.",
+      "evidence": [
+        {
+          "file": ".github/workflows/mobile.yml",
+          "line": 9,
+          "note": "job build"
+        }
+      ]
+    },
+    {
+      "id": "ext:expo-push",
+      "kind": "external",
+      "layer": "external",
+      "label": "Expo Push",
+      "tech": "Push notifications",
+      "category": "Push notifications",
+      "cost": {
+        "tier": "free",
+        "model": "free tier"
+      },
+      "description": "Expo Push — Push notifications. Billing: free tier.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/push.ts",
+          "line": 1,
+          "note": "expo-server-sdk"
+        }
+      ]
+    },
+    {
+      "kind": "external",
+      "layer": "external",
+      "id": "ext:google-sso",
+      "label": "Google SSO",
+      "tech": "Login for employees",
+      "manual": true,
+      "evidence": [
+        {
+          "file": ".repomind.yml",
+          "note": "added by hand"
+        }
+      ]
+    },
+    {
+      "id": "ext:keka",
+      "kind": "external",
+      "layer": "external",
+      "label": "Keka",
+      "tech": "HR platform",
+      "category": "HR platform",
+      "cost": {
+        "tier": "medium",
+        "model": "per employee (subscription)"
+      },
+      "description": "Keka — HR platform. Billing: per employee (subscription).",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/keka.ts",
+          "line": 3,
+          "note": "keka.com"
+        }
+      ]
+    },
+    {
+      "id": "ext:posthog",
+      "kind": "external",
+      "layer": "external",
+      "label": "PostHog",
+      "tech": "Product analytics",
+      "category": "Product analytics",
+      "cost": {
+        "tier": "low",
+        "model": "per event"
+      },
+      "description": "PostHog — Product analytics. Billing: per event.",
+      "evidence": [
+        {
+          "file": "apps/web/package.json",
+          "line": 1,
+          "note": "dependency"
+        }
+      ]
+    },
+    {
+      "id": "ext:sentry",
+      "kind": "external",
+      "layer": "external",
+      "label": "Sentry",
+      "tech": "Error tracking",
+      "category": "Error tracking",
+      "cost": {
+        "tier": "low",
+        "model": "per event"
+      },
+      "description": "Sentry — Error tracking. Billing: per event.",
+      "evidence": [
+        {
+          "file": "apps/api/src/index.ts",
+          "line": 3,
+          "note": "@sentry/node"
+        }
+      ]
+    },
+    {
+      "id": "ext:slack",
+      "kind": "external",
+      "layer": "external",
+      "label": "Slack",
+      "tech": "Chat & notifications",
+      "category": "Chat & notifications",
+      "cost": {
+        "tier": "free",
+        "model": "API free"
+      },
+      "description": "Slack — Chat & notifications. Billing: API free.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/slack.ts",
+          "line": 1,
+          "note": "@slack/web-api"
+        }
+      ]
+    },
+    {
+      "id": "ext:smtp",
+      "kind": "external",
+      "layer": "external",
+      "label": "SMTP server",
+      "tech": "Email",
+      "category": "Email",
+      "cost": {
+        "tier": "low",
+        "model": "depends on host"
+      },
+      "description": "SMTP server — Email. Billing: depends on host.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/email.ts",
+          "line": 1,
+          "note": "nodemailer"
+        }
+      ]
+    },
+    {
+      "id": "ext:twilio",
+      "kind": "external",
+      "layer": "external",
+      "label": "Twilio",
+      "tech": "SMS & voice",
+      "category": "SMS & voice",
+      "cost": {
+        "tier": "medium",
+        "model": "per SMS / call"
+      },
+      "description": "Twilio — SMS & voice. Billing: per SMS / call.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 1,
+          "note": "twilio"
+        }
+      ]
+    },
+    {
+      "id": "gcp:artifact-registry",
+      "kind": "cloud",
+      "layer": "cloud",
+      "label": "Artifact Registry",
+      "tech": "Container images",
+      "cost": {
+        "tier": "low",
+        "model": "per GB stored"
+      },
+      "evidence": [
+        {
+          "file": ".github/workflows/deploy-api.yml",
+          "line": 13,
+          "note": "job deploy"
+        }
+      ]
+    },
+    {
+      "id": "gcp:kms",
+      "kind": "secret",
+      "layer": "cloud",
+      "label": "Cloud KMS",
+      "tech": "GCP · encryption keys",
+      "category": "GCP · encryption keys",
+      "cost": {
+        "tier": "low",
+        "model": "per key version + operation"
+      },
+      "description": "Cloud KMS — GCP · encryption keys. Billing: per key version + operation.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/crypto.ts",
+          "line": 1,
+          "note": "@google-cloud/kms"
+        }
+      ]
+    },
+    {
+      "id": "gcp:run:sumitra-api",
+      "kind": "cloud",
+      "layer": "cloud",
+      "label": "sumitra-api",
+      "tech": "Cloud Run",
+      "category": "GCP · serverless containers",
+      "cost": {
+        "tier": "medium",
+        "model": "per vCPU-second + requests"
+      },
+      "description": "Production API on Cloud Run in tl-sumitra-prod (asia-south1).",
+      "evidence": [
+        {
+          "file": ".github/workflows/deploy-api.yml",
+          "line": 13,
+          "note": "job deploy"
+        },
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "id": "gcp:storage",
+      "kind": "bucket",
+      "layer": "cloud",
+      "label": "Cloud Storage",
+      "tech": "GCP · object storage",
+      "category": "GCP · object storage",
+      "cost": {
+        "tier": "low",
+        "model": "per GB + operations"
+      },
+      "description": "Cloud Storage — GCP · object storage. Billing: per GB + operations.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/storage.ts",
+          "line": 1,
+          "note": "@google-cloud/storage"
+        }
+      ]
+    },
+    {
+      "id": "host:vercel",
+      "kind": "cloud",
+      "layer": "cloud",
+      "label": "Vercel",
+      "tech": "Hosting",
+      "category": "Hosting",
+      "cost": {
+        "tier": "medium",
+        "model": "per seat + usage"
+      },
+      "description": "Vercel — Hosting.",
+      "evidence": [
+        {
+          "file": ".github/workflows/web.yml",
+          "line": 10,
+          "note": "job deploy"
+        }
+      ]
+    },
+    {
+      "id": "mod:apps-api/auth",
+      "kind": "module",
+      "layer": "module",
+      "label": "auth",
+      "tech": "3 files",
+      "parent": "app:apps-api",
+      "description": "Feature module in apps/api.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/keka.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/api/src/modules/auth",
+        "files": 3
+      }
+    },
+    {
+      "id": "mod:apps-api/leave",
+      "kind": "module",
+      "layer": "module",
+      "label": "leave",
+      "tech": "1 file",
+      "parent": "app:apps-api",
+      "description": "Feature module in apps/api.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/leave/routes.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/api/src/modules/leave",
+        "files": 1
+      }
+    },
+    {
+      "id": "mod:apps-api/notifications",
+      "kind": "module",
+      "layer": "module",
+      "label": "notifications",
+      "tech": "3 files",
+      "parent": "app:apps-api",
+      "description": "Feature module in apps/api.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/email.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/api/src/modules/notifications",
+        "files": 3
+      }
+    },
+    {
+      "id": "mod:apps-api/payroll",
+      "kind": "module",
+      "layer": "module",
+      "label": "payroll",
+      "tech": "4 files",
+      "parent": "app:apps-api",
+      "description": "Feature module in apps/api.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/crypto.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/api/src/modules/payroll",
+        "files": 4
+      }
+    },
+    {
+      "id": "mod:apps-api/polls",
+      "kind": "module",
+      "layer": "module",
+      "label": "polls",
+      "tech": "1 file",
+      "parent": "app:apps-api",
+      "description": "Feature module in apps/api.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/polls/routes.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/api/src/modules/polls",
+        "files": 1
+      }
+    },
+    {
+      "id": "mod:apps-api/timesheet",
+      "kind": "module",
+      "layer": "module",
+      "label": "timesheet",
+      "tech": "1 file",
+      "parent": "app:apps-api",
+      "description": "Feature module in apps/api.",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/timesheet/routes.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/api/src/modules/timesheet",
+        "files": 1
+      }
+    },
+    {
+      "id": "mod:apps-mobile/home",
+      "kind": "module",
+      "layer": "module",
+      "label": "home",
+      "tech": "2 files",
+      "parent": "app:apps-mobile",
+      "description": "Feature module in apps/mobile.",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/home/api.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/mobile/app/home",
+        "files": 2
+      }
+    },
+    {
+      "id": "mod:apps-mobile/leave",
+      "kind": "module",
+      "layer": "module",
+      "label": "leave",
+      "tech": "1 file",
+      "parent": "app:apps-mobile",
+      "description": "Feature module in apps/mobile.",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/leave/index.tsx"
+        }
+      ],
+      "meta": {
+        "dir": "apps/mobile/app/leave",
+        "files": 1
+      }
+    },
+    {
+      "id": "mod:apps-mobile/profile",
+      "kind": "module",
+      "layer": "module",
+      "label": "profile",
+      "tech": "1 file",
+      "parent": "app:apps-mobile",
+      "description": "Feature module in apps/mobile.",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/profile/index.tsx"
+        }
+      ],
+      "meta": {
+        "dir": "apps/mobile/app/profile",
+        "files": 1
+      }
+    },
+    {
+      "id": "mod:apps-web/api",
+      "kind": "module",
+      "layer": "module",
+      "label": "api",
+      "tech": "1 file",
+      "parent": "app:apps-web",
+      "description": "Feature module in apps/web.",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/api/health/route.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/web/src/app/api",
+        "files": 1,
+        "routes": [
+          "GET /api/health"
+        ],
+        "routeCount": 1
+      }
+    },
+    {
+      "id": "mod:apps-web/dashboard",
+      "kind": "module",
+      "layer": "module",
+      "label": "dashboard",
+      "tech": "1 file",
+      "parent": "app:apps-web",
+      "description": "Feature module in apps/web.",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/dashboard/page.tsx"
+        }
+      ],
+      "meta": {
+        "dir": "apps/web/src/app/dashboard",
+        "files": 1
+      }
+    },
+    {
+      "id": "mod:apps-web/leave",
+      "kind": "module",
+      "layer": "module",
+      "label": "leave",
+      "tech": "2 files",
+      "parent": "app:apps-web",
+      "description": "Feature module in apps/web.",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/leave/api.ts"
+        }
+      ],
+      "meta": {
+        "dir": "apps/web/src/app/leave",
+        "files": 2
+      }
+    },
+    {
+      "id": "mod:apps-web/payroll",
+      "kind": "module",
+      "layer": "module",
+      "label": "payroll",
+      "tech": "1 file",
+      "parent": "app:apps-web",
+      "description": "Feature module in apps/web.",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/payroll/page.tsx"
+        }
+      ],
+      "meta": {
+        "dir": "apps/web/src/app/payroll",
+        "files": 1
+      }
+    },
+    {
+      "id": "tf:google_access_context_manager_service_perimeter.payroll",
+      "kind": "network",
+      "layer": "cloud",
+      "label": "payroll-fence",
+      "tech": "VPC Service Controls perimeter",
+      "category": "GCP · VPC Service Controls perimeter",
+      "cost": {
+        "tier": "free",
+        "model": "free"
+      },
+      "description": "VPC Service Controls perimeter defined in Terraform (google_access_context_manager_service_perimeter.payroll).",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 69,
+          "note": "google_access_context_manager_service_perimeter.payroll"
+        }
+      ],
+      "meta": {
+        "terraform": "google_access_context_manager_service_perimeter.payroll"
+      }
+    },
+    {
+      "id": "tf:google_compute_network.vpc",
+      "kind": "network",
+      "layer": "cloud",
+      "label": "sumitra-vpc",
+      "tech": "VPC network",
+      "category": "GCP · VPC network",
+      "cost": {
+        "tier": "free",
+        "model": "free"
+      },
+      "description": "VPC network defined in Terraform (google_compute_network.vpc).",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 55,
+          "note": "google_compute_network.vpc"
+        }
+      ],
+      "meta": {
+        "terraform": "google_compute_network.vpc"
+      }
+    },
+    {
+      "id": "tf:google_kms_crypto_key.payroll",
+      "kind": "secret",
+      "layer": "cloud",
+      "label": "payroll-key",
+      "tech": "KMS key",
+      "category": "GCP · KMS key",
+      "cost": {
+        "tier": "low",
+        "model": "per key version + operation"
+      },
+      "description": "KMS key defined in Terraform (google_kms_crypto_key.payroll).",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 50,
+          "note": "google_kms_crypto_key.payroll"
+        }
+      ],
+      "meta": {
+        "terraform": "google_kms_crypto_key.payroll"
+      }
+    },
+    {
+      "id": "tf:google_kms_key_ring.payroll",
+      "kind": "secret",
+      "layer": "cloud",
+      "label": "payroll-ring",
+      "tech": "KMS key ring",
+      "category": "GCP · KMS key ring",
+      "cost": {
+        "tier": "free",
+        "model": "free"
+      },
+      "description": "KMS key ring defined in Terraform (google_kms_key_ring.payroll). Region: asia-south1.",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 45,
+          "note": "google_kms_key_ring.payroll"
+        }
+      ],
+      "meta": {
+        "terraform": "google_kms_key_ring.payroll"
+      }
+    },
+    {
+      "id": "tf:google_secret_manager_secret.slack",
+      "kind": "secret",
+      "layer": "cloud",
+      "label": "slack-bot-token",
+      "tech": "Secret",
+      "category": "GCP · Secret",
+      "cost": {
+        "tier": "low",
+        "model": "per secret version"
+      },
+      "description": "Secret defined in Terraform (google_secret_manager_secret.slack).",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 64,
+          "note": "google_secret_manager_secret.slack"
+        }
+      ],
+      "meta": {
+        "terraform": "google_secret_manager_secret.slack"
+      }
+    },
+    {
+      "id": "tf:google_sql_database_instance.main",
+      "kind": "database",
+      "layer": "data",
+      "label": "sumitra-db",
+      "tech": "Cloud SQL",
+      "category": "GCP · Cloud SQL",
+      "cost": {
+        "tier": "high",
+        "model": "per instance-hour + storage"
+      },
+      "description": "Cloud SQL defined in Terraform (google_sql_database_instance.main). Region: asia-south1. Tier: db-custom-2-7680. Version: POSTGRES_15.",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 23,
+          "note": "google_sql_database_instance.main"
+        }
+      ],
+      "meta": {
+        "terraform": "google_sql_database_instance.main"
+      }
+    },
+    {
+      "id": "tf:google_storage_bucket.payslips",
+      "kind": "bucket",
+      "layer": "cloud",
+      "label": "sumitra-payslips",
+      "tech": "Cloud Storage bucket",
+      "category": "GCP · Cloud Storage bucket",
+      "cost": {
+        "tier": "low",
+        "model": "per GB + operations"
+      },
+      "description": "Cloud Storage bucket defined in Terraform (google_storage_bucket.payslips). Region: ASIA-SOUTH1.",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 38,
+          "note": "google_storage_bucket.payslips"
+        }
+      ],
+      "meta": {
+        "terraform": "google_storage_bucket.payslips"
+      }
+    },
+    {
+      "id": "tf:google_vpc_access_connector.main",
+      "kind": "network",
+      "layer": "cloud",
+      "label": "sumitra-connector",
+      "tech": "Serverless VPC connector",
+      "category": "GCP · Serverless VPC connector",
+      "cost": {
+        "tier": "medium",
+        "model": "per instance-hour"
+      },
+      "description": "Serverless VPC connector defined in Terraform (google_vpc_access_connector.main).",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 59,
+          "note": "google_vpc_access_connector.main"
+        }
+      ],
+      "meta": {
+        "terraform": "google_vpc_access_connector.main"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "app:apps-api",
+      "to": "app:packages-shared",
+      "kind": "depends",
+      "evidence": [
+        {
+          "file": "apps/api/package.json",
+          "line": 16
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "data:postgres",
+      "kind": "reads",
+      "evidence": [
+        {
+          "file": "apps/api/src/db.ts",
+          "line": 1,
+          "note": "Prisma"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "data:queue",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/queue.ts",
+          "line": 1,
+          "note": "bullmq"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "data:redis",
+      "kind": "reads",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/routes.ts",
+          "line": 2,
+          "note": "ioredis"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "ext:expo-push",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/push.ts",
+          "line": 1,
+          "note": "expo-server-sdk"
+        },
+        {
+          "file": "apps/api/src/modules/notifications/push.ts",
+          "line": 2,
+          "note": "EXPO_ACCESS_TOKEN"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "ext:keka",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/keka.ts",
+          "line": 3,
+          "note": "keka.com"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "ext:sentry",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/api/src/index.ts",
+          "line": 3,
+          "note": "@sentry/node"
+        },
+        {
+          "file": "apps/api/src/index.ts",
+          "line": 10,
+          "note": "SENTRY_DSN"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 9,
+          "note": "SENTRY_DSN"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "ext:slack",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/slack.ts",
+          "line": 1,
+          "note": "@slack/web-api"
+        },
+        {
+          "file": "apps/api/src/modules/notifications/slack.ts",
+          "line": 2,
+          "note": "SLACK_BOT_TOKEN"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 3,
+          "note": "SLACK_BOT_TOKEN"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "ext:smtp",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/email.ts",
+          "line": 1,
+          "note": "nodemailer"
+        },
+        {
+          "file": "apps/api/src/modules/notifications/email.ts",
+          "line": 2,
+          "note": "SMTP_HOST"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 4,
+          "note": "SMTP_HOST"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 5,
+          "note": "SMTP_USER"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 6,
+          "note": "SMTP_PASS"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "ext:twilio",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 1,
+          "note": "twilio"
+        },
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 2,
+          "note": "TWILIO_ACCOUNT_SID"
+        },
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 4,
+          "note": "TWILIO_FROM"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "gcp:kms",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/crypto.ts",
+          "line": 1,
+          "note": "@google-cloud/kms"
+        },
+        {
+          "file": "apps/api/src/modules/payroll/crypto.ts",
+          "line": 3,
+          "note": "KMS_KEY_NAME"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 8,
+          "note": "KMS_KEY_NAME"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "gcp:run:sumitra-api",
+      "kind": "runs-on",
+      "evidence": [
+        {
+          "file": ".github/workflows/deploy-api.yml",
+          "note": "deployed by deploy"
+        },
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 1,
+          "note": "asia-south1-docker.pkg.dev/tl-sumitra-prod/sumitra/sumitra-api:latest"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "gcp:storage",
+      "kind": "writes",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/storage.ts",
+          "line": 1,
+          "note": "@google-cloud/storage"
+        },
+        {
+          "file": "apps/api/src/modules/payroll/storage.ts",
+          "line": 3,
+          "note": "GCS_PAYSLIP_BUCKET"
+        },
+        {
+          "file": "apps/api/.env.example",
+          "line": 7,
+          "note": "GCS_PAYSLIP_BUCKET"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "mod:apps-api/auth",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "mod:apps-api/leave",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/leave"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "mod:apps-api/notifications",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "mod:apps-api/payroll",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "mod:apps-api/polls",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/polls"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-api",
+      "to": "mod:apps-api/timesheet",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/timesheet"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "app:apps-api",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/home/api.ts",
+          "line": 1,
+          "note": "EXPO_PUBLIC_API_URL"
+        }
+      ],
+      "label": "HTTP"
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "app:packages-shared",
+      "kind": "depends",
+      "evidence": [
+        {
+          "file": "apps/mobile/package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "ext:expo-push",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/mobile/package.json",
+          "line": 1,
+          "note": "dependency"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "ext:sentry",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/mobile/package.json",
+          "line": 1,
+          "note": "dependency"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "mod:apps-mobile/home",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/home"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "mod:apps-mobile/leave",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/leave"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-mobile",
+      "to": "mod:apps-mobile/profile",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/mobile/app/profile"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "app:apps-api",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/leave/api.ts",
+          "line": 1,
+          "note": "NEXT_PUBLIC_API_URL"
+        }
+      ],
+      "label": "HTTP"
+    },
+    {
+      "from": "app:apps-web",
+      "to": "app:packages-shared",
+      "kind": "depends",
+      "evidence": [
+        {
+          "file": "apps/web/package.json",
+          "line": 1
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "ext:google-sso",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": ".repomind.yml",
+          "note": "added by hand"
+        }
+      ],
+      "label": "login"
+    },
+    {
+      "from": "app:apps-web",
+      "to": "ext:posthog",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/web/package.json",
+          "line": 1,
+          "note": "dependency"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "ext:sentry",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/web/package.json",
+          "line": 1,
+          "note": "dependency"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "host:vercel",
+      "kind": "runs-on",
+      "evidence": [
+        {
+          "file": ".github/workflows/web.yml",
+          "note": "deployed by deploy"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "mod:apps-web/api",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/api"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "mod:apps-web/dashboard",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/dashboard"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "mod:apps-web/leave",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/leave"
+        }
+      ]
+    },
+    {
+      "from": "app:apps-web",
+      "to": "mod:apps-web/payroll",
+      "kind": "contains",
+      "evidence": [
+        {
+          "file": "apps/web/src/app/payroll"
+        }
+      ]
+    },
+    {
+      "from": "ci:deploy-api",
+      "to": "gcp:artifact-registry",
+      "kind": "deploys",
+      "evidence": [
+        {
+          "file": ".github/workflows/deploy-api.yml",
+          "line": 13,
+          "note": "job deploy"
+        }
+      ],
+      "label": "pushes image"
+    },
+    {
+      "from": "ci:deploy-api",
+      "to": "gcp:run:sumitra-api",
+      "kind": "deploys",
+      "evidence": [
+        {
+          "file": ".github/workflows/deploy-api.yml",
+          "line": 13,
+          "note": "job deploy"
+        }
+      ]
+    },
+    {
+      "from": "ci:mobile",
+      "to": "ext:eas",
+      "kind": "deploys",
+      "evidence": [
+        {
+          "file": ".github/workflows/mobile.yml",
+          "line": 9,
+          "note": "job build"
+        }
+      ],
+      "label": "triggers"
+    },
+    {
+      "from": "ci:web",
+      "to": "host:vercel",
+      "kind": "deploys",
+      "evidence": [
+        {
+          "file": ".github/workflows/web.yml",
+          "line": 10,
+          "note": "job deploy"
+        }
+      ]
+    },
+    {
+      "from": "client:mobile",
+      "to": "app:apps-mobile",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "apps/mobile/package.json"
+        }
+      ]
+    },
+    {
+      "from": "client:web",
+      "to": "app:apps-web",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "apps/web/package.json"
+        }
+      ]
+    },
+    {
+      "from": "data:postgres",
+      "to": "tf:google_sql_database_instance.main",
+      "kind": "runs-on",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 23
+        }
+      ]
+    },
+    {
+      "from": "ext:eas",
+      "to": "app:apps-mobile",
+      "kind": "deploys",
+      "evidence": [
+        {
+          "file": "apps/mobile/eas.json"
+        }
+      ],
+      "label": "builds"
+    },
+    {
+      "from": "ext:eas",
+      "to": "ext:app-stores",
+      "kind": "deploys",
+      "evidence": [
+        {
+          "file": "apps/mobile/eas.json",
+          "line": 1
+        }
+      ],
+      "label": "submits"
+    },
+    {
+      "from": "gcp:kms",
+      "to": "tf:google_kms_crypto_key.payroll",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 50
+        }
+      ]
+    },
+    {
+      "from": "gcp:run:sumitra-api",
+      "to": "tf:google_sql_database_instance.main",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 13
+        }
+      ]
+    },
+    {
+      "from": "gcp:run:sumitra-api",
+      "to": "tf:google_vpc_access_connector.main",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "from": "gcp:storage",
+      "to": "tf:google_storage_bucket.payslips",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 38
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/auth",
+      "to": "data:redis",
+      "kind": "reads",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/routes.ts",
+          "line": 2,
+          "note": "ioredis"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/auth",
+      "to": "ext:keka",
+      "kind": "calls",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/keka.ts",
+          "line": 3,
+          "note": "keka.com"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/auth",
+      "to": "ext:twilio",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 1,
+          "note": "twilio"
+        },
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 2,
+          "note": "TWILIO_ACCOUNT_SID"
+        },
+        {
+          "file": "apps/api/src/modules/auth/otp.ts",
+          "line": 4,
+          "note": "TWILIO_FROM"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/leave",
+      "to": "data:postgres",
+      "kind": "reads",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/leave/routes.ts",
+          "line": 2,
+          "note": "via apps/api/src/db.ts"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/leave",
+      "to": "mod:apps-api/notifications",
+      "kind": "depends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/leave/routes.ts",
+          "line": 3
+        },
+        {
+          "file": "apps/api/src/modules/leave/routes.ts",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/notifications",
+      "to": "ext:expo-push",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/push.ts",
+          "line": 1,
+          "note": "expo-server-sdk"
+        },
+        {
+          "file": "apps/api/src/modules/notifications/push.ts",
+          "line": 2,
+          "note": "EXPO_ACCESS_TOKEN"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/notifications",
+      "to": "ext:slack",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/slack.ts",
+          "line": 1,
+          "note": "@slack/web-api"
+        },
+        {
+          "file": "apps/api/src/modules/notifications/slack.ts",
+          "line": 2,
+          "note": "SLACK_BOT_TOKEN"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/notifications",
+      "to": "ext:smtp",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/notifications/email.ts",
+          "line": 1,
+          "note": "nodemailer"
+        },
+        {
+          "file": "apps/api/src/modules/notifications/email.ts",
+          "line": 2,
+          "note": "SMTP_HOST"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/payroll",
+      "to": "data:postgres",
+      "kind": "reads",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/routes.ts",
+          "line": 2,
+          "note": "via apps/api/src/db.ts"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/payroll",
+      "to": "data:queue",
+      "kind": "sends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/queue.ts",
+          "line": 1,
+          "note": "bullmq"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/payroll",
+      "to": "gcp:kms",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/crypto.ts",
+          "line": 1,
+          "note": "@google-cloud/kms"
+        },
+        {
+          "file": "apps/api/src/modules/payroll/crypto.ts",
+          "line": 3,
+          "note": "KMS_KEY_NAME"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/payroll",
+      "to": "gcp:storage",
+      "kind": "writes",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/payroll/storage.ts",
+          "line": 1,
+          "note": "@google-cloud/storage"
+        },
+        {
+          "file": "apps/api/src/modules/payroll/storage.ts",
+          "line": 3,
+          "note": "GCS_PAYSLIP_BUCKET"
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/polls",
+      "to": "mod:apps-api/notifications",
+      "kind": "depends",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/polls/routes.ts",
+          "line": 2
+        }
+      ]
+    },
+    {
+      "from": "mod:apps-api/timesheet",
+      "to": "data:postgres",
+      "kind": "reads",
+      "evidence": [
+        {
+          "file": "apps/api/src/modules/timesheet/routes.ts",
+          "line": 2,
+          "note": "via apps/api/src/db.ts"
+        }
+      ]
+    },
+    {
+      "from": "tf:google_access_context_manager_service_perimeter.payroll",
+      "to": "tf:google_kms_crypto_key.payroll",
+      "kind": "protects",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 75,
+          "note": "cloudkms.googleapis.com"
+        }
+      ]
+    },
+    {
+      "from": "tf:google_access_context_manager_service_perimeter.payroll",
+      "to": "tf:google_kms_key_ring.payroll",
+      "kind": "protects",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 75,
+          "note": "cloudkms.googleapis.com"
+        }
+      ]
+    },
+    {
+      "from": "tf:google_access_context_manager_service_perimeter.payroll",
+      "to": "tf:google_storage_bucket.payslips",
+      "kind": "protects",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 75,
+          "note": "storage.googleapis.com"
+        }
+      ]
+    },
+    {
+      "from": "tf:google_kms_crypto_key.payroll",
+      "to": "tf:google_kms_key_ring.payroll",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 52
+        }
+      ]
+    },
+    {
+      "from": "tf:google_sql_database_instance.main",
+      "to": "tf:google_compute_network.vpc",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "from": "tf:google_storage_bucket.payslips",
+      "to": "tf:google_kms_crypto_key.payroll",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 42
+        }
+      ]
+    },
+    {
+      "from": "tf:google_vpc_access_connector.main",
+      "to": "tf:google_compute_network.vpc",
+      "kind": "uses",
+      "evidence": [
+        {
+          "file": "infra/terraform/main.tf",
+          "line": 61
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "run-public-invoke:infra/terraform/main.tf:public",
+      "rule": "run-public-invoke",
+      "severity": "high",
+      "title": "Cloud Run service allows unauthenticated calls",
+      "file": "infra/terraform/main.tf",
+      "line": 20,
+      "node": "gcp:run:sumitra-api",
+      "fix": "If this is not a public API, remove allUsers and put it behind IAP or a load balancer with auth."
+    },
+    {
+      "id": "cors-wildcard:apps/api/src/index.ts:root",
+      "rule": "cors-wildcard",
+      "severity": "medium",
+      "title": "CORS allows any origin",
+      "file": "apps/api/src/index.ts",
+      "line": 12,
+      "node": "app:apps-api",
+      "fix": "List allowed origins explicitly."
+    },
+    {
+      "id": "docker-root:apps/api/Dockerfile:root",
+      "rule": "docker-root",
+      "severity": "medium",
+      "title": "Container runs as root",
+      "file": "apps/api/Dockerfile",
+      "line": 1,
+      "node": "app:apps-api",
+      "fix": "Add a non-root USER (e.g. USER node) before CMD."
+    },
+    {
+      "id": "env-undocumented:apps/api/src/modules/auth/keka.ts:keka-api-token",
+      "rule": "env-undocumented",
+      "severity": "low",
+      "title": "Secret missing from .env.example: KEKA_API_TOKEN",
+      "file": "apps/api/src/modules/auth/keka.ts",
+      "line": 3,
+      "node": "mod:apps-api/auth",
+      "fix": "Add them to .env.example so new deploys and teammates know they are needed."
+    },
+    {
+      "id": "env-undocumented:apps/api/src/modules/auth/otp.ts:twilio-account-sid-twilio-auth-token-twilio-from",
+      "rule": "env-undocumented",
+      "severity": "low",
+      "title": "3 secrets missing from .env.example: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM",
+      "file": "apps/api/src/modules/auth/otp.ts",
+      "line": 2,
+      "node": "mod:apps-api/auth",
+      "fix": "Add them to .env.example so new deploys and teammates know they are needed."
+    },
+    {
+      "id": "env-undocumented:apps/api/src/modules/notifications/push.ts:expo-access-token",
+      "rule": "env-undocumented",
+      "severity": "low",
+      "title": "Secret missing from .env.example: EXPO_ACCESS_TOKEN",
+      "file": "apps/api/src/modules/notifications/push.ts",
+      "line": 2,
+      "node": "mod:apps-api/notifications",
+      "fix": "Add them to .env.example so new deploys and teammates know they are needed."
+    },
+    {
+      "id": "vpcsc-dry-run:infra/terraform/main.tf:payroll",
+      "rule": "vpcsc-dry-run",
+      "severity": "low",
+      "title": "VPC Service Controls perimeter is in dry-run (not enforced)",
+      "file": "infra/terraform/main.tf",
+      "line": 73,
+      "node": "tf:google_access_context_manager_service_perimeter.payroll",
+      "fix": "Review dry-run violation logs, then enforce the perimeter."
+    }
+  ]
+}

@@ -1,18 +1,107 @@
 name: RepoMind
-description: Scan base and head, diff the architecture graph, and comment on the PR.
+description: Map your repo's code, infrastructure and integrations, and comment on every PR with what changed — plus new security and cost risks.
+author: RepoMind
+branding:
+  icon: map
+  color: purple
+
 inputs:
-  fail-on:
-    description: "Fail the check at this severity or above (critical, high, medium, low, none)"
-    default: none
   github-token:
-    description: Token used to post the PR comment
+    description: Token used to post the PR comment.
     default: ${{ github.token }}
+  path:
+    description: Directory to scan (relative to the repo root).
+    default: .
+  fail-on:
+    description: Fail the check when the PR adds a risk at or above this severity (critical, high, medium, low, none).
+    default: none
+  comment:
+    description: Post or update a PR comment (true/false).
+    default: 'true'
+
+outputs:
+  new-risks:
+    description: Number of new risks this PR introduces.
+    value: ${{ steps.diff.outputs.new_risks }}
+
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v4
-      with: { node-version: 20 }
-    - shell: bash
-      run: npx --yes repomind pr --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" --fail-on "${{ inputs.fail-on }}"
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install RepoMind
+      shell: bash
+      run: |
+        cd "${{ github.action_path }}"
+        npm ci --no-audit --no-fund --silent || npm install --no-audit --no-fund --silent
+        npm run build --silent
+
+    - name: Scan head
+      shell: bash
+      run: |
+        mkdir -p .repomind-out
+        node "${{ github.action_path }}/bin/repomind.js" scan "${{ inputs.path }}" -o .repomind-out/head.json
+
+    - name: Scan base
+      if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
+      shell: bash
+      run: |
+        git fetch --no-tags --depth=1 origin "${{ github.event.pull_request.base.sha }}"
+        git worktree add --detach .repomind-base "${{ github.event.pull_request.base.sha }}"
+        node "${{ github.action_path }}/bin/repomind.js" scan ".repomind-base/${{ inputs.path }}" -o .repomind-out/base.json --repo "${{ github.repository }}" --quiet
+        git worktree remove --force .repomind-base
+
+    - name: Build map
+      shell: bash
+      run: |
+        BLOB="${{ github.server_url }}/${{ github.repository }}/blob/${{ github.event.pull_request.head.sha || github.sha }}"
+        if [ -f .repomind-out/base.json ]; then
+          node "${{ github.action_path }}/bin/repomind.js" view .repomind-out/head.json --base .repomind-out/base.json -o .repomind-out/map.html --blob-base "$BLOB"
+        else
+          node "${{ github.action_path }}/bin/repomind.js" view .repomind-out/head.json -o .repomind-out/map.html --blob-base "$BLOB"
+        fi
+
+    - name: Upload map
+      uses: actions/upload-artifact@v4
+      with:
+        name: repomind-map
+        path: .repomind-out/
+
+    - name: Diff
+      id: diff
+      if: hashFiles('.repomind-out/base.json') != ''
+      shell: bash
+      run: |
+        BLOB="${{ github.server_url }}/${{ github.repository }}/blob/${{ github.event.pull_request.head.sha }}"
+        RUN="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        set +e
+        node "${{ github.action_path }}/bin/repomind.js" diff .repomind-out/base.json .repomind-out/head.json \
+          -o .repomind-out/comment.md --json .repomind-out/diff.json \
+          --fail-on "${{ inputs.fail-on }}" --blob-base "$BLOB" --map-url "$RUN"
+        echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+        echo "new_risks=$(node -e 'console.log(require("./.repomind-out/diff.json").newFindings.length)')" >> "$GITHUB_OUTPUT"
+
+    - name: Comment on PR
+      if: inputs.comment == 'true' && steps.diff.outcome == 'success'
+      shell: bash
       env:
-        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GH_TOKEN: ${{ inputs.github-token }}
+      run: |
+        PR=${{ github.event.pull_request.number }}
+        ID=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate \
+          --jq '.[] | select(.body | startswith("<!-- repomind:pr-comment -->")) | .id' | head -n1)
+        if [ -n "$ID" ]; then
+          gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$ID" -F body=@.repomind-out/comment.md > /dev/null
+        else
+          gh api -X POST "repos/${{ github.repository }}/issues/$PR/comments" -F body=@.repomind-out/comment.md > /dev/null
+        fi
+
+    - name: Gate
+      if: steps.diff.outputs.exit_code == '2'
+      shell: bash
+      run: |
+        echo "::error::This PR adds risks at or above '${{ inputs.fail-on }}'. See the RepoMind comment."
+        exit 1

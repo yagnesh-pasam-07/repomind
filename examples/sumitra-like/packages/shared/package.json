@@ -1,0 +1,1 @@
+{ "name": "@sumitra/shared", "description": "Types and validation shared by api, web and mobile.", "dependencies": { "zod": "^3.22.0" } }

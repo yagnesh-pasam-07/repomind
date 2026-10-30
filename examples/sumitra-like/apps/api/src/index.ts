@@ -1,12 +1,19 @@
 import express from 'express';
-import twilio from 'twilio';
+import cors from 'cors';
+import * as Sentry from '@sentry/node';
+import { leaveRouter } from './modules/leave/routes';
+import { payrollRouter } from './modules/payroll/routes';
+import { timesheetRouter } from './modules/timesheet/routes';
+import { authRouter } from './modules/auth/routes';
+import { pollsRouter } from './modules/polls/routes';
 
+Sentry.init({ dsn: process.env.SENTRY_DSN });
 const app = express();
-const sms = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
-app.post('/leave/apply', async (_req, res) => {
-  await sms.messages.create({ to: '+910000000000', from: '+10000000000', body: 'Leave applied' });
-  res.json({ ok: true });
-});
-
-app.listen(8080);
+app.use(cors());
+app.use('/auth', authRouter);
+app.use('/leave', leaveRouter);
+app.use('/payroll', payrollRouter);
+app.use('/timesheets', timesheetRouter);
+app.use('/polls', pollsRouter);
+app.get('/health', (_req, res) => res.send('ok'));
+app.listen(process.env.PORT ?? 8080);
