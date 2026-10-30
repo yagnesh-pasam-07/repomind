@@ -429,6 +429,8 @@ A running log of choices made while building. Newest last.
 | D36 | 2026-10-30 | Polling cron runs **daily** (`0 6 * * *`), not every 5 minutes; the GitHub webhook gives instant updates and open map pages still poll every 30 s. | The Vercel account is on the Hobby plan, which only allows daily cron jobs. |
 | D37 | 2026-10-30 | Backfill starts *after* the head scan's queued task, not inside it. | Bug found on Vercel: awaiting backfill inside the per-repo queue waited on itself, so history never filled. Verified fixed: `sindresorhus/ky` got 5 versions in Neon. |
 
+| D38 | 2026-10-30 | Hero birds redrawn as a **flying** weaverbird: side view, streamlined body, two wings (near coral, far deep indigo) that beat up and down, body rising on each downstroke, and the dotted thread leaving from the beak — the weaver carrying a strand. Replaces D33's sliding logo bird with a detached trail. | Owner: "bird should fly"; the sitting logo pose didn't read as flight. |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
