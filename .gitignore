@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+repomind.graph.json
+repomind.html
+.DS_Store
+*.log

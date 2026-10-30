@@ -1,0 +1,18 @@
+name: RepoMind
+description: Scan base and head, diff the architecture graph, and comment on the PR.
+inputs:
+  fail-on:
+    description: "Fail the check at this severity or above (critical, high, medium, low, none)"
+    default: none
+  github-token:
+    description: Token used to post the PR comment
+    default: ${{ github.token }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with: { node-version: 20 }
+    - shell: bash
+      run: npx --yes repomind pr --base "${{ github.event.pull_request.base.sha }}" --head "${{ github.event.pull_request.head.sha }}" --fail-on "${{ inputs.fail-on }}"
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}

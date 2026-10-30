@@ -1,0 +1,1 @@
+{ "name": "sumitra-like", "private": true, "workspaces": ["apps/*"] }

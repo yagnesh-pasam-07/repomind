@@ -1,0 +1,15 @@
+# Copy to .repomind.yml in the repo you scan.
+rename:
+  apps/api: Payroll API
+hide:
+  - packages/eslint-config
+groups:
+  Backend: [apps/api, apps/worker]
+nodes:
+  - id: gcp-console-lb
+    kind: cloud
+    label: HTTPS Load Balancer (console)
+edges:
+  - from: gcp-console-lb
+    to: apps/api
+    kind: calls
