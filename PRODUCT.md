@@ -440,6 +440,8 @@ A running log of choices made while building. Newest last.
 | D43 | 2026-10-30 | Final form: a **big, soft ink-brush tree** (tapered strokes, 180 leaves, a few honey and coral accents) at low opacity on the right of the hero, and **three small nests** hanging from branches near the trunk. Each nest follows the owner's reference photos: thin woven neck, pear-shaped chamber, long entrance tube dropping from one side, rough woven-grass texture, gentle sway. A tiny weaverbird clings to one nest. Hidden under 1100 px and during scanning; still under reduced motion. | Owner: "add a big tree… nest looking big… small nest… 2 nests… add another nest… place the nest near the tree", with photos of real Baya nests. |
 | D44 | 2026-10-30 | Nest position and nest sway live on separate SVG groups. | Bug found in the browser: the sway animation's `transform` overrode each nest's `translate()`, so all three nests stacked off-screen at the top-left. |
 
+| D45 | 2026-10-30 | The tree and nests (D42–D44) are **removed**; the home hero is plain again, with only the flying weaverbirds (nav-bar bird + first-screen flock). | Owner: "remove the whole tree… keep it plain". |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
