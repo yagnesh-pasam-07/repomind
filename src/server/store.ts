@@ -28,6 +28,8 @@ export interface RepoRecord {
   secret?: string;
   lastChecked?: string;
   createdAt: string;
+  /** GitHub's visibility at the time of mapping (private repos need care before sharing). */
+  private?: boolean;
 }
 
 export interface RepoIndex {
@@ -213,5 +215,5 @@ function safeList(d: string): string[] {
 
 /** The public view of a repo record: never includes token or secret. */
 export function publicRepo(r: RepoRecord, pollMinutes: number) {
-  return { owner: r.owner, repo: r.repo, branch: r.branch, connected: r.connected, private: !!r.token, lastChecked: r.lastChecked, pollMinutes };
+  return { owner: r.owner, repo: r.repo, branch: r.branch, connected: r.connected, private: r.private ?? !!r.token, lastChecked: r.lastChecked, pollMinutes };
 }

@@ -14,6 +14,9 @@ const BINARY_EXT = new Set([
 ]);
 
 const MAX_FILE_BYTES = 512 * 1024;
+/** Schemas are read for their model list, and large apps routinely exceed 512 KB (D50). */
+const MAX_SCHEMA_BYTES = 4 * 1024 * 1024;
+const isSchema = (name: string) => name.endsWith('.prisma');
 const MAX_FILES = 20000;
 
 export const SOURCE_EXT = /\.(c|m)?(t|j)sx?$/;
@@ -48,7 +51,7 @@ export class Repo {
           if (BINARY_EXT.has(ext) && e.name !== 'package-lock.json') continue;
           if (e.name === 'package-lock.json' || e.name === 'yarn.lock' || e.name === 'pnpm-lock.yaml') continue;
           try {
-            if (statSync(full).size > MAX_FILE_BYTES) continue;
+            if (statSync(full).size > (isSchema(e.name) ? MAX_SCHEMA_BYTES : MAX_FILE_BYTES)) continue;
           } catch {
             continue;
           }

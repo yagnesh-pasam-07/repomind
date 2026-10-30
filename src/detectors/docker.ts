@@ -3,6 +3,11 @@ import { DATA_STORES } from '../catalog.js';
 import type { Ctx } from '../context.js';
 import { basename, dirOf, findLine, slug } from '../repo.js';
 
+/** Dockerfile, Dockerfile.prod, api.Dockerfile — but not Dockerfile.dockerignore (a skip list, not a build file). */
+export function isDockerfile(path: string): boolean {
+  return /(^|\/)(Dockerfile|[\w.-]+\.Dockerfile|Dockerfile\.[\w.-]+)$/.test(path) && !/\.dockerignore$/i.test(path);
+}
+
 export interface DockerfileInfo {
   file: string;
   base: string[];
@@ -14,7 +19,7 @@ export interface DockerfileInfo {
 export function detectDocker(ctx: Ctx) {
   const { repo, g } = ctx;
 
-  for (const f of repo.files.filter((x) => /(^|\/)(Dockerfile|[\w.-]+\.Dockerfile|Dockerfile\.[\w.-]+)$/.test(x))) {
+  for (const f of repo.files.filter((x) => isDockerfile(x))) {
     const info = parseDockerfile(f, repo.read(f) ?? '');
     const unit = ctx.unitFor(f);
     if (unit && unit.role !== 'tooling') {

@@ -442,6 +442,13 @@ A running log of choices made while building. Newest last.
 
 | D45 | 2026-10-30 | The tree and nests (D42–D44) are **removed**; the home hero is plain again, with only the flying weaverbirds (nav-bar bird + first-screen flock). | Owner: "remove the whole tree… keep it plain". |
 
+| D46 | 2026-10-30 | Private repos are mapped **only on a local server** (`repomind serve` on 127.0.0.1, disk storage, no `DATABASE_URL`) until sign-in and token encryption exist. The public Vercel site has no sign-in, so anything mapped there is visible to everyone. | A private repo's map shows services, file paths and risks that must not be public. |
+| D47 | 2026-10-30 | A repo's `private` flag now comes from GitHub's own visibility, recorded when it is mapped, not from whether a token was pasted. | Found when the token came from the server environment instead of the form: the repo showed `private: false`. |
+| D48 | 2026-10-30 | `*.dockerignore` files are no longer treated as Dockerfiles. | Found on a real repo: a `Dockerfile.dockerignore` produced false "container runs as root" risks. |
+
+| D49 | 2026-10-30 | New detector for **deploy-environment manifests** (`.github/environments/*.yml`, `deploy/` and `infra/environments/`): each environment becomes a node, with its Cloud Run services, Cloud SQL instance, storage bucket and migration job wired to the apps. Flags `allow_unauthenticated: true` (once per service, even when environments share it) and Cloud SQL without point-in-time recovery. **EAS Workflows** (`.eas/workflows/`) count as mobile pipelines. | Teams that deploy by script instead of Terraform keep their real infrastructure in these files; on a real repo this took the map from 32 to 60 components and 72 to 169 connections. |
+| D50 | 2026-10-30 | **At a glance counts everything** the scan found, not only boxes: data models, API routes, environments, container images, connections and files scanned. Prisma schemas are read up to 4 MB (other files stay capped at 512 KB). The website header gets a **GitHub "Star" button with a live star count** (cached 1 h server-side) and the footer links the open-source repo, like Pen & Paper. | Owner: "it should count everything", "make it open source, add the repo in the webpage… like pen and paper". A 665 KB schema with 386 models was being skipped by the 512 KB limit. |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).

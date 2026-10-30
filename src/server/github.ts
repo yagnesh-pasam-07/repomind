@@ -53,7 +53,13 @@ export class GitHub {
   }
 
   async defaultBranch(ref: RepoRef): Promise<string> {
-    return (await this.get(`/repos/${ref.owner}/${ref.repo}`)).default_branch;
+    return (await this.info(ref)).defaultBranch;
+  }
+
+  /** Default branch and GitHub's own visibility for the repo. */
+  async info(ref: RepoRef): Promise<{ defaultBranch: string; private: boolean }> {
+    const r = await this.get(`/repos/${ref.owner}/${ref.repo}`);
+    return { defaultBranch: r.default_branch, private: !!r.private };
   }
 
   async branches(ref: RepoRef): Promise<string[]> {

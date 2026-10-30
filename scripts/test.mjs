@@ -131,3 +131,31 @@ console.log(`${v2} v2 checks passed`);
     console.log('  ✓ dev-only express does not make a library a server (D30)');
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
+
+// Dockerfile.dockerignore is a skip list, not a Dockerfile (found mapping a real repo).
+{
+  const { isDockerfile } = await import('../dist/detectors/docker.js');
+  for (const f of ['Dockerfile', 'apps/api/Dockerfile', 'Dockerfile.prod', 'api.Dockerfile']) assert.ok(isDockerfile(f), f);
+  for (const f of ['apps/api/Dockerfile.dockerignore', '.dockerignore', 'docs/Dockerfile.md.dockerignore']) assert.ok(!isDockerfile(f), f);
+  console.log('  ✓ .dockerignore files are not treated as Dockerfiles');
+}
+
+// D49: deploy-environment manifests become Cloud Run / Cloud SQL / bucket / job nodes; shared services report once.
+{
+  const { mkdtempSync, writeFileSync, rmSync, mkdirSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'rm-env-'));
+  try {
+    mkdirSync(join(dir, '.github/environments'), { recursive: true });
+    const env = (name, svc) => `name: ${name}\nproject:\n  id: acme\ncloud_run:\n  api_service: ${svc}\n  allow_unauthenticated: true\ncloud_sql:\n  instance: acme-${name}-pg\n  version: POSTGRES_17\nstorage:\n  bucket: acme-${name}-files\nmigrations:\n  job: acme-migrate-${name}\n`;
+    writeFileSync(join(dir, '.github/environments/prod.yml'), env('prod', 'acme-api-prod'));
+    writeFileSync(join(dir, '.github/environments/verify.yml'), env('verify', 'acme-api-prod'));
+    const g = scan(dir, { repoName: 'env' });
+    const has = (id) => g.nodes.some((n) => n.id === id);
+    assert.ok(has('env:prod') && has('env:verify'));
+    assert.ok(has('gcp:run:acme-api-prod') && has('gcp:sql:acme-prod-pg') && has('gcp:bucket:acme-prod-files') && has('gcp:job:acme-migrate-prod'));
+    assert.equal(g.findings.filter((f) => f.rule === 'run-public-invoke').length, 1);
+    console.log('  ✓ environment manifests map to cloud resources; shared services report once (D49)');
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+}

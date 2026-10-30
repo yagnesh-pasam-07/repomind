@@ -52,6 +52,14 @@
       <div class="stat"><b>${count('cloud')}</b><span>cloud resources</span></div>
       <div class="stat"><b>${count('external')}</b><span>external services</span></div>
       <div class="stat"><b>${count('cicd')}</b><span>pipelines</span></div></div>`;
+    // Count everything the scan found, not just boxes (D50): models, routes, environments, images, files.
+    const sum = (f) => G.nodes.reduce((t, n) => t + (f(n) || 0), 0);
+    const models = sum((n) => n.meta && Array.isArray(n.meta.models) ? n.meta.models.length : 0);
+    const routes = sum((n) => n.kind === 'module' ? 0 : (n.meta && n.meta.routeCount) || 0) || sum((n) => n.kind === 'module' && n.meta ? n.meta.routeCount : 0);
+    const envs = G.nodes.filter((n) => n.meta && n.meta.environment).length;
+    const images = G.nodes.filter((n) => n.meta && n.meta.container).length;
+    const extra = [[models, 'data models'], [routes, 'API routes'], [envs, 'environments'], [images, 'container images'], [G.edges.length, 'connections'], [G.meta.stats.files, 'files scanned']].filter(([v]) => v > 0);
+    if (extra.length) h += `<div class="stats" style="margin-top:8px">${extra.map(([v, l]) => `<div class="stat"><b>${v.toLocaleString()}</b><span>${l}</span></div>`).join('')}</div>`;
     h += `<h3>Open risks · ${G.findings.length}</h3><div class="sevbar">${SEV.map((s) => `<div style="width:${(sevCount[s] / total) * 100}%;background:var(--s-${s})"></div>`).join('')}</div>
       <div class="chips">${SEV.map((s) => `<span class="chip">${sevCount[s]} ${s}</span>`).join('')}</div>`;
     const shown = state.view === 'risks' ? G.findings : G.findings.slice(0, 3);

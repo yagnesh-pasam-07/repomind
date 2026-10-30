@@ -1,7 +1,7 @@
 import type { Ctx } from '../context.js';
 import { basename, lineAt, slug } from '../repo.js';
 import type { Finding, Severity } from '../types.js';
-import { parseDockerfile } from '../detectors/docker.js';
+import { isDockerfile, parseDockerfile } from '../detectors/docker.js';
 import { envFileKeys, envRefsOf } from '../detectors/imports.js';
 import { providerForEnv } from '../detectors/integrations.js';
 import { terraformResources, type TfResource } from '../detectors/terraform.js';
@@ -128,7 +128,7 @@ export function runSecurityRules(ctx: Ctx) {
   }
 
   // 4) Dockerfiles.
-  for (const f of repo.files.filter((x) => /(^|\/)(Dockerfile|[\w.-]+\.Dockerfile|Dockerfile\.[\w.-]+)$/.test(x))) {
+  for (const f of repo.files.filter((x) => isDockerfile(x))) {
     const text = repo.read(f) ?? '';
     const info = parseDockerfile(f, text);
     const owner = ctx.unitFor(f)?.nodeId;

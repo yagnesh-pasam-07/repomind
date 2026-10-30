@@ -4,6 +4,7 @@ import { basename, join, resolve } from 'node:path';
 import { Ctx } from './context.js';
 import { detectCI } from './detectors/ci.js';
 import { detectDocker } from './detectors/docker.js';
+import { detectEnvironments } from './detectors/environments.js';
 import { detectIntegrations } from './detectors/integrations.js';
 import { detectModules } from './detectors/modules.js';
 import { applyOverrides, loadOverrides } from './detectors/overrides.js';
@@ -37,6 +38,7 @@ export function scan(root: string, opts: { repoName?: string; commit?: string } 
   detectDocker(ctx);
   detectCI(ctx);
   detectTerraform(ctx);
+  detectEnvironments(ctx);
   applyOverrides(ctx, overrides);
   runSecurityRules(ctx);
   ctx.g.prune();

@@ -84,6 +84,22 @@ export function detectCI(ctx: Ctx) {
     deployTargets(ctx, id, f, text, JSON.stringify(doc), flat, units, 'build');
   }
 
+  // EAS Workflows (D49): Expo's own CI under .eas/workflows/ — mobile builds, OTA updates, store submits.
+  for (const f of repo.files.filter((x) => /^\.eas\/workflows\/[^/]+\.ya?ml$/.test(x))) {
+    const text = repo.read(f) ?? '';
+    let doc: any;
+    try {
+      doc = YAML.parse(text);
+    } catch {
+      continue;
+    }
+    const id = `ci:eas-${slug(basename(f).replace(/\.ya?ml$/, ''))}`;
+    const name: string = doc?.name ?? basename(f).replace(/\.ya?ml$/, '');
+    g.node({ id, kind: 'pipeline', layer: 'cicd', label: name, tech: 'EAS Workflows', category: 'CI/CD · mobile', cost: { tier: 'medium', model: 'per build' }, description: 'Expo EAS workflow: builds, updates or submits the mobile app.', evidence: [{ file: f, line: 1 }] });
+    hostNode(ctx, 'ext:eas', 'Expo EAS', 'Mobile build & updates', { tier: 'medium', model: 'per build + MAU' });
+    g.edge(id, 'ext:eas', 'deploys', [{ file: f, line: 1 }], 'runs on');
+  }
+
   // Host config files next to apps.
   for (const f of repo.files.filter((x) => basename(x) === 'vercel.json')) {
     const u = ctx.unitFor(f);

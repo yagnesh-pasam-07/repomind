@@ -89,10 +89,12 @@ export function createApp(opts: AppOptions) {
   async function startMap(url: string, branch?: string, token?: string, backfill = false, live = false) {
     const ref = parseRepoUrl(url);
     const gh = new GitHub(token);
-    const br = branch || ref.branch || (await gh.defaultBranch(ref));
+    const meta = await gh.info(ref);
+    const br = branch || ref.branch || meta.defaultBranch;
     let idx = await store.get(ref.owner, ref.repo);
     if (!idx) idx = { repo: { owner: ref.owner, repo: ref.repo, branch: br, connected: false, createdAt: new Date().toISOString() }, versions: [] };
     if (token) idx.repo.token = token;
+    idx.repo.private = meta.private;
     if (idx.repo.branch !== br) {
       // A different branch is a different timeline; keep it simple and start over for that branch.
       idx.repo.branch = br;
@@ -184,6 +186,19 @@ export function createApp(opts: AppOptions) {
     return { graph, base: base ? { nodes: base.nodes, edges: base.edges } : null, diff: d ? viewerDiff(d) : null, _d: d, _base: base, version: v };
   }
 
+  const SOURCE_REPO = 'yagnesh-pasam-07/repomind';
+  let stats: { at: number; data: { stars: number | null; forks: number | null; url: string } } | null = null;
+  async function githubStats() {
+    if (stats && Date.now() - stats.at < 3600_000) return stats.data;
+    let stars: number | null = null, forks: number | null = null;
+    try {
+      const r = await fetch(`https://api.github.com/repos/${SOURCE_REPO}`, { headers: { accept: 'application/vnd.github+json', 'user-agent': 'repomind' } });
+      if (r.ok) { const j: any = await r.json(); stars = j.stargazers_count ?? null; forks = j.forks_count ?? null; }
+    } catch {}
+    stats = { at: Date.now(), data: { stars, forks, url: `https://github.com/${SOURCE_REPO}` } };
+    return stats.data;
+  }
+
   const repoFromPath = (owner: string, repo: string) => store.get(decodeURIComponent(owner), decodeURIComponent(repo));
 
   const handle = async (req: IncomingMessage, res: ServerResponse) => {
@@ -195,6 +210,8 @@ export function createApp(opts: AppOptions) {
 
       if (req.method === 'GET' && (p === '/' || p === '/index.html')) return send(res, 200, landing(), 'text/html; charset=utf-8');
       if (req.method === 'GET' && p === '/healthz') return send(res, 200, { ok: true });
+      // Star count for the header button (D50). Cached so visitors never hit GitHub's rate limit.
+      if (req.method === 'GET' && p === '/api/github-stats') return send(res, 200, await githubStats(), 'application/json; charset=utf-8', { 'cache-control': 'public, max-age=600' });
       if (req.method === 'GET' && p === '/example') return send(res, 200, example(), 'text/html; charset=utf-8');
       // Workspace and sign-in pages (D29).
       if (req.method === 'GET' && (p === '/app' || p === '/app/')) return send(res, 200, page('app.html'), 'text/html; charset=utf-8');
