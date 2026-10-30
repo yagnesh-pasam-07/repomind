@@ -1,0 +1,46 @@
+/* Shared by the landing page and the map viewer (injected at build time by scripts/copy-viewer.mjs).
+   Fonts: Excalidraw's own hand-drawn faces, loaded from the @excalidraw/excalidraw npm package on jsDelivr (D21).
+   Not bundled: Excalifont's embedded notice reserves rights, so we link to Excalidraw's published copy instead. */
+@font-face {
+  font-family: "Excalifont";
+  src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw@0.18.0/dist/prod/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2") format("woff2");
+  font-display: swap;
+  unicode-range: U+20-7e, U+a0-a3, U+a5-a6, U+a8-ab, U+ad-b1, U+b4, U+b6-b8, U+ba-ff, U+131, U+152-153, U+2bc, U+2c6, U+2da, U+2dc, U+304, U+308, U+2013-2014, U+2018-201a, U+201c-201e, U+2020, U+2022, U+2024-2026, U+2030, U+2039-203a, U+20ac, U+2122, U+2212;
+}
+@font-face {
+  font-family: "Excalifont";
+  src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw@0.18.0/dist/prod/fonts/Excalifont/Excalifont-Regular-be310b9bcd4f1a43f571c46df7809174.woff2") format("woff2");
+  font-display: swap;
+  unicode-range: U+100-130, U+132-137, U+139-149, U+14c-151, U+154-17e, U+192, U+1fc-1ff, U+218-21b, U+237, U+1e80-1e85, U+1ef2-1ef3, U+2113;
+}
+@font-face {
+  font-family: "Comic Shanns";
+  src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw@0.18.0/dist/prod/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2") format("woff2");
+  font-display: swap;
+  unicode-range: U+20-7e, U+a1-a6, U+a8, U+ab-ac, U+af-b1, U+b4, U+b8, U+bb-bc, U+bf-cf, U+d1-d7, U+d9-de, U+e0-ef, U+f1-f7, U+f9-ff, U+131, U+152-153, U+2c6, U+2da, U+2dc, U+2013-2014, U+2018-201a, U+201c-201d, U+2020-2022, U+2026, U+2039-203a, U+2044, U+20ac, U+2191, U+2193, U+2212;
+}
+
+:root {
+  /* One hand for everything, like Excalidraw: Excalifont for words, Comic Shanns for paths and shas. */
+  --hand: Excalifont, Virgil, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+  --title: var(--hand);
+  --mono: "Comic Shanns", "Comic Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Dark = GitHub's dark default palette, so the map feels like part of GitHub (D22).
+   Surfaces/borders/text from GitHub Primer; layer strokes from Primer's scale colours. */
+:root.dark {
+  --gh-canvas: #0d1117; --gh-subtle: #161b22; --gh-inset: #010409; --gh-overlay: #161b22;
+  --gh-border: #30363d; --gh-border-muted: #21262d; --gh-fg: #e6edf3; --gh-muted: #9198a1;
+  --gh-accent: #4493f8; --gh-success: #3fb950; --gh-danger: #f85149; --gh-attention: #d29922; --gh-done: #a371f7; --gh-btn: #21262d; --gh-btn-primary: #238636;
+
+  --paper: var(--gh-canvas); --card: var(--gh-subtle); --paper2: var(--gh-subtle); --paper2-stroke: var(--gh-border); --dot: #1c2129;
+  --ink: var(--gh-fg); --pencil: var(--gh-muted); --body: var(--gh-muted); --muted: var(--gh-muted);
+  --brand: #8957e5; --brand-stroke: var(--gh-done); --brand-soft: rgba(163,113,247,.25); --link: var(--gh-accent); --live: var(--gh-success);
+
+  /* Fills stay pastel-in-spirit but drawn at low strength on the dark canvas; strokes use Primer hues. */
+  --f-client: #4493f8; --k-client: #4493f8; --f-app: #a371f7; --k-app: #a371f7; --f-module: #db61a2; --k-module: #db61a2;
+  --f-data: #3fb950; --k-data: #3fb950; --f-cloud: #39c5cf; --k-cloud: #39c5cf; --f-external: #d29922; --k-external: #d29922;
+  --f-cicd: #db6d28; --k-cicd: #db6d28; --f-risk: #f85149; --k-risk: #f85149;
+  color-scheme: dark;
+}

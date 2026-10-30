@@ -234,7 +234,9 @@ const DATA = /*__REPOMIND_DATA__*/null;
 
     const sk = sketchOn();
     rc = sk ? rough.svg($('#canvas')) : null;
-    const ink = cssVar('--ink'), pencil = cssVar('--pencil');
+    // GitHub dark: outlines in GitHub's muted grey, not chalk white, so the sketch sits quietly on the canvas.
+    const dark = document.documentElement.classList.contains('dark');
+    const ink = dark ? '#8b949e' : cssVar('--ink'), pencil = dark ? '#30363d' : cssVar('--pencil');
 
     L.lanes.forEach((k, i) => {
       const x = i * (LANE_W + LANE_GAP);

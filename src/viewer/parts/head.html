@@ -4,9 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>__REPOMIND_TITLE__</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;600&family=Kalam:wght@400;700&display=swap" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<style>/*__THEME_CSS__*/</style>
 <style>
   :root {
     --bg: #f6f7f9; --panel: #ffffff; --lane: #eef0f4; --lane-border: #e1e4ea; --card: #ffffff; --card-border: #d9dde5;
@@ -31,9 +30,43 @@
     --f-client: #A5D8FF; --k-client: #1971C2; --f-app: #D0BFFF; --k-app: #6741D9; --f-module: #EEBEFA; --k-module: #9C36B5;
     --f-data: #B2F2BB; --k-data: #2F9E44; --f-cloud: #99E9F2; --k-cloud: #0C8599; --f-external: #FFEC99; --k-external: #F08C00;
     --f-cicd: #FFD8A8; --k-cicd: #E8590C; --f-risk: #FFC9C9; --k-risk: #E03131;
-    --hand: Kalam, "Segoe Print", "Comic Sans MS", cursive; --title: Caveat, Kalam, "Segoe Print", cursive; --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
-  :root.dark { --paper: #1B1B1F; --paper2: #24242A; --paper2-stroke: #3A3A42; --ink: #E9E7E2; --pencil: #A3A09A; }
+  /* GitHub dark (theme.css sets --gh-*): sketch and clean both sit on GitHub's canvas. */
+  :root.dark {
+    --bg: var(--gh-canvas); --panel: var(--gh-canvas); --lane: var(--gh-subtle); --lane-border: var(--gh-border); --card: var(--gh-subtle); --card-border: var(--gh-border);
+    --text: var(--gh-fg); --muted: var(--gh-muted); --faint: #6e7681; --accent: var(--gh-accent); --accent-soft: rgba(68,147,248,.18);
+    --shadow: 0 0 0 1px var(--gh-border-muted);
+    --l-client: #4493f8; --l-app: #a371f7; --l-module: #db61a2; --l-data: #3fb950; --l-cloud: #39c5cf; --l-external: #d29922; --l-cicd: #db6d28;
+    --e-data: #3fb950; --e-integration: #d29922; --e-deploy: #db6d28; --e-structure: #6e7681; --e-security: #39c5cf; --e-call: #4493f8;
+    --s-critical: #f85149; --s-high: #db6d28; --s-medium: #d29922; --s-low: #6e7681;
+    --c-added: #3fb950; --c-removed: #f85149; --c-changed: #d29922;
+  }
+  :root.dark body.sketch { --accent: var(--gh-accent); --accent-soft: rgba(68,147,248,.18); --s-low: #6e7681; --c-added: #3fb950; --c-removed: #f85149; --c-changed: #d29922; --s-critical: #f85149; }
+  :root.dark header, :root.dark aside, :root.dark #timeline { background: var(--gh-canvas); }
+  :root.dark header { border-bottom: 1px solid var(--gh-border) !important; }
+  :root.dark aside { border-left: 1px solid var(--gh-border) !important; }
+  :root.dark #timeline { border-top: 1px solid var(--gh-border) !important; }
+  :root.dark #stage { background-color: var(--gh-canvas) !important; background-image: radial-gradient(#1c2129 1.2px, transparent 1.3px) !important; }
+  :root.dark .tabs, :root.dark .seg { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
+  :root.dark .tab.on, :root.dark .seg button.on { background: var(--gh-btn); color: var(--gh-fg); box-shadow: none; border: 1px solid var(--gh-border); }
+  :root.dark .btn { background: var(--gh-btn); border: 1px solid var(--gh-border); color: var(--gh-fg); }
+  :root.dark .btn:hover { border-color: #8b949e; }
+  :root.dark .btn.primary { background: var(--gh-btn-primary); border-color: rgba(240,246,252,.1); color: #fff; }
+  :root.dark .search input { background: var(--gh-inset); border-color: var(--gh-border); }
+  :root.dark .stat, :root.dark .chip, :root.dark .badge { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
+  :root.dark .logo { background: #8957e5; }
+  :root.dark #toast { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 8px 24px rgba(1,4,9,.8); }
+  :root.dark #modal .box { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 16px 32px rgba(1,4,9,.85); }
+  :root.dark #modal .fmt, :root.dark #modal .field input, :root.dark #modal .field code { background-color: var(--gh-inset); border-color: var(--gh-border); color: var(--gh-fg); }
+  :root.dark #modal .live-box { border-color: #8957e5; background: rgba(137,87,229,.08); }
+  :root.dark .delta.add { background: rgba(46,160,67,.15); border-color: #2ea043; color: var(--gh-fg); }
+  :root.dark .delta.rem { background: rgba(248,81,73,.12); border-color: #da3633; color: var(--gh-fg); }
+  :root.dark .delta.risk { background: rgba(219,109,40,.14); border-color: #bd561d; color: var(--gh-fg); }
+  :root.dark .range span { background: var(--gh-subtle); border-color: var(--gh-border); }
+  :root.dark .range span.to { background: rgba(137,87,229,.25); color: var(--gh-fg); }
+  :root.dark .tl-v .dot { background: var(--gh-subtle); border-color: var(--gh-muted); }
+  :root.dark .tl-v.cur .dot { background: #8957e5; box-shadow: 0 0 0 5px rgba(137,87,229,.3); }
+  :root.dark .pill { background: rgba(46,160,67,.15); border-color: #2ea043; color: #3fb950; }
   body.sketch {
     --bg: var(--paper); --panel: var(--paper); --lane: var(--paper2); --lane-border: var(--paper2-stroke); --card: var(--paper); --card-border: var(--ink);
     --text: var(--ink); --muted: var(--pencil); --faint: var(--pencil); --accent: var(--brand); --accent-soft: rgba(105,101,219,.16); --shadow: none;
@@ -43,22 +76,23 @@
     --c-added: #2F9E44; --c-removed: #E03131; --c-changed: #F08C00;
     font-family: var(--hand); font-size: 14px;
   }
+  body.sketch, body.sketch button, body.sketch input, body.sketch b, body.sketch strong, body.sketch h1, body.sketch h2, body.sketch h3, body.sketch .t, body.sketch .sev, body.sketch .status, body.sketch .tag { font-weight: 400; }
   body.sketch #stage { background-color: var(--paper); background-image: radial-gradient(var(--paper2-stroke) 1.1px, transparent 1.3px); background-size: 22px 22px; }
   body.sketch header, body.sketch aside { border-color: var(--paper2-stroke); }
-  body.sketch .brand h1 { font-family: var(--title); font-size: 26px; line-height: 1; }
+  body.sketch .brand h1 { font-family: var(--title); font-size: 24px; line-height: 1; font-weight: 400; }
   body.sketch .logo { background: var(--brand); border-radius: 9px 7px 10px 6px; font-family: var(--title); font-size: 20px; }
-  body.sketch .tab { font-weight: 700; font-size: 14px; }
-  body.sketch .btn { border: 1.5px solid var(--ink); border-radius: 10px 8px 11px 7px; font-weight: 700; font-size: 13.5px; }
+  body.sketch .tab { font-weight: 400; font-size: 15px; }
+  body.sketch .btn { border: 1.5px solid var(--ink); border-radius: 10px 8px 11px 7px; font-weight: 400; font-size: 14.5px; }
   body.sketch .btn.primary { background: var(--brand); border-color: var(--brand-stroke); }
-  body.sketch .card .label { font-family: var(--hand); font-size: 15px; font-weight: 700; }
+  body.sketch .card .label { font-family: var(--hand); font-size: 15px; font-weight: 400; }
   body.sketch .card .tech, body.sketch .card .cost { font-family: var(--hand); font-size: 12.5px; }
-  body.sketch .lane-title { font-family: var(--title); font-size: 24px; font-weight: 700; letter-spacing: 0; fill: var(--ink); }
+  body.sketch .lane-title { font-family: var(--title); font-size: 21px; font-weight: 400; letter-spacing: 0; fill: var(--ink); }
   body.sketch .lane-count { font-family: var(--title); font-size: 18px; }
   body.sketch .mono, body.sketch .ev, body.sketch .finding .f { font-family: var(--mono); }
-  body.sketch aside h2 { font-family: var(--title); font-size: 30px; }
-  body.sketch aside h3 { font-family: var(--title); font-size: 21px; text-transform: none; letter-spacing: 0; color: var(--ink); }
+  body.sketch aside h2 { font-family: var(--title); font-size: 28px; font-weight: 400; }
+  body.sketch aside h3 { font-family: var(--title); font-size: 19px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink); }
   body.sketch .stat, body.sketch .chip { border: 1px solid var(--paper2-stroke); }
-  body.sketch #caption .title { font-family: var(--title); font-size: 30px; }
+  body.sketch #caption .title { font-family: var(--title); font-size: 28px; font-weight: 400; }
   .card .ring { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 4; opacity: 0; }
   body:not(.sketch) .card .ring { display: none; }
   body.sketch .card:hover .ring { opacity: .5; }
