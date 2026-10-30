@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RepoMind — draw any GitHub repo</title>
+<link rel="icon" type="image/svg+xml" href="/*__FAVICON__*/" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,7 +25,8 @@
   .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
   header.top { padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
-  .logo { width: 40px; height: 40px; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--title); font-size: 21px; border: var(--line) solid var(--ink); border-radius: var(--radius); }
+  /* Logo = the favicon (green tile, pink brain); it draws its own border and follows dark mode. */
+  .logo { width: 40px; height: 40px; display: block; flex: none; }
   .brand b { font-family: var(--title); font-size: 25px; font-weight: 400; }
   nav.main { display: flex; align-items: center; gap: 22px; font-size: 18px; flex-wrap: wrap; }
   nav.main a { color: var(--ink); text-decoration: none; }
@@ -97,7 +99,6 @@
   /* GitHub dark (variables from theme.css): flat 1px borders, no ink shadows, GitHub buttons. */
   :root.dark { --link-hover: #79c0ff; --err: #f85149; --dash: #30363d; }
   :root.dark body { background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); }
-  :root.dark .logo { border-color: var(--gh-border); background: var(--brand); }
   :root.dark header.top { border-bottom: 1px solid var(--gh-border); }
   :root.dark nav.main a.pill, :root.dark .theme { border: var(--line) solid var(--gh-border); background: var(--gh-btn); border-radius: var(--radius); }
   :root.dark form.card, :root.dark .panel { border: var(--line) solid var(--gh-border); box-shadow: var(--soft-shadow); background: var(--gh-subtle); }
@@ -118,7 +119,7 @@
 </head>
 <body>
 <header class="top wrap">
-  <a class="brand" href="/"><span class="logo">R</span><b>RepoMind</b></a>
+  <a class="brand" href="/"><img class="logo" src="/*__FAVICON__*/" alt="RepoMind" width="40" height="40" /><b>RepoMind</b></a>
   <nav class="main" aria-label="Main">
     <a href="#how">How it works</a>
     <a href="#recent">Examples</a>

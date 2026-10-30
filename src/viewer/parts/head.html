@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>__REPOMIND_TITLE__</title>
+<link rel="icon" type="image/svg+xml" href="/*__FAVICON__*/" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -58,7 +59,6 @@
   :root.dark .btn.primary { background: var(--gh-btn-primary); border-color: rgba(240,246,252,.1); color: #fff; }
   :root.dark .search input { background: var(--gh-inset); border-color: var(--gh-border); }
   :root.dark .stat, :root.dark .chip, :root.dark .badge { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
-  :root.dark .logo { background: var(--brand); border-color: var(--gh-border); }
   :root.dark #toast { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 8px 24px rgba(1,4,9,.8); }
   :root.dark #modal .box { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 16px 32px rgba(1,4,9,.85); }
   :root.dark #modal .fmt, :root.dark #modal .field input, :root.dark #modal .field code { background-color: var(--gh-inset); border-color: var(--gh-border); color: var(--gh-fg); }
@@ -84,7 +84,6 @@
   body.sketch #stage { background-color: var(--paper); background-image: radial-gradient(var(--paper2-stroke) 1.1px, transparent 1.3px); background-size: 22px 22px; }
   body.sketch header, body.sketch aside { border-color: var(--paper2-stroke); }
   body.sketch .brand h1 { font-family: var(--title); font-size: 21px; line-height: 1; font-weight: 400; }
-  body.sketch .logo { background: var(--brand); border: var(--line) solid var(--ink); border-radius: var(--radius); font-family: var(--title); font-size: 18px; font-weight: 400; }
   body.sketch .tab { font-weight: 400; font-size: 15px; }
   body.sketch .btn { border: var(--line) solid var(--ink); border-radius: var(--radius); font-size: 15px; }
   body.sketch .btn.primary { border-color: var(--ink); }
@@ -182,7 +181,8 @@
 
   header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--lane-border); position: relative; z-index: 5; }
   .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-  .logo { width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #a855f7); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 14px; flex: none; }
+  /* Logo = the favicon (green tile, pink brain). */
+  .logo { width: 32px; height: 32px; display: block; flex: none; }
   .brand h1 { font-size: 14px; margin: 0; font-weight: 700; white-space: nowrap; }
   .brand .sub { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tabs { display: flex; gap: 2px; background: var(--lane); padding: 3px; border-radius: 10px; margin-left: 8px; }
@@ -288,7 +288,7 @@
 <div id="app">
   <header>
     <div class="brand">
-      <div class="logo">R</div>
+      <img class="logo" src="/*__FAVICON__*/" alt="RepoMind" width="32" height="32" />
       <div style="min-width:0">
         <h1 id="repoName">RepoMind</h1>
         <div class="sub" id="repoSub"></div>

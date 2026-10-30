@@ -217,7 +217,8 @@ The map looks drawn by hand on paper: one ink colour for every outline and word,
 | Paper 2 | `#F4F1EA` | `#D9D3C7` | Lanes, panels, cards in the UI |
 | Ink | `#1E1E1E` | — | Outlines, labels, main text |
 | Pencil | `#6B6B6B` | — | Secondary text, tech line under a label |
-| Brand violet | `#6965DB` | `#5B57D1` | Buttons, links, selection, logo |
+| Brand violet | `#6965DB` | `#5B57D1` | Buttons, links, selection |
+| Logo · Green + Pink | `#2F9E44` tile, `#FCC2D7` brain | `#A61E4D` | Logo and favicon (D25) |
 | Users · Sky | `#A5D8FF` | `#1971C2` | Mobile, web and desktop users |
 | Apps · Lavender | `#D0BFFF` | `#6741D9` | Apps and services |
 | Modules · Grape | `#EEBEFA` | `#9C36B5` | Feature modules |
@@ -339,6 +340,8 @@ A running log of choices made while building. Newest last.
 
 | D23 | 2026-10-30 | Follow the updated v2 designs (Landing, LandingDark, Map, MapDark): Excalifont only for headings, brand, buttons, tabs and map labels; **IBM Plex Sans** for interface text and **IBM Plex Mono** for code (both OFL, Google Fonts). Thin 1.5px lines, 8px corners, soft shadow instead of hard ink offsets. Dark mode: `#010409` header, `#161B22` panels, GitHub green (`#238636`) as the brand and primary colour, current version dot green with a blue ring. Supersedes the Comic Shanns part of D21. | The design artifact and PRD were updated to this split; all-handwritten body text was hard to read at small sizes. |
 | D24 | 2026-10-30 | Recent-map summaries count shared packages as apps and use singular/plural ("1 app · 1 risk"). | Found in the browser: a library repo (expressjs/express) showed "0 apps". |
+
+| D25 | 2026-10-30 | Logo and favicon: a pink hand-drawn brain (`#FCC2D7` fill, `#A61E4D` lines) on a green tile (`#2F9E44`, GitHub `#238636` in dark). One SVG (`src/web/favicon.svg`) is the browser tab icon and the header logo on every page, embedded as a data URI so the offline HTML map keeps it. Replaces the violet "R" tile. | Owner asked for green and pink with a brain; "RepoMind" is the project's brain. |
 
 ### Verified (2026-10-30)
 
