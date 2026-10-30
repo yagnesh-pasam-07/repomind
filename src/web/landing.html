@@ -12,12 +12,7 @@
 <style>/*__THEME_CSS__*/</style>
 <!-- Landing + Scanning screens. Layout and palette follow the "RepoMind — v2 designs" artifact. -->
 <style>
-  :root {
-    --paper: #FDFBF7; --card: #FFFEFB; --paper2: #F4F1EA; --dot: #E4DED2; --ink: #2B2B2B; --body: #4A4A4A; --muted: #5F5F5F; --pencil: #6B6B6B;
-    --brand: #6965DB; --brand-stroke: #5B57D1; --brand-soft: #D0CFFB; --link: #5B57D1; --live: #2B8A3E;
-    --f-app: #D0BFFF; --k-app: #6741D9; --f-data: #B2F2BB; --k-data: #2F9E44; --f-cloud: #99E9F2; --k-cloud: #0C8599;
-    --f-external: #FFEC99; --k-external: #F08C00; --f-cicd: #FFD8A8; --k-cicd: #E8590C; --f-client: #A5D8FF; --k-client: #1971C2; --f-risk: #FFC9C9; --k-risk: #E03131;
-  }
+  /* Palette comes from theme.css (weaverbird brand, D26). */
   * { box-sizing: border-box; }
   body { margin: 0; min-height: 100vh; background-color: var(--paper); background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size: 22px 22px; font-family: var(--ui); color: var(--ink); }
   a { color: var(--link); }
@@ -25,8 +20,8 @@
   .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
   header.top { padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
-  /* Logo = the favicon (green tile, pink brain); it draws its own border and follows dark mode. */
-  .logo { width: 40px; height: 40px; display: block; flex: none; }
+  /* Logo = the weaverbird (D26); follows dark mode on its own. */
+  .logo { width: 64px; height: 40px; display: block; flex: none; }
   .brand b { font-family: var(--title); font-size: 25px; font-weight: 400; }
   nav.main { display: flex; align-items: center; gap: 22px; font-size: 18px; flex-wrap: wrap; }
   nav.main a { color: var(--ink); text-decoration: none; }
@@ -83,7 +78,7 @@
   ol.steps li { display: flex; align-items: center; gap: 14px; }
   ol.steps .m { width: 30px; height: 30px; flex: none; border: var(--line) solid currentColor; border-radius: var(--radius); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   ol.steps .t { margin-left: auto; font-family: var(--mono); font-size: 14px; color: var(--muted); }
-  ol.steps li.done .m { background: var(--f-data); }
+  ol.steps li.done .m { background: var(--k-live); }
   ol.steps li.doing { color: var(--ink); font-weight: 600; }
   ol.steps li.doing .m { background: var(--brand-soft); }
   ol.steps li.todo { color: var(--pencil); }
@@ -96,30 +91,30 @@
   .sr { position: absolute; left: -9999px; }
   .theme { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; border: var(--line) solid var(--ink); border-radius: var(--radius); background: transparent; color: var(--ink); cursor: pointer; font-size: 18px; }
 
-  /* GitHub dark (variables from theme.css): flat 1px borders, no ink shadows, GitHub buttons. */
-  :root.dark { --link-hover: #79c0ff; --err: #f85149; --dash: #30363d; }
+  /* Night dark (variables from theme.css). */
+  :root.dark { --err: #FF8787; --dash: #475569; }
   :root.dark body { background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); }
   :root.dark header.top { border-bottom: 1px solid var(--gh-border); }
   :root.dark nav.main a.pill, :root.dark .theme { border: var(--line) solid var(--gh-border); background: var(--gh-btn); border-radius: var(--radius); }
   :root.dark form.card, :root.dark .panel { border: var(--line) solid var(--gh-border); box-shadow: var(--soft-shadow); background: var(--gh-subtle); }
   :root.dark input.url, :root.dark select, :root.dark input.tok { background: var(--gh-canvas); border: var(--line) solid var(--gh-border); }
   :root.dark input.url:focus, :root.dark select:focus, :root.dark input.tok:focus { outline: 2px solid var(--gh-accent); outline-offset: -1px; }
-  :root.dark button.go { background: var(--gh-btn-primary); border: var(--line) solid var(--gh-border); }
+  :root.dark button.go { background: var(--brand); border: var(--line) solid var(--gh-border); }
   :root.dark .example .frame { border: var(--line) solid var(--gh-border); background: var(--gh-canvas); }
-  :root.dark .sticky { background: #9E6A03; color: var(--gh-fg); border-color: var(--gh-border); }
+  :root.dark .sticky { background: #B45309; color: #FEF3C7; border-color: var(--gh-border); }
   :root.dark .rcard { border: var(--line) solid var(--gh-border); background: var(--gh-subtle); }
   :root.dark .rcard:hover { box-shadow: 0 0 0 1px var(--gh-accent); }
   :root.dark .bar { border: 1px solid var(--gh-border); background: var(--gh-inset); }
-  :root.dark .bar div { background-color: transparent; background-image: repeating-linear-gradient(-41deg, #238636 0 3px, transparent 3px 9px); border-right-color: var(--gh-border); }
-  :root.dark ol.steps li.done .m { background: rgba(46,160,67,.25); }
-  :root.dark ol.steps li.doing .m { background: rgba(31,111,235,.3); }
+  :root.dark .bar div { background-color: transparent; background-image: repeating-linear-gradient(-41deg, var(--brand) 0 3px, transparent 3px 9px); border-right-color: var(--gh-border); }
+  :root.dark ol.steps li.done .m { background: rgba(52,211,153,.3); }
+  :root.dark ol.steps li.doing .m { background: rgba(99,102,241,.35); }
   :root.dark .found, :root.dark .found .ic { border: var(--line) solid var(--gh-border); background-color: var(--gh-canvas); }
   :root.dark #how code { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
 </style>
 </head>
 <body>
 <header class="top wrap">
-  <a class="brand" href="/"><img class="logo" src="/*__FAVICON__*/" alt="RepoMind" width="40" height="40" /><b>RepoMind</b></a>
+  <a class="brand" href="/"><img class="logo" src="/*__LOGO__*/" data-light="/*__LOGO__*/" data-dark="/*__LOGO_DARK__*/" alt="RepoMind" width="64" height="40" /><b>RepoMind</b></a>
   <nav class="main" aria-label="Main">
     <a href="#how">How it works</a>
     <a href="#recent">Examples</a>
@@ -185,7 +180,7 @@
   <main class="scan wrap">
     <section>
       <span class="ref" id="scanRef"></span>
-      <h1 id="scanTitle">Sketching your repo…</h1>
+      <h1 id="scanTitle">Weaving your repo…</h1>
       <div class="bar"><div id="bar"></div></div>
       <ol class="steps" id="steps"></ol>
       <p style="margin:0;font-size:17px;color:var(--body)" id="scanNote">Usually under a minute. You can leave; the map keeps updating once it's connected.</p>
@@ -220,8 +215,8 @@
     if (typeof rough === 'undefined') return;
     svg.innerHTML = '';
     const rc = rough.svg(svg);
-    // GitHub dark: outlines in GitHub's muted grey, like the map viewer.
-    const ink = document.documentElement.classList.contains('dark') ? '#8b949e' : cssVar('--ink');
+    // Night dark: slate outlines, like the map viewer.
+    const ink = document.documentElement.classList.contains('dark') ? '#94A3B8' : cssVar('--ink');
     const NS = 'http://www.w3.org/2000/svg';
     const text = (x, y, s, size, fam, fill, anchor) => {
       const t = document.createElementNS(NS, 'text');
@@ -345,14 +340,18 @@
     tick();
   }
 
+  // The logo is an <img>, so it can't see the .dark class: swap to its dark drawing.
+  const syncLogo = () => document.querySelectorAll('img.logo').forEach((i) => (i.src = i.dataset[document.documentElement.classList.contains('dark') ? 'dark' : 'light']));
   const setTheme = (dark) => {
     document.documentElement.classList.toggle('dark', dark);
+    syncLogo();
     try { localStorage.setItem('repomind-theme', dark ? 'dark' : 'light'); } catch (e) {}
     drawExample();
   };
   let saved = null;
   try { saved = localStorage.getItem('repomind-theme'); } catch (e) {}
   document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
+  syncLogo();
   $('#themeBtn').onclick = () => setTheme(!document.documentElement.classList.contains('dark'));
 
   drawExample();

@@ -28,57 +28,51 @@
     --e-data: #22d3ee; --e-integration: #c084fc; --e-deploy: #fbbf24; --e-structure: #5b667a; --e-security: #34d399; --e-call: #818cf8;
     --s-low: #64748b;
   }
-  /* v2 sketch palette (PRODUCT.md, "Visual style and colour palette"). --f-* fill, --k-* stroke. */
-  :root {
-    --paper: #FDFBF7; --paper2: #F4F1EA; --paper2-stroke: #D9D3C7; --ink: #1E1E1E; --pencil: #6B6B6B; --brand: #6965DB; --brand-stroke: #5B57D1;
-    --f-client: #A5D8FF; --k-client: #1971C2; --f-app: #D0BFFF; --k-app: #6741D9; --f-module: #EEBEFA; --k-module: #9C36B5;
-    --f-data: #B2F2BB; --k-data: #2F9E44; --f-cloud: #99E9F2; --k-cloud: #0C8599; --f-external: #FFEC99; --k-external: #F08C00;
-    --f-cicd: #FFD8A8; --k-cicd: #E8590C; --f-risk: #FFC9C9; --k-risk: #E03131;
-  }
-  /* GitHub dark (theme.css sets --gh-*): sketch and clean both sit on GitHub's canvas. */
+  /* Sketch palette (--paper, --ink, --brand, --f-* fill, --k-* stroke) comes from theme.css (D26). */
+  /* Night dark (theme.css sets the --gh-* surface tokens): sketch and clean both sit on it. */
   :root.dark {
     --bg: var(--gh-canvas); --panel: var(--gh-canvas); --lane: var(--gh-subtle); --lane-border: var(--gh-border); --card: var(--gh-subtle); --card-border: var(--gh-border);
-    --text: var(--gh-fg); --muted: var(--gh-muted); --faint: #6e7681; --accent: var(--gh-accent); --accent-soft: rgba(68,147,248,.18);
+    --text: var(--gh-fg); --muted: var(--gh-muted); --faint: #64748B; --accent: var(--gh-accent); --accent-soft: rgba(165,180,252,.18);
     --shadow: 0 0 0 1px var(--gh-border-muted);
-    --l-client: #4493f8; --l-app: #a371f7; --l-module: #db61a2; --l-data: #3fb950; --l-cloud: #39c5cf; --l-external: #d29922; --l-cicd: #db6d28;
-    --e-data: #3fb950; --e-integration: #d29922; --e-deploy: #db6d28; --e-structure: #6e7681; --e-security: #39c5cf; --e-call: #4493f8;
-    --s-critical: #f85149; --s-high: #db6d28; --s-medium: #d29922; --s-low: #6e7681;
-    --c-added: #3fb950; --c-removed: #f85149; --c-changed: #d29922;
+    --l-client: var(--k-client); --l-app: var(--k-app); --l-module: var(--k-module); --l-data: var(--k-data); --l-cloud: var(--k-cloud); --l-external: var(--k-external); --l-cicd: var(--k-cicd);
+    --e-data: var(--k-data); --e-integration: var(--k-external); --e-deploy: var(--k-cicd); --e-structure: #64748B; --e-security: var(--k-cloud); --e-call: var(--k-app);
+    --s-critical: #FF8787; --s-high: #FDBA74; --s-medium: #FCD34D; --s-low: #64748B;
+    --c-added: #34D399; --c-removed: #FF8787; --c-changed: #FF8787;
   }
-  :root.dark body.sketch { --accent: var(--gh-accent); --accent-soft: rgba(68,147,248,.18); --s-low: #6e7681; --c-added: #3fb950; --c-removed: #f85149; --c-changed: #d29922; --s-critical: #f85149; }
+  :root.dark body.sketch { --accent: var(--gh-accent); --accent-soft: rgba(165,180,252,.18); --s-low: #64748B; --c-added: #34D399; --c-removed: #FF8787; --c-changed: #FF8787; --s-critical: #FF8787; --s-high: #FDBA74; }
   :root.dark header { background: var(--gh-header); }
   :root.dark aside, :root.dark #timeline { background: var(--gh-subtle); }
   :root.dark header { border-bottom: 1px solid var(--gh-border) !important; }
   :root.dark aside { border-left: 1px solid var(--gh-border) !important; }
   :root.dark #timeline { border-top: 1px solid var(--gh-border) !important; }
-  :root.dark #stage { background-color: var(--gh-canvas) !important; background-image: radial-gradient(#1c2129 1.2px, transparent 1.3px) !important; }
+  :root.dark #stage { background-color: var(--gh-canvas) !important; background-image: radial-gradient(var(--dot) 1.2px, transparent 1.3px) !important; }
   :root.dark .tabs, :root.dark .seg { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
   :root.dark .tab.on, :root.dark .seg button.on { background: var(--gh-btn); color: var(--gh-fg); box-shadow: none; border: 1px solid var(--gh-border); }
   :root.dark .btn { background: var(--gh-btn); border: 1px solid var(--gh-border); color: var(--gh-fg); }
-  :root.dark .btn:hover { border-color: #8b949e; }
-  :root.dark .btn.primary { background: var(--gh-btn-primary); border-color: rgba(240,246,252,.1); color: #fff; }
+  :root.dark .btn:hover { border-color: #64748B; }
+  :root.dark .btn.primary { background: var(--brand); border-color: var(--gh-border); color: #fff; }
   :root.dark .search input { background: var(--gh-inset); border-color: var(--gh-border); }
   :root.dark .stat, :root.dark .chip, :root.dark .badge { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
-  :root.dark #toast { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 8px 24px rgba(1,4,9,.8); }
-  :root.dark #modal .box { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 16px 32px rgba(1,4,9,.85); }
+  :root.dark #toast { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 8px 24px rgba(2,6,23,.6); }
+  :root.dark #modal .box { background: var(--gh-overlay); border-color: var(--gh-border); box-shadow: 0 16px 32px rgba(2,6,23,.7); }
   :root.dark #modal .fmt, :root.dark #modal .field input, :root.dark #modal .field code { background-color: var(--gh-inset); border-color: var(--gh-border); color: var(--gh-fg); }
-  :root.dark #modal .live-box { border-color: #238636; background: rgba(46,160,67,.06); }
-  :root.dark .delta.add { background: rgba(46,160,67,.15); border-color: #2ea043; color: var(--gh-fg); }
-  :root.dark .delta.rem { background: rgba(248,81,73,.12); border-color: #da3633; color: var(--gh-fg); }
-  :root.dark .delta.risk { background: rgba(219,109,40,.14); border-color: #bd561d; color: var(--gh-fg); }
+  :root.dark #modal .live-box { border-color: var(--brand); background: rgba(99,102,241,.08); }
+  :root.dark .delta.add { background: rgba(52,211,153,.12); border-color: #34D399; color: var(--gh-fg); }
+  :root.dark .delta.rem { background: rgba(255,135,135,.12); border-color: #FF8787; color: var(--gh-fg); }
+  :root.dark .delta.risk { background: rgba(253,186,116,.12); border-color: #FDBA74; color: var(--gh-fg); }
   :root.dark .range span { background: var(--gh-subtle); border-color: var(--gh-border); }
-  :root.dark .range span.to { background: rgba(31,111,235,.25); color: var(--gh-fg); }
+  :root.dark .range span.to { background: rgba(99,102,241,.3); color: var(--gh-fg); }
   :root.dark .tl-v .dot { background: var(--gh-subtle); border-color: var(--gh-muted); }
-  :root.dark .tl-v.cur .dot { background: #238636; box-shadow: 0 0 0 5px #1F6FEB; }
+  :root.dark .tl-v.cur .dot { background: var(--brand); box-shadow: 0 0 0 5px rgba(99,102,241,.35); }
   :root.dark .tl-v .dot { border-color: var(--gh-border); }
-  :root.dark .pill { background: rgba(46,160,67,.15); border-color: #2ea043; color: #3fb950; }
+  :root.dark .pill { background: rgba(52,211,153,.12); border-color: #34D399; color: #34D399; }
   body.sketch {
     --bg: var(--paper); --panel: var(--paper); --lane: var(--paper2); --lane-border: var(--paper2-stroke); --card: var(--paper); --card-border: var(--ink);
-    --text: var(--ink); --muted: var(--pencil); --faint: var(--pencil); --accent: var(--brand); --accent-soft: rgba(105,101,219,.16); --shadow: none;
+    --text: var(--ink); --muted: var(--pencil); --faint: var(--pencil); --accent: var(--brand); --accent-soft: rgba(99,102,241,.16); --shadow: none;
     --l-client: var(--k-client); --l-app: var(--k-app); --l-module: var(--k-module); --l-data: var(--k-data); --l-cloud: var(--k-cloud); --l-external: var(--k-external); --l-cicd: var(--k-cicd);
     --e-data: var(--k-data); --e-integration: var(--k-external); --e-deploy: var(--k-cicd); --e-structure: var(--pencil); --e-security: var(--k-cloud); --e-call: var(--brand);
-    --s-critical: #E03131; --s-high: #E8590C; --s-medium: #F08C00; --s-low: var(--pencil);
-    --c-added: #2F9E44; --c-removed: #E03131; --c-changed: #F08C00;
+    --s-critical: #E03131; --s-high: #C2410C; --s-medium: #B45309; --s-low: var(--pencil);
+    --c-added: #10B981; --c-removed: #E03131; --c-changed: #FF6B6B;
   }
   body.sketch .brand h1, body.sketch .tab, body.sketch .btn, body.sketch .seg button, body.sketch aside h2, body.sketch aside h3, body.sketch .tl-title, body.sketch .lane-title, body.sketch .lane-count, body.sketch .card .label, body.sketch .card .tech, body.sketch .card .cost, body.sketch #caption .title, body.sketch #modal h1, body.sketch #modal h2, body.sketch .fmt b, body.sketch .delta b { font-family: var(--hand); font-weight: 400; }
   body.sketch #stage { background-color: var(--paper); background-image: radial-gradient(var(--paper2-stroke) 1.1px, transparent 1.3px); background-size: 22px 22px; }
@@ -116,8 +110,9 @@
   body.live .tabs { margin-left: 0; }
   .badge { align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); padding: 4px 10px; border-radius: 99px; background: var(--lane); white-space: nowrap; }
   .badge .pulse { width: 8px; height: 8px; border-radius: 99px; background: var(--pencil); }
-  .badge.on .pulse { background: #2F9E44; box-shadow: 0 0 0 0 rgba(47,158,68,.5); animation: pulse 2s infinite; }
-  @keyframes pulse { 70% { box-shadow: 0 0 0 7px rgba(47,158,68,0); } 100% { box-shadow: 0 0 0 0 rgba(47,158,68,0); } }
+  .badge.on { color: var(--live); }
+  .badge.on .pulse { background: var(--k-live); box-shadow: 0 0 0 0 rgba(16,185,129,.5); animation: pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 7px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
   body.live #app { grid-template-rows: auto 1fr auto; }
   .seg { display: inline-flex; padding: 3px; background: var(--lane); border-radius: 10px; }
   .seg button { border: 0; background: transparent; padding: 5px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 13.5px; }
@@ -137,22 +132,22 @@
   .tl-v .sha { font-family: var(--mono); font-size: 11.5px; }
   .tl-v.big .sha { font-weight: 700; }
   .tl-v .when { font-size: 12px; color: var(--muted); }
-  .tl-v.cur .dot { background: var(--brand); box-shadow: 0 0 0 5px #D0CFFB; }
+  .tl-v.cur .dot { background: var(--brand); box-shadow: 0 0 0 5px var(--brand-soft); }
   .tl-v.base .dot { box-shadow: 0 0 0 4px var(--pencil); }
   #toast { position: absolute; left: 50%; top: 18px; transform: translate(-50%, -12px) rotate(-0.6deg); display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--panel); color: var(--text); border: var(--line) solid var(--ink); border-radius: var(--radius); box-shadow: var(--soft-shadow); font-size: 15px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 20; max-width: 80%; }
   #toast.show { opacity: 1; pointer-events: auto; transform: translate(-50%, 0) rotate(-0.6deg); }
-  #toast .pulse { width: 10px; height: 10px; border-radius: 50%; background: #2F9E44; flex: none; }
+  #toast .pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--k-live); flex: none; }
   #toast a { color: var(--accent); font-weight: 700; cursor: pointer; }
   .deltas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
   .delta { padding: 10px; border: var(--line) solid; border-radius: var(--radius); display: flex; flex-direction: column; }
   .delta b { font-size: 28px; line-height: 1; }
   .delta span { font-size: 13px; }
-  .delta.add { border-color: #2F9E44; background: #EBFBEE; color: #1E1E1E; }
-  .delta.rem { border-color: #E03131; background: #FFF5F5; color: #1E1E1E; }
-  .delta.risk { border-color: #E8590C; background: #FFF4E6; color: #1E1E1E; }
+  .delta.add { border-color: #10B981; background: #ECFDF5; color: var(--ink); }
+  .delta.rem { border-color: #E03131; background: #FFF5F5; color: var(--ink); }
+  .delta.risk { border-color: #C2410C; background: #FFF4E6; color: var(--ink); }
   .range { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12.5px; margin-top: 8px; flex-wrap: wrap; }
   .range span { padding: 4px 10px; border: 2px solid var(--ink); border-radius: 9px 12px 8px 11px; background: var(--paper2); }
-  .range span.to { background: #D0CFFB; color: #1E1E1E; font-weight: 700; }
+  .range span.to { background: var(--brand-soft); color: var(--ink); font-weight: 700; }
   #modal { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; place-items: center; z-index: 30; }
   #modal.open { display: grid; }
   #modal .box { position: relative; background: var(--paper); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--radius); box-shadow: var(--soft-shadow); padding: 26px 28px; width: min(980px, 94vw); max-height: 92vh; overflow-y: auto; font-family: var(--hand); }
@@ -161,7 +156,7 @@
   #modal h2 { font-family: var(--title); font-size: 26px; font-weight: 400; margin: 4px 0 8px; }
   #modal .cols { display: flex; flex-wrap: wrap; gap: 26px; }
   #modal .col { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-  #modal .live-box { padding: 18px; border: var(--line) dashed var(--brand); border-radius: var(--radius); background: rgba(105,101,219,.06); }
+  #modal .live-box { padding: 18px; border: var(--line) dashed var(--brand); border-radius: var(--radius); background: #EEF2FF; }
   #modal .formats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   #modal .fmt { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 80px; padding: 12px 14px; text-align: left; border: var(--line) solid var(--ink); border-radius: var(--radius); background-color: var(--paper); font: inherit; color: var(--ink); cursor: pointer; }
   #modal .fmt b { font-size: 20px; }
@@ -171,7 +166,7 @@
   #modal label.k { font-weight: 700; font-size: 14px; }
   #modal .hint { color: var(--pencil); font-size: 14px; }
   #modal .close { width: 44px; height: 44px; margin-left: auto; font-size: 22px; justify-content: center; }
-  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border: 2px solid #2F9E44; border-radius: 99px; background: #EBFBEE; color: #1E6B30; font-weight: 700; font-size: 14px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border: var(--line) solid #10B981; border-radius: 99px; background: #ECFDF5; color: #047857; font-weight: 700; font-size: 14px; }
   .pill.off { border-color: var(--pencil); background: var(--paper2); color: var(--pencil); }
 
   * { box-sizing: border-box; }
@@ -181,8 +176,8 @@
 
   header { display: flex; align-items: center; gap: 14px; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--lane-border); position: relative; z-index: 5; }
   .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-  /* Logo = the favicon (green tile, pink brain). */
-  .logo { width: 32px; height: 32px; display: block; flex: none; }
+  /* Logo = the weaverbird (D26). */
+  .logo { width: 58px; height: 36px; display: block; flex: none; }
   .brand h1 { font-size: 14px; margin: 0; font-weight: 700; white-space: nowrap; }
   .brand .sub { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tabs { display: flex; gap: 2px; background: var(--lane); padding: 3px; border-radius: 10px; margin-left: 8px; }
@@ -288,7 +283,7 @@
 <div id="app">
   <header>
     <div class="brand">
-      <img class="logo" src="/*__FAVICON__*/" alt="RepoMind" width="32" height="32" />
+      <img class="logo" src="/*__LOGO__*/" data-light="/*__LOGO__*/" data-dark="/*__LOGO_DARK__*/" alt="RepoMind" width="58" height="36" />
       <div style="min-width:0">
         <h1 id="repoName">RepoMind</h1>
         <div class="sub" id="repoSub"></div>

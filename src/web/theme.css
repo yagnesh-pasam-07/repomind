@@ -1,5 +1,5 @@
 /* Shared by the landing page and the map viewer (injected at build time by scripts/copy-viewer.mjs).
-   Fonts per the v2 designs (D23): Excalifont (Excalidraw's hand) for headings, buttons, brand and the map;
+   Fonts per the v2 designs (D23); colours per the weaverbird brand (D26): Excalifont (Excalidraw's hand) for headings, buttons, brand and the map;
    IBM Plex Sans for interface text; IBM Plex Mono for paths and shas.
    Excalifont loads from the @excalidraw/excalidraw npm package on jsDelivr and is not bundled: its embedded
    notice reserves rights. IBM Plex (OFL) loads from Google Fonts via the <link> in each page. */
@@ -24,21 +24,33 @@
   --radius: 8px; --line: 1.5px; --soft-shadow: 0 2px 14px rgba(43, 43, 43, .07);
 }
 
-/* Dark = GitHub's dark default palette, so the map feels like part of GitHub (D22).
-   Surfaces/borders/text from GitHub Primer; layer strokes from Primer's scale colours. */
+/* Light palette per the "Brand · the weaverbird" and "Palette & type" designs (D26).
+   Indigo is the brand. Green only means live or success; coral means a warning or a change. */
+:root {
+  --paper: #FDFBF7; --card: #FBFAF7; --paper2: #F4F1EA; --paper2-stroke: #D9D3C7; --dot: #E4DED2;
+  --ink: #262626; --pencil: #5F5F5F; --body: #4A4A4A; --muted: #5F5F5F;
+  --brand: #6366F1; --brand-stroke: #4F46E5; --brand-soft: #E0E7FF; --link: #4F46E5; --link-hover: #4338CA; --live: #047857; --honey: #FBBF24;
+  --f-client: #E7E5E4; --k-client: #57534E; --f-app: #C7D2FE; --k-app: #4F46E5; --f-module: #E0E7FF; --k-module: #6366F1;
+  --f-data: #BAE6FD; --k-data: #0284C7; --f-cloud: #A5F3FC; --k-cloud: #0E7490; --f-external: #FDE68A; --k-external: #B45309;
+  --f-cicd: #FED7AA; --k-cicd: #C2410C; --f-risk: #FFD6D6; --k-risk: #E03131;
+  --f-live: #A7F3D0; --k-live: #10B981; --f-change: #FFD6D6; --k-change: #FF6B6B;
+}
+
+/* Dark = "Night" from the designs (slate/navy, indigo brand). The --gh-* names are kept as the
+   dark-surface tokens the pages already use; their values are the Night palette now (D26). */
 :root.dark {
-  --gh-canvas: #0d1117; --gh-subtle: #161b22; --gh-inset: #010409; --gh-overlay: #161b22;
-  --gh-border: #30363d; --gh-border-muted: #21262d; --gh-fg: #e6edf3; --gh-muted: #9198a1;
-  --gh-accent: #4493f8; --gh-success: #3fb950; --gh-danger: #f85149; --gh-attention: #d29922; --gh-done: #a371f7; --gh-btn: #21262d; --gh-btn-primary: #238636;
+  --gh-canvas: #0F172A; --gh-subtle: #1E293B; --gh-inset: #0F172A; --gh-overlay: #1E293B; --gh-header: #0B1120;
+  --gh-border: #334155; --gh-border-muted: #1E293B; --gh-fg: #E2E8F0; --gh-muted: #94A3B8;
+  --gh-accent: #A5B4FC; --gh-success: #34D399; --gh-danger: #FF8787; --gh-attention: #FDBA74; --gh-done: #A5B4FC; --gh-btn: #1E293B; --gh-btn-primary: #6366F1;
 
-  --paper: var(--gh-canvas); --card: var(--gh-subtle); --paper2: var(--gh-subtle); --paper2-stroke: var(--gh-border); --dot: #1c2129;
+  --paper: var(--gh-canvas); --card: var(--gh-subtle); --paper2: var(--gh-subtle); --paper2-stroke: var(--gh-border); --dot: #1E293B;
   --ink: var(--gh-fg); --pencil: var(--gh-muted); --body: var(--gh-muted); --muted: var(--gh-muted);
-  --gh-header: #010409;
-  --brand: #238636; --brand-stroke: #2ea043; --brand-soft: rgba(46,160,67,.25); --link: var(--gh-accent); --live: var(--gh-success);
+  --brand: #6366F1; --brand-stroke: #818CF8; --brand-soft: rgba(99,102,241,.25); --link: #A5B4FC; --link-hover: #C7D2FE; --live: #34D399;
 
-  /* Fills stay pastel-in-spirit but drawn at low strength on the dark canvas; strokes use Primer hues. */
-  --f-client: #4493f8; --k-client: #4493f8; --f-app: #a371f7; --k-app: #a371f7; --f-module: #db61a2; --k-module: #db61a2;
-  --f-data: #3fb950; --k-data: #3fb950; --f-cloud: #39c5cf; --k-cloud: #39c5cf; --f-external: #d29922; --k-external: #d29922;
-  --f-cicd: #db6d28; --k-cicd: #db6d28; --f-risk: #f85149; --k-risk: #f85149;
+  /* Same layer hues, brighter strokes for the dark canvas; fills are drawn at low strength. */
+  --f-client: #A8A29E; --k-client: #D6D3D1; --f-app: #818CF8; --k-app: #A5B4FC; --f-module: #A5B4FC; --k-module: #C7D2FE;
+  --f-data: #38BDF8; --k-data: #7DD3FC; --f-cloud: #22D3EE; --k-cloud: #67E8F9; --f-external: #FBBF24; --k-external: #FCD34D;
+  --f-cicd: #FB923C; --k-cicd: #FDBA74; --f-risk: #FF8787; --k-risk: #FF8787;
+  --f-live: #34D399; --k-live: #34D399; --f-change: #FF8787; --k-change: #FF8787;
   color-scheme: dark;
 }

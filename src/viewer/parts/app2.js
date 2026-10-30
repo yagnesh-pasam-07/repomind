@@ -234,8 +234,11 @@
   });
 
   // ---------- Theme ----------
+  // The logo is an <img>, so it can't see the .dark class: swap to its dark drawing.
+  const syncLogo = () => document.querySelectorAll('img.logo').forEach((i) => (i.src = i.dataset[document.documentElement.classList.contains('dark') ? 'dark' : 'light']));
   const setTheme = (dark) => {
     document.documentElement.classList.toggle('dark', dark);
+    syncLogo();
     try { localStorage.setItem('repomind-theme', dark ? 'dark' : 'light'); } catch (e) {}
   };
   let savedTheme = null;
@@ -464,7 +467,7 @@
       vs.forEach((v, i) => {
         const b = document.createElement('button');
         const big = v.changes > 0 || i === 0;
-        const color = v.newRisks > 0 ? 'var(--f-risk)' : v.removed > 0 && !v.added ? 'var(--f-risk)' : v.changed > 0 && !v.added ? 'var(--f-external)' : 'var(--f-data)';
+        const color = v.newRisks > 0 || (v.removed > 0 && !v.added) ? 'var(--f-risk)' : v.changed > 0 && !v.added ? 'var(--f-external)' : 'var(--f-live)';
         b.className = `tl-v${big ? ' big' : ''}${v.sha === live.sha ? ' cur' : ''}${v.sha === live.base ? ' base' : ''}`;
         b.title = `${v.sha} · ${v.message || ''}${v.author ? ' · ' + v.author : ''}\n${v.changes ? `${v.added} added, ${v.removed} removed, ${v.changed} changed, ${v.newRisks} new risks` : 'no map change'}`;
         b.setAttribute('aria-label', `Version ${v.sha}, ${shortDate(v.committedAt || v.scannedAt)}`);
@@ -605,7 +608,7 @@
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">Keep it live</h2><span class="pill ${on ? '' : 'off'}"><span class="pulse" style="width:8px;height:8px;border-radius:50%;background:currentColor"></span>${on ? `Polling every ${Math.round((live.info.pollMinutes || 5))} min` : 'Not connected'}</span></div>
             <p style="margin:0">For instant updates on every push, add this webhook in GitHub → Settings → Webhooks.</p>
             ${fields.map(([k, v], i) => `<div><label class="k">${k}</label><div class="field"><code>${esc(v)}</code><button class="btn" data-copy="${i}">Copy</button></div></div>`).join('')}
-            ${on ? '' : `<label style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="backfill" checked style="width:20px;height:20px;accent-color:#6965DB">Scan the last 10 commits for history</label><button class="btn primary" id="doConnect" style="align-self:flex-start">Connect for live updates</button>`}
+            ${on ? '' : `<label style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="backfill" checked style="width:20px;height:20px;accent-color:var(--brand)">Scan the last 10 commits for history</label><button class="btn primary" id="doConnect" style="align-self:flex-start">Connect for live updates</button>`}
           </div>
         </div>`;
       modal.classList.add('open');

@@ -207,29 +207,32 @@ The map looks drawn by hand on paper: one ink colour for every outline and word,
 - Words: Excalifont (Excalidraw's own font) for map labels, titles, the brand and buttons; IBM Plex Sans for small interface text; IBM Plex Mono for file paths and commit ids (see D23).
 - The canvas is warm paper with a faint dot grid. Lanes are dashed pencil boxes with a handwritten title.
 - Colour only carries meaning: layer fill, risk, or change. Everything else is ink or pencil grey.
-- Dark mode follows GitHub's dark theme (Primer) so the map feels like part of GitHub: `#0D1117` canvas, `#010409` header, `#161B22` panels, `#30363D` borders, `#E6EDF3` text, green primary buttons and brand, blue links; layer fills at lower strength (see D22, D23).
+- Dark mode is "Night": `#0F172A` canvas, `#0B1120` header, `#1E293B` panels, `#334155` borders, `#E2E8F0` text, indigo primary buttons, `#A5B4FC` links; layer fills at lower strength (see D26; replaces the GitHub-dark palette of D22).
 
 ### Palette
 
+Brand: the **weaverbird** — a bird that weaves connections, as RepoMind weaves understanding across a codebase (D26). Indigo outline, honey breast, a woven wing, and a thread tying three nodes together in its beak.
+
+Rules: **indigo is the brand** (logo, primary buttons, selection, the Apps layer). **Green means something** — only live, success and added, never decoration. **Coral asks for attention** — warnings, risks and changes between versions.
+
 | Token | Fill | Stroke | Used for |
 |---|---|---|---|
-| Paper | `#FDFBF7` | — | Canvas background |
-| Paper 2 | `#F4F1EA` | `#D9D3C7` | Lanes, panels, cards in the UI |
-| Ink | `#1E1E1E` | — | Outlines, labels, main text |
-| Pencil | `#6B6B6B` | — | Secondary text, tech line under a label |
-| Brand violet | `#6965DB` | `#5B57D1` | Buttons, links, selection |
-| Logo · Green + Pink | `#2F9E44` tile, `#FCC2D7` brain | `#A61E4D` | Logo and favicon (D25) |
-| Users · Sky | `#A5D8FF` | `#1971C2` | Mobile, web and desktop users |
-| Apps · Lavender | `#D0BFFF` | `#6741D9` | Apps and services |
-| Modules · Grape | `#EEBEFA` | `#9C36B5` | Feature modules |
-| Data · Mint | `#B2F2BB` | `#2F9E44` | Databases, caches, queues |
-| Cloud · Aqua | `#99E9F2` | `#0C8599` | GCP and hosting |
-| External · Butter | `#FFEC99` | `#F08C00` | Third-party services |
-| CI/CD · Peach | `#FFD8A8` | `#E8590C` | Pipelines |
-| Risk · Coral | `#FFC9C9` | `#E03131` | Critical and high risks, removed items |
-| Added | `#B2F2BB` | `#2F9E44` | New in this version |
-| Changed | `#FFEC99` | `#F08C00` | Modified in this version |
-| GitHub dark | `#0d1117` / `#161b22` | `#30363d` | Dark-mode canvas, panels and borders; text `#e6edf3`, outlines `#8b949e` |
+| Paper | `#F4F1EA` / canvas `#FDFBF7` | — | Background |
+| Card | `#FBFAF7` | `#262626` | Panels, cards, header |
+| Graphite | `#262626` | — | Main text, outlines |
+| Indigo (brand) | `#6366F1` | `#4F46E5` | Logo, primary buttons, selection, current version |
+| Honey | `#FBBF24` | — | Logo accent |
+| Users · Stone | `#E7E5E4` | `#57534E` | Mobile, web and desktop users |
+| Apps · Indigo | `#C7D2FE` | `#4F46E5` | Apps and services |
+| Modules · Lilac | `#E0E7FF` | `#6366F1` | Feature modules |
+| Data · Sky | `#BAE6FD` | `#0284C7` | Databases, caches, queues |
+| Cloud · Cyan | `#A5F3FC` | `#0E7490` | GCP and hosting |
+| External · Honey | `#FDE68A` | `#B45309` | Third-party services |
+| CI/CD · Peach | `#FED7AA` | `#C2410C` | Pipelines |
+| Live / success | `#A7F3D0` | `#34D399` (`#10B981` text-safe) | Live badge, added items |
+| Warning / change | `#FFD6D6` | `#FF6B6B` | Changed items |
+| Critical risk | `#FFD6D6` | `#E03131` | Critical/high risks, removed items |
+| Night (dark) | `#0F172A` / panels `#1E293B` / header `#0B1120` | `#334155` | Dark mode; text `#E2E8F0`, links `#A5B4FC` |
 
 The fills and strokes follow Excalidraw's open colour scale, so a map exported later into Excalidraw keeps its colours.
 
@@ -341,7 +344,10 @@ A running log of choices made while building. Newest last.
 | D23 | 2026-10-30 | Follow the updated v2 designs (Landing, LandingDark, Map, MapDark): Excalifont only for headings, brand, buttons, tabs and map labels; **IBM Plex Sans** for interface text and **IBM Plex Mono** for code (both OFL, Google Fonts). Thin 1.5px lines, 8px corners, soft shadow instead of hard ink offsets. Dark mode: `#010409` header, `#161B22` panels, GitHub green (`#238636`) as the brand and primary colour, current version dot green with a blue ring. Supersedes the Comic Shanns part of D21. | The design artifact and PRD were updated to this split; all-handwritten body text was hard to read at small sizes. |
 | D24 | 2026-10-30 | Recent-map summaries count shared packages as apps and use singular/plural ("1 app · 1 risk"). | Found in the browser: a library repo (expressjs/express) showed "0 apps". |
 
-| D25 | 2026-10-30 | Logo and favicon: a pink hand-drawn brain (`#FCC2D7` fill, `#A61E4D` lines) on a green tile (`#2F9E44`, GitHub `#238636` in dark). One SVG (`src/web/favicon.svg`) is the browser tab icon and the header logo on every page, embedded as a data URI so the offline HTML map keeps it. Replaces the violet "R" tile. | Owner asked for green and pink with a brain; "RepoMind" is the project's brain. |
+| D25 | 2026-10-30 | *(Replaced by D26.)* Logo and favicon: a pink hand-drawn brain (`#FCC2D7` fill, `#A61E4D` lines) on a green tile (`#2F9E44`, GitHub `#238636` in dark). One SVG (`src/web/favicon.svg`) is the browser tab icon and the header logo on every page, embedded as a data URI so the offline HTML map keeps it. Replaces the violet "R" tile. | Owner asked for green and pink with a brain; "RepoMind" is the project's brain. |
+
+| D26 | 2026-10-30 | Follow the updated design artifact (Brand · the weaverbird; Palette & type; all screens). Logo is the **weaverbird** (indigo outline, honey breast, woven wing, thread through three nodes), drawn as SVG in `src/web/logo.svg`; the favicon is a simplified bird on an indigo tile (`src/web/favicon.svg`). Palette moves to indigo brand + honey accent; green only for live/success/added; coral for warnings/changes. Dark mode becomes "Night" (`#0F172A`). Scanning copy is "Weaving your repo…". Replaces D25's brain and D22's GitHub-dark colours. | Owner asked to build to the artifact, which introduced the weaverbird brand. The artifact's bird images could not be read here, so the SVG follows its written description. |
+| D27 | 2026-10-30 | Logo dark variant is generated at build time and swapped by the page's theme toggle. | An `<img>` SVG follows the OS dark setting, not RepoMind's own toggle. |
 
 ### Verified (2026-10-30)
 
@@ -349,4 +355,5 @@ A running log of choices made while building. Newest last.
 - Mapped `expressjs/express` from its URL: scan ~1 s, 10 versions backfilled, map page with no console errors.
 - Webhook: bad signature → 401; valid HMAC → accepted. Token/secret absent from all API responses; `index.json` is mode 0600.
 - Browser: Landing, Scanning (→ redirect to map), Map (sketch, timeline, live badge), Changes (`?base=`), Share dialog, live toast on a new version all render as designed.
+- D26–D27: served Landing and Map carry the weaverbird logo (light + dark variants), favicon, indigo palette and "Weaving" copy, with no brain or GitHub-dark colours left; logo SVGs rendered and checked in light and dark. Chrome was disconnected, so the screens themselves were not re-checked in a browser.
 - Browser (D21–D24): Excalifont, IBM Plex Sans and IBM Plex Mono load; Landing, Scanning and Map checked in light and GitHub dark against the Landing/LandingDark/Map/MapDark designs, no console errors.

@@ -221,7 +221,7 @@ const DATA = /*__REPOMIND_DATA__*/null;
   const SEVERE = new Set(['critical', 'high']);
   function sketchFill(n) {
     const ch = changeOf(n.id);
-    if (state.view === 'changes' && ch) return { added: '--f-data', changed: '--f-external', removed: '--f-risk' }[ch];
+    if (state.view === 'changes' && ch) return { added: '--f-live', changed: '--f-change', removed: '--f-risk' }[ch];
     if (state.view === 'risks' && (findingsByNode.get(n.id) || []).some((f) => SEVERE.has(f.severity))) return '--f-risk';
     return `--f-${n.layer}`;
   }
@@ -234,9 +234,9 @@ const DATA = /*__REPOMIND_DATA__*/null;
 
     const sk = sketchOn();
     rc = sk ? rough.svg($('#canvas')) : null;
-    // GitHub dark: outlines in GitHub's muted grey, not chalk white, so the sketch sits quietly on the canvas.
+    // Night dark: outlines in slate grey, not chalk white, so the sketch sits quietly on the canvas.
     const dark = document.documentElement.classList.contains('dark');
-    const ink = dark ? '#8b949e' : cssVar('--ink'), pencil = dark ? '#30363d' : cssVar('--pencil');
+    const ink = dark ? '#94A3B8' : cssVar('--ink'), pencil = dark ? '#475569' : cssVar('--pencil');
 
     L.lanes.forEach((k, i) => {
       const x = i * (LANE_W + LANE_GAP);
