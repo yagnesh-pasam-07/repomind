@@ -433,6 +433,8 @@ A running log of choices made while building. Newest last.
 
 | D39 | 2026-10-30 | The landing preview shows the full product again, map **plus** the side panel (at a glance, open risks, paid services), sized to fit the frame; the workspace card's small preview still shows the map only. The flock flies across the **whole screen** in a fixed layer behind the content, instead of being clipped to the hero. | Owner: images missing in prod (the panel from the landing screenshot was hidden), and "keep the bird animation full screen" (a bird was cut off at the hero's edge). |
 
+| D40 | 2026-10-30 | Birds appear **only on the home page's first screen**: the flock covers the top 100vh at full width, flies left to right edge to edge, and scrolls away with the hero. No birds on the rest of the page or on any other page. Replaces D39's fixed layer that followed the visitor down. | Owner: "don't include the birds in the whole website… only the home page… fly left to right full screen". |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
