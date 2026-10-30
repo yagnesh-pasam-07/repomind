@@ -166,6 +166,7 @@ Overrides from `.repomind.yml` are applied after the detectors and before the ru
 ### Open questions
 
 - [x] Final product name: **RepoMind** (see D1).
+- [ ] The Weaver Bird brand brief (D34) calls the product **Repo Brain**. Keep RepoMind, or rename everywhere (repo, site, logo wordmark, CLI)?
 - [x] Should the viewer be hosted for the team or stay a CI artifact? **Both** (see D7).
 - [ ] Which Sumitra infrastructure lives only in the GCP console and needs manual nodes?
 - [ ] Open-source from day one, or after v0.3?
@@ -196,6 +197,71 @@ Live loop:     push to GitHub ──► webhook (or 5-min poll) ──► scan n
 ```
 
 A snapshot needs no setup. Live updates need one click ("Connect") plus a webhook in the repo settings, or they fall back to polling.
+
+## Brand story: the Weaver Bird
+
+> Owner's brand brief, recorded as written (D34). It uses the name **Repo Brain**; the product ships as **RepoMind**. See Open questions.
+
+### The inspiration
+
+The Baya Weaver Bird is known for its remarkable ability to construct intricate hanging nests by weaving individual strands of grass and other natural materials.
+
+What makes this bird fascinating is not simply the nest it creates, but the process behind it.
+
+It explores its surroundings, gathers materials, repeatedly weaves individual strands and gradually constructs a complete structure.
+
+Each strand has a place. Each connection contributes to the whole.
+
+This is the philosophy behind Repo Brain.
+
+### Brand personality
+
+- **Curious:** Always exploring and discovering.
+- **Intelligent:** Recognising relationships between seemingly unrelated things.
+- **Precise:** Connecting components with care and accuracy.
+- **Resourceful:** Making meaningful use of available information.
+- **Persistent:** Building understanding incrementally.
+- **Architectural:** Understanding how individual elements form a larger system.
+- **Thoughtful:** Looking beyond individual components to understand the bigger picture.
+
+### Brand philosophy
+
+A software repository is more than a collection of files.
+
+It is an interconnected ecosystem of functions, modules, dependencies, configurations and architectural decisions.
+
+Understanding one file is not the same as understanding the system.
+
+Repo Brain aims to connect these individual pieces and build a meaningful understanding of the entire codebase.
+
+Just as the Weaver Bird turns individual strands into an intricate nest, Repo Brain turns scattered code into connected knowledge.
+
+### Animation direction
+
+Create a sophisticated, nature-inspired yet technology-oriented visual experience.
+
+1. Start with a lone Weaver Bird exploring its environment.
+2. Show it discovering and collecting individual strands.
+3. Transition the strands into subtle code symbols, file references and interconnected nodes.
+4. Show the bird weaving these strands together.
+5. Gradually transform the woven structure into a visual representation of a software repository.
+6. Reveal a complete, interconnected knowledge graph.
+7. End with the Repo Brain logo.
+
+### Visual personality
+
+- Warm golden yellow inspired by the Baya Weaver.
+- Deep charcoal and natural earthy tones.
+- Fine woven lines and interconnected patterns.
+- Organic motion combined with precise geometric transitions.
+- Minimal, premium, sophisticated visual language.
+- Avoid cartoonish mascots and generic AI brain imagery.
+
+### Core message
+
+**Weaving intelligence into code.**
+
+Repo Brain doesn't just look at files. It connects the pieces, discovers relationships and helps developers understand the bigger picture.
 
 ## Visual style and colour palette
 
@@ -356,12 +422,20 @@ A running log of choices made while building. Newest last.
 | D31 | 2026-10-30 | Open source like Pen & Paper: public repo, MIT, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `CODEOWNERS`, issue and PR templates. Footer credits the maker (black-and-white photo, LinkedIn, email). README gets the logo, live demo link, badges, a screenshot gallery (`docs/screenshots/`) and a 1280×640 social preview (`docs/social-preview.png`). | Owner asked to open-source it like penandpaper, add screenshots, logo and a maker credit. |
 | D32 | 2026-10-30 | Vercel hosts a **static showcase** at [repomind-pi.vercel.app](https://repomind-pi.vercel.app): website, sign-in and the example map (`scripts/build-static.mjs` → `public/`). "Map it" there explains how to self-host instead of scanning. The full app (`repomind serve`) is not on Vercel. | The scanner keeps per-commit graphs on disk and polls every 5 minutes; Vercel functions have no persistent disk or long-running process. Self-hosting also keeps the promise that code never leaves your server. |
 
+| D33 | 2026-10-30 | The landing hero has a small flock of flying weaverbirds, each trailing a dotted thread like a link on the map. Birds fly only above the headline or in the side margins (checked: 0 overlaps with the text over 40 samples); they hold still for people who set reduced motion. | Owner asked for flying-bird detail in the hero. The trail ties the bird to the product: it weaves links. |
+| D34 | 2026-10-30 | The Weaver Bird brand story (inspiration, personality, philosophy, animation direction, visual personality, core message "Weaving intelligence into code.") is recorded in this PRD as written. Not yet built: the 7-step story animation and the golden-yellow/charcoal palette it describes, which differs from the shipped indigo brand (D26–D28). | Owner supplied the brief. The name and palette differences are open questions, not silent changes. |
+
+| D35 | 2026-10-30 | The full app runs on Vercel with **Neon Postgres** (project `repomind`, `aws-ap-southeast-1`, same region as the owner's other projects). One store interface, two backends: `DiskStore` for `repomind serve` without a database, `NeonStore` when `DATABASE_URL` is set. Tables `rm_repos`, `rm_graphs`, `rm_jobs` are created on first use. Scan jobs are stored too, so any function instance can report progress; background scans run via `waitUntil` (max 300 s), with backfill cut to 5 commits on Vercel. `DATABASE_URL` and `CRON_SECRET` live only in Vercel's encrypted env and a git-ignored `.env.local`. Replaces D32's static-only showcase. | Owner asked for the DB in Neon. Vercel functions have no disk and stop after the response, so state must live in Postgres. |
+| D36 | 2026-10-30 | Polling cron runs **daily** (`0 6 * * *`), not every 5 minutes; the GitHub webhook gives instant updates and open map pages still poll every 30 s. | The Vercel account is on the Hobby plan, which only allows daily cron jobs. |
+| D37 | 2026-10-30 | Backfill starts *after* the head scan's queued task, not inside it. | Bug found on Vercel: awaiting backfill inside the per-repo queue waited on itself, so history never filled. Verified fixed: `sindresorhus/ky` got 5 versions in Neon. |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
 - Mapped `expressjs/express` from its URL: scan ~1 s, 10 versions backfilled, map page with no console errors.
 - Webhook: bad signature → 401; valid HMAC → accepted. Token/secret absent from all API responses; `index.json` is mode 0600.
 - Browser: Landing, Scanning (→ redirect to map), Map (sketch, timeline, live badge), Changes (`?base=`), Share dialog, live toast on a new version all render as designed.
+- D35–D37 (Vercel + Neon, live at repomind-pi.vercel.app): every route returns 200; a real scan of `expressjs/express` ran on Vercel, its job progress was read back from Neon by a separate request, the map and Overview render from Neon, and the webhook secret never appears in API output. Backfill gave `sindresorhus/ky` 5 versions. The Neon store contract test could not run from the build machine (its network blocks Neon's HTTPS endpoint), so the database was verified on Vercel instead.
 - D28–D30: every route (`/`, `/login`, `/app`, `/example`, `/r/:owner/:repo`, `?embed=1`, `/api/overview`) returns 200; Landing, Sign in, Scanning, Map (light + Night), Overview (light + Night) checked in Chrome with no console errors. Live scan of `vercel/commerce` with 10-commit backfill feeds the Overview. 14 tests pass.
 - D26–D27: served Landing and Map carry the weaverbird logo (light + dark variants), favicon, indigo palette and "Weaving" copy, with no brain or GitHub-dark colours left; logo SVGs rendered and checked in light and dark. Chrome was disconnected, so the screens themselves were not re-checked in a browser.
 - Browser (D21–D24): Excalifont, IBM Plex Sans and IBM Plex Mono load; Landing, Scanning and Map checked in light and GitHub dark against the Landing/LandingDark/Map/MapDark designs, no console errors.

@@ -2,15 +2,18 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build && node scripts/build-static.mjs",
   "outputDirectory": "public",
-  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/app",
-      "destination": "/map"
+      "source": "/brand/:path*",
+      "destination": "/brand/:path*"
     },
     {
-      "source": "/r/:path*",
-      "destination": "/map"
+      "source": "/social-preview.png",
+      "destination": "/social-preview.png"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
     }
   ],
   "headers": [
@@ -26,6 +29,18 @@
           "value": "strict-origin-when-cross-origin"
         }
       ]
+    }
+  ],
+  "functions": {
+    "api/index.mjs": {
+      "maxDuration": 300,
+      "includeFiles": "{dist/**,examples/sumitra-like/**}"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/poll",
+      "schedule": "0 6 * * *"
     }
   ]
 }

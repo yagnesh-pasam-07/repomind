@@ -34,17 +34,29 @@ export interface Job {
 
 /** Runs scans one commit at a time per repo, and records the result as a version. */
 export class Scanner {
+  /** Jobs started by this instance (live objects); the store holds the copy other instances read (D35). */
   jobs = new Map<string, Job>();
   private chains = new Map<string, Promise<unknown>>();
 
   constructor(private store: Store) {}
 
-  newJob(owner: string, repo: string, branch: string): Job {
+  async newJob(owner: string, repo: string, branch: string): Promise<Job> {
     const job: Job = { id: randomBytes(8).toString('hex'), owner, repo, branch, status: 'running', steps: STEPS.map((s) => ({ ...s, state: 'todo' })), found: [], startedAt: new Date().toISOString() };
     this.jobs.set(job.id, job);
     // Forget old jobs so memory stays flat.
     if (this.jobs.size > 500) this.jobs.delete(this.jobs.keys().next().value!);
+    await this.store.putJob(job.id, job);
     return job;
+  }
+
+  /** Persist a job's progress so the Scanning screen can poll any instance. */
+  saveJob(job: Job) {
+    return this.store.putJob(job.id, job);
+  }
+
+  /** A job from this instance, else from the store (another serverless instance may own it). */
+  async getJob(id: string): Promise<Job | null> {
+    return this.jobs.get(id) ?? (await this.store.job<Job>(id));
   }
 
   /** Serialises work per repo so two pushes never write the index at the same time. */
@@ -60,15 +72,18 @@ export class Scanner {
     const { owner, repo } = idx.repo;
     const existing = idx.versions.find((v) => v.sha.startsWith(commit.sha.slice(0, 7)));
     const short = commit.sha.slice(0, 7);
-    if (existing && this.store.graph(owner, repo, existing.sha)) {
+    const stored = existing ? await this.store.graph(owner, repo, existing.sha) : null;
+    if (existing && stored) {
       if (job) job.steps.forEach((s) => (s.state = 'done'));
-      if (job) Object.assign(job, foundOf(this.store.graph(owner, repo, existing.sha)!));
+      if (job) Object.assign(job, foundOf(stored));
+      if (job) await this.saveJob(job);
       return existing;
     }
     const step = async <T>(key: StepKey, fn: () => Promise<T> | T): Promise<T> => {
       const s = job?.steps.find((x) => x.key === key);
       const t0 = Date.now();
       if (s) s.state = 'doing';
+      if (job) await this.saveJob(job);
       const r = await fn();
       if (s) Object.assign(s, { state: 'done', ms: Date.now() - t0 });
       return r;
@@ -88,6 +103,7 @@ export class Scanner {
       // Rules run inside scan(); this step reports them separately to match the Scanning screen.
       await step('risks', () => undefined);
       const v = await step('draw', () => this.record(idx, commit, g));
+      if (job) await this.saveJob(job);
       return v;
     } finally {
       rmSync(dir, { recursive: true, force: true });
@@ -95,11 +111,11 @@ export class Scanner {
   }
 
   /** Store the graph, then recompute change counts for the whole timeline (backfill can arrive out of order). */
-  private record(idx: RepoIndex, commit: CommitInfo, g: Graph): Version {
+  private async record(idx: RepoIndex, commit: CommitInfo, g: Graph): Promise<Version> {
     const { owner, repo } = idx.repo;
     const sha = commit.sha.slice(0, 7);
     g.meta.commit = sha;
-    this.store.putGraph(owner, repo, sha, g);
+    await this.store.putGraph(owner, repo, sha, g);
     const v: Version = {
       sha,
       message: commit.message,
@@ -111,15 +127,15 @@ export class Scanner {
       findings: g.findings.length,
     };
     idx.versions = idx.versions.filter((x) => x.sha !== sha).concat(v);
-    this.store.save(idx);
-    recount(this.store, idx);
-    this.store.save(idx);
+    await this.store.save(idx); // sorts newest first
+    await recount(this.store, idx);
+    await this.store.save(idx);
     return v;
   }
 }
 
 /** D13: change count = added + removed + changed components + new risks vs the previous version. */
-export function recount(store: Store, idx: RepoIndex) {
+export async function recount(store: Store, idx: RepoIndex) {
   const { owner, repo } = idx.repo;
   const vs = idx.versions; // newest first
   for (let i = 0; i < vs.length; i++) {
@@ -129,7 +145,7 @@ export function recount(store: Store, idx: RepoIndex) {
       Object.assign(v, { added: 0, removed: 0, changed: 0, newRisks: 0, changes: 0 });
       continue;
     }
-    const a = store.graph(owner, repo, prev.sha), b = store.graph(owner, repo, v.sha);
+    const [a, b] = await Promise.all([store.graph(owner, repo, prev.sha), store.graph(owner, repo, v.sha)]);
     if (!a || !b) continue;
     const d = diffGraphs(a, b);
     const comp = (ns: { kind: string }[]) => ns.filter((n) => n.kind !== 'module').length;

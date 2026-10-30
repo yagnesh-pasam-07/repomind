@@ -9,7 +9,7 @@ import { renderViewer, viewerDiff } from '../viewer.js';
 import { GitHub, parseRepoUrl } from './github.js';
 import { Scanner } from './jobs.js';
 import { overview } from './overview.js';
-import { publicRepo, Store, type RepoIndex } from './store.js';
+import { DiskStore, openStore, publicRepo, type RepoIndex, type Store } from './store.js';
 
 export interface ServeOptions {
   port?: number;
@@ -19,16 +19,30 @@ export interface ServeOptions {
   backfill?: number;
 }
 
+export interface AppOptions {
+  store: Store;
+  pollMinutes?: number;
+  backfill?: number;
+  /**
+   * Keeps background work alive after the response (Vercel's waitUntil). Without it (long-running
+   * `repomind serve`), background promises simply run in the process (D35).
+   */
+  waitUntil?: (p: Promise<unknown>) => void;
+}
+
 const here = dirname(fileURLToPath(import.meta.url));
 const MAX_BODY = 1024 * 1024;
 
-export function startServer(opts: ServeOptions = {}) {
-  const port = opts.port ?? 4242;
-  const host = opts.host ?? '127.0.0.1';
+/** The whole web app + API as one request handler, usable by `repomind serve` and by a Vercel function (D35). */
+export function createApp(opts: AppOptions) {
   const pollMinutes = opts.pollMinutes ?? 5;
   const backfillN = opts.backfill ?? 10;
-  const store = new Store(resolve(opts.dataDir ?? '.repomind-data'));
+  const store = opts.store;
   const scanner = new Scanner(store);
+  const bg = (p: Promise<unknown>) => {
+    const safe = p.catch((e) => console.error('repomind: background task failed:', e instanceof Error ? e.message : e));
+    if (opts.waitUntil) opts.waitUntil(safe);
+  };
   const page = (f: string) => readFileSync(join(here, '..', 'viewer', f), 'utf8');
   const landing = () => page('landing.html');
   // Landing-page preview (D28): the built-in example repo, scanned once and rendered with the real viewer.
@@ -72,11 +86,11 @@ export function startServer(opts: ServeOptions = {}) {
   };
 
   /** Start (or reuse) a repo and scan its head. Returns the job. */
-  async function startMap(url: string, branch?: string, token?: string, backfill = false) {
+  async function startMap(url: string, branch?: string, token?: string, backfill = false, live = false) {
     const ref = parseRepoUrl(url);
     const gh = new GitHub(token);
     const br = branch || ref.branch || (await gh.defaultBranch(ref));
-    let idx = store.get(ref.owner, ref.repo);
+    let idx = await store.get(ref.owner, ref.repo);
     if (!idx) idx = { repo: { owner: ref.owner, repo: ref.repo, branch: br, connected: false, createdAt: new Date().toISOString() }, versions: [] };
     if (token) idx.repo.token = token;
     if (idx.repo.branch !== br) {
@@ -84,33 +98,45 @@ export function startServer(opts: ServeOptions = {}) {
       idx.repo.branch = br;
       idx.versions = [];
     }
-    store.save(idx);
-    const job = scanner.newJob(idx.repo.owner, idx.repo.repo, br);
-    scanner
-      .enqueue(ref.owner, ref.repo, async () => {
-        const fresh = store.get(ref.owner, ref.repo)!;
-        const head = await new GitHub(fresh.repo.token).head(ref, br);
-        job.sha = head.sha.slice(0, 7);
-        await scanner.scanCommit(fresh, head, job);
-        fresh.repo.lastChecked = new Date().toISOString();
-        store.save(fresh);
-        job.status = 'done';
-        if (backfill) void runBackfill(ref.owner, ref.repo);
-      })
-      .catch((e) => {
-        job.status = 'error';
-        job.error = e instanceof Error ? e.message : String(e);
-      });
+    if (live) {
+      idx.repo.connected = true;
+      if (!idx.repo.secret) idx.repo.secret = 'rm_whsec_' + randomBytes(18).toString('hex');
+    }
+    await store.save(idx);
+    const job = await scanner.newJob(idx.repo.owner, idx.repo.repo, br);
+    bg(
+      scanner
+        .enqueue(ref.owner, ref.repo, async () => {
+          const fresh = (await store.get(ref.owner, ref.repo))!;
+          const head = await new GitHub(fresh.repo.token).head(ref, br);
+          job.sha = head.sha.slice(0, 7);
+          await scanner.scanCommit(fresh, head, job);
+          const after = (await store.get(ref.owner, ref.repo))!;
+          after.repo.lastChecked = new Date().toISOString();
+          await store.save(after);
+          job.status = 'done';
+          await scanner.saveJob(job);
+        })
+        // Backfill queues on the same per-repo chain, so it must start after this task, not inside it
+        // (awaiting it from within the chain waits on itself).
+        .then(() => (backfill ? runBackfill(ref.owner, ref.repo) : undefined))
+        .catch(async (e) => {
+          if (job.status === 'done') throw e; // backfill failure: the map itself is fine
+          job.status = 'error';
+          job.error = e instanceof Error ? e.message : String(e);
+          await scanner.saveJob(job);
+        }),
+    );
     return job;
   }
 
   function runBackfill(owner: string, repo: string) {
     return scanner.enqueue(owner, repo, async () => {
-      const idx = store.get(owner, repo);
+      const idx = await store.get(owner, repo);
       if (!idx) return;
       const commits = await new GitHub(idx.repo.token).recentCommits(idx.repo, idx.repo.branch, backfillN);
       for (const c of commits) {
-        const cur = store.get(owner, repo)!;
+        const cur = (await store.get(owner, repo))!;
         try {
           await scanner.scanCommit(cur, c);
         } catch (e) {
@@ -122,44 +148,45 @@ export function startServer(opts: ServeOptions = {}) {
 
   /** Check the branch head and scan it if new. Returns a job id when a scan started. */
   async function checkHead(owner: string, repo: string): Promise<string | null> {
-    const idx = store.get(owner, repo);
+    const idx = await store.get(owner, repo);
     if (!idx) throw new Error('Unknown repo');
     const head = await new GitHub(idx.repo.token).head(idx.repo, idx.repo.branch);
     idx.repo.lastChecked = new Date().toISOString();
-    store.save(idx);
+    await store.save(idx);
     if (idx.versions.some((v) => v.sha === head.sha.slice(0, 7))) return null;
-    const job = scanner.newJob(owner, repo, idx.repo.branch);
+    const job = await scanner.newJob(owner, repo, idx.repo.branch);
     job.sha = head.sha.slice(0, 7);
-    scanner
-      .enqueue(owner, repo, async () => {
-        await scanner.scanCommit(store.get(owner, repo)!, head, job);
-        job.status = 'done';
-      })
-      .catch((e) => {
-        job.status = 'error';
-        job.error = e instanceof Error ? e.message : String(e);
-      });
+    bg(
+      scanner
+        .enqueue(owner, repo, async () => {
+          await scanner.scanCommit((await store.get(owner, repo))!, head, job);
+          job.status = 'done';
+          await scanner.saveJob(job);
+        })
+        .catch(async (e) => {
+          job.status = 'error';
+          job.error = e instanceof Error ? e.message : String(e);
+          await scanner.saveJob(job);
+        }),
+    );
     return job.id;
   }
 
-  function graphPayload(idx: RepoIndex, sha?: string | null, baseSha?: string | null) {
+  async function graphPayload(idx: RepoIndex, sha?: string | null, baseSha?: string | null) {
     const { owner, repo } = idx.repo;
     const v = sha ? idx.versions.find((x) => x.sha.startsWith(sha)) : idx.versions[0];
     if (!v) return null;
-    const graph = store.graph(owner, repo, v.sha);
+    const graph = await store.graph(owner, repo, v.sha);
     if (!graph) return null;
     let baseV = baseSha ? idx.versions.find((x) => x.sha.startsWith(baseSha)) : idx.versions[idx.versions.indexOf(v) + 1];
-    const base = baseV ? store.graph(owner, repo, baseV.sha) : null;
+    const base = baseV ? await store.graph(owner, repo, baseV.sha) : null;
     const d = base ? diffGraphs(base, graph) : null;
     return { graph, base: base ? { nodes: base.nodes, edges: base.edges } : null, diff: d ? viewerDiff(d) : null, _d: d, _base: base, version: v };
   }
 
-  const repoFromPath = (owner: string, repo: string) => {
-    const idx = store.get(decodeURIComponent(owner), decodeURIComponent(repo));
-    return idx;
-  };
+  const repoFromPath = (owner: string, repo: string) => store.get(decodeURIComponent(owner), decodeURIComponent(repo));
 
-  const server = createServer(async (req, res) => {
+  const handle = async (req: IncomingMessage, res: ServerResponse) => {
     try {
       const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
       const p = url.pathname;
@@ -175,19 +202,13 @@ export function startServer(opts: ServeOptions = {}) {
       if (req.method === 'GET' && p === '/social') return send(res, 200, page('social.html'), 'text/html; charset=utf-8');
       if (req.method === 'GET' && p === '/api/overview') {
         const scanning = new Set([...scanner.jobs.values()].filter((j) => j.status === 'running').map((j) => `${j.owner}/${j.repo}`.toLowerCase()));
-        return send(res, 200, overview(store, scanning));
+        return send(res, 200, await overview(store, scanning));
       }
 
       if (req.method === 'POST' && p === '/api/maps') {
         const b = await json(req);
         if (typeof b.url !== 'string') return fail(res, 400, 'Missing "url".');
-        const job = await startMap(b.url, typeof b.branch === 'string' ? b.branch : undefined, typeof b.token === 'string' && b.token ? b.token : undefined, !!b.backfill);
-        if (b.live) {
-          const idx = store.get(job.owner, job.repo)!;
-          idx.repo.connected = true;
-          if (!idx.repo.secret) idx.repo.secret = 'rm_whsec_' + randomBytes(18).toString('hex');
-          store.save(idx);
-        }
+        const job = await startMap(b.url, typeof b.branch === 'string' ? b.branch : undefined, typeof b.token === 'string' && b.token ? b.token : undefined, !!b.backfill, !!b.live);
         return send(res, 202, { job: job.id, owner: job.owner, repo: job.repo, branch: job.branch });
       }
 
@@ -199,27 +220,28 @@ export function startServer(opts: ServeOptions = {}) {
       }
 
       if (req.method === 'GET' && (r = m(/^\/api\/jobs\/([a-f0-9]{16})$/))) {
-        const job = scanner.jobs.get(r[1]);
+        const job = await scanner.getJob(r[1]);
         return job ? send(res, 200, job) : fail(res, 404, 'Unknown job');
       }
 
       if (req.method === 'GET' && p === '/api/repos') {
-        const list = store
-          .all()
+        const top = (await store.all())
           .filter((i) => i.versions.length)
           .sort((a, b) => b.versions[0].scannedAt.localeCompare(a.versions[0].scannedAt))
-          .slice(0, 12)
-          .map((i) => ({ ...publicRepo(i.repo, pollMinutes), latest: i.versions[0], count: i.versions.length, summary: summaryOf(store.graph(i.repo.owner, i.repo.repo, i.versions[0].sha)) }));
+          .slice(0, 12);
+        const list = await Promise.all(
+          top.map(async (i) => ({ ...publicRepo(i.repo, pollMinutes), latest: i.versions[0], count: i.versions.length, summary: summaryOf(await store.graph(i.repo.owner, i.repo.repo, i.versions[0].sha)) })),
+        );
         return send(res, 200, { repos: list });
       }
 
       if ((r = m(/^\/api\/repos\/([^/]+)\/([^/]+)\/(versions|graph|refresh|connect)$/))) {
-        const idx = repoFromPath(r[1], r[2]);
+        const idx = await repoFromPath(r[1], r[2]);
         if (!idx) return fail(res, 404, 'This repo has not been mapped yet.');
         const what = r[3];
         if (what === 'versions' && req.method === 'GET') return send(res, 200, { repo: publicRepo(idx.repo, pollMinutes), versions: idx.versions });
         if (what === 'graph' && req.method === 'GET') {
-          const g = graphPayload(idx, url.searchParams.get('sha'), url.searchParams.get('base'));
+          const g = await graphPayload(idx, url.searchParams.get('sha'), url.searchParams.get('base'));
           if (!g) return fail(res, 404, 'No version found.');
           const { _d, _base, ...out } = g;
           return send(res, 200, out);
@@ -231,8 +253,8 @@ export function startServer(opts: ServeOptions = {}) {
           // The secret is shown once, here; later reads never include it (D9).
           const secret = 'rm_whsec_' + randomBytes(18).toString('hex');
           idx.repo.secret = secret;
-          store.save(idx);
-          if (b.backfill !== false) void runBackfill(idx.repo.owner, idx.repo.repo);
+          await store.save(idx);
+          if (b.backfill !== false) bg(runBackfill(idx.repo.owner, idx.repo.repo));
           return send(res, 200, { repo: publicRepo(idx.repo, pollMinutes), secret, webhook: `${originOf(req)}/api/webhook/github` });
         }
         return fail(res, 405, 'Method not allowed');
@@ -250,7 +272,7 @@ export function startServer(opts: ServeOptions = {}) {
         }
         const full: string = body?.repository?.full_name || '';
         const [owner, repo] = full.split('/');
-        const idx = owner && repo ? store.get(owner, repo) : null;
+        const idx = owner && repo ? await store.get(owner, repo) : null;
         if (!idx || !idx.repo.secret) return fail(res, 404, 'Repo not connected');
         const sig = String(req.headers['x-hub-signature-256'] || '');
         const want = 'sha256=' + createHmac('sha256', idx.repo.secret).update(raw).digest('hex');
@@ -262,10 +284,10 @@ export function startServer(opts: ServeOptions = {}) {
       }
 
       if (req.method === 'GET' && (r = m(/^\/r\/([^/]+)\/([^/]+?)(\/download\.html)?$/))) {
-        const idx = repoFromPath(r[1], r[2]);
+        const idx = await repoFromPath(r[1], r[2]);
         if (!idx) return send(res, 404, notFoundPage(`${decodeURIComponent(r[1])}/${decodeURIComponent(r[2])}`), 'text/html; charset=utf-8');
         const sha = url.searchParams.get('sha');
-        const g = graphPayload(idx, sha, url.searchParams.get('base'));
+        const g = await graphPayload(idx, sha, url.searchParams.get('base'));
         if (!g) return send(res, 404, notFoundPage(`${idx.repo.owner}/${idx.repo.repo}`), 'text/html; charset=utf-8');
         if (r[3]) {
           // R6: offline file — data and rough.js embedded, no live polling.
@@ -288,22 +310,39 @@ export function startServer(opts: ServeOptions = {}) {
       const msg = e instanceof Error ? e.message : String(e);
       if (!res.headersSent) fail(res, /not found|Not a GitHub|token|rate limit|larger|refuses|Invalid|Missing|too large/i.test(msg) ? 400 : 500, msg);
     }
-  });
+  };
 
-  // Polling fallback: check every repo's head on an interval (PRD v2, "How updates arrive").
-  const pollTimer = setInterval(async () => {
-    for (const i of store.all()) {
+  /** Polling fallback: check every connected repo's head (PRD v2, "How updates arrive"). Vercel runs it from a cron. */
+  async function pollAll() {
+    let checked = 0;
+    for (const i of await store.all()) {
       if (!i.repo.connected) continue;
       try {
         await checkHead(i.repo.owner, i.repo.repo);
+        checked++;
       } catch (e) {
         console.error(`repomind: poll ${i.repo.owner}/${i.repo.repo} failed:`, e instanceof Error ? e.message : e);
       }
     }
-  }, pollMinutes * 60_000);
-  pollTimer.unref();
+    return checked;
+  }
 
-  server.listen(port, host, () => console.log(`RepoMind web app → http://${host === '0.0.0.0' ? 'localhost' : host}:${port}  (data in ${store.root})`));
+  return { handle, pollAll, scanner, store };
+}
+
+/** `repomind serve`: one long-running process with a disk (or Neon, if DATABASE_URL is set) store. */
+export async function startServer(opts: ServeOptions = {}) {
+  const port = opts.port ?? 4242;
+  const host = opts.host ?? '127.0.0.1';
+  const pollMinutes = opts.pollMinutes ?? 5;
+  const dataDir = resolve(opts.dataDir ?? '.repomind-data');
+  const store = await openStore(dataDir);
+  const app = createApp({ store, pollMinutes, backfill: opts.backfill });
+  const server = createServer((req, res) => void app.handle(req, res));
+  const pollTimer = setInterval(() => void app.pollAll(), pollMinutes * 60_000);
+  pollTimer.unref();
+  const where = store instanceof DiskStore ? `data in ${store.root}` : 'data in Neon Postgres';
+  server.listen(port, host, () => console.log(`RepoMind web app → http://${host === '0.0.0.0' ? 'localhost' : host}:${port}  (${where})`));
   server.on('close', () => clearInterval(pollTimer));
   return server;
 }

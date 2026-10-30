@@ -52,44 +52,62 @@ console.log(`\n${passed} checks passed`);
 
 // ---------- v2 ----------
 const { parseRepoUrl } = await import('../dist/server/github.js');
-const { Store } = await import('../dist/server/store.js');
+const { DiskStore, NeonStore } = await import('../dist/server/store.js');
 const { recount } = await import('../dist/server/jobs.js');
 const { renderViewer } = await import('../dist/index.js');
 const { mkdtempSync, rmSync } = await import('node:fs');
 const { tmpdir } = await import('node:os');
 const { join } = await import('node:path');
 let v2 = 0;
-const t2 = (name, fn) => { fn(); v2++; console.log('  ✓', name); };
+const t2 = async (name, fn) => { await fn(); v2++; console.log('  ✓', name); };
 
-t2('R1: GitHub URL forms parse', () => {
+await t2('R1: GitHub URL forms parse', () => {
   for (const u of ['https://github.com/tilicho/sumitra', 'github.com/tilicho/sumitra', 'tilicho/sumitra', 'https://github.com/tilicho/sumitra.git', 'git@github.com:tilicho/sumitra.git'])
     assert.deepEqual(parseRepoUrl(u), { owner: 'tilicho', repo: 'sumitra', branch: undefined }, u);
   assert.equal(parseRepoUrl('https://github.com/a/b/tree/feature/x').branch, 'feature/x');
   assert.throws(() => parseRepoUrl('not a url'));
   assert.throws(() => parseRepoUrl('github.com/../etc'));
 });
-t2('store keeps versions newest first and recount marks map changes (D13)', () => {
+// Same contract for every store backend (D35).
+async function storeContract(s) {
+  const base = scan('examples/sumitra-like', { repoName: 'x' });
+  const head = JSON.parse(JSON.stringify(base));
+  head.nodes.push({ id: 'ext:new', kind: 'external', layer: 'external', label: 'New', evidence: [] });
+  const owner = 'rmtest', repo = 'r' + Date.now().toString(36);
+  await s.putGraph(owner, repo, 'aaaaaaa', base);
+  await s.putGraph(owner, repo, 'bbbbbbb', head);
+  const v = (sha, t) => ({ sha, message: '', author: '', committedAt: t, scannedAt: t, added: 0, removed: 0, changed: 0, newRisks: 0, changes: 0, components: 0, findings: 0 });
+  await s.save({ repo: { owner, repo, branch: 'main', connected: false, createdAt: '' }, versions: [v('aaaaaaa', '2026-01-01'), v('bbbbbbb', '2026-01-02')] });
+  const back = await s.get(owner, repo);
+  assert.equal(back.versions[0].sha, 'bbbbbbb');
+  await recount(s, back);
+  assert.equal(back.versions[0].added, 1);
+  assert.equal(back.versions[0].changes, 1);
+  assert.equal(back.versions[1].changes, 0);
+  assert.equal(await s.graph(owner, repo, '../../etc'), null);
+  assert.ok((await s.all()).some((i) => i.repo.repo === repo));
+  await s.putJob('abc', { status: 'running', steps: [1] });
+  assert.equal((await s.job('abc')).status, 'running');
+  return { owner, repo };
+}
+await t2('disk store keeps versions newest first and recount marks map changes (D13)', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'rm-store-'));
-  try {
-    const s = new Store(dir);
-    const base = scan('examples/sumitra-like', { repoName: 'x' });
-    const head = JSON.parse(JSON.stringify(base));
-    head.nodes.push({ id: 'ext:new', kind: 'external', layer: 'external', label: 'New', evidence: [] });
-    s.putGraph('o', 'r', 'aaaaaaa', base);
-    s.putGraph('o', 'r', 'bbbbbbb', head);
-    const v = (sha, t) => ({ sha, message: '', author: '', committedAt: t, scannedAt: t, added: 0, removed: 0, changed: 0, newRisks: 0, changes: 0, components: 0, findings: 0 });
-    const idx = { repo: { owner: 'o', repo: 'r', branch: 'main', connected: false, createdAt: '' }, versions: [v('aaaaaaa', '2026-01-01'), v('bbbbbbb', '2026-01-02')] };
-    s.save(idx);
-    const back = s.get('o', 'r');
-    assert.equal(back.versions[0].sha, 'bbbbbbb');
-    recount(s, back);
-    assert.equal(back.versions[0].added, 1);
-    assert.equal(back.versions[0].changes, 1);
-    assert.equal(back.versions[1].changes, 0);
-    assert.equal(s.graph('o', 'r', '../../etc'), null);
-  } finally { rmSync(dir, { recursive: true, force: true }); }
+  try { await storeContract(new DiskStore(dir)); } finally { rmSync(dir, { recursive: true, force: true }); }
 });
-t2('viewer embeds rough.js, live settings and escapes data', () => {
+if (process.env.DATABASE_URL) {
+  await t2('Neon store passes the same contract (D35)', async () => {
+    const s = await NeonStore.connect(process.env.DATABASE_URL);
+    const { owner, repo } = await storeContract(s);
+    // Clean up the test rows.
+    const { neon } = await import('@neondatabase/serverless');
+    const sql = neon(process.env.DATABASE_URL);
+    const key = `${owner}/${repo}`;
+    await sql`DELETE FROM rm_graphs WHERE key = ${key}`;
+    await sql`DELETE FROM rm_repos WHERE key = ${key}`;
+    await sql`DELETE FROM rm_jobs WHERE id = 'abc'`;
+  });
+}
+await t2('viewer embeds rough.js, live settings and escapes data', () => {
   const html = renderViewer(g, { live: { owner: 'o', repo: 'r' } });
   assert.match(html, /var rough=/);
   assert.match(html, /"live":\{"owner":"o"/);

@@ -1,7 +1,7 @@
 {
   "name": "repomind",
   "version": "0.1.0",
-  "description": "Live map of your codebase, infrastructure and integrations \u2014 with PR diffs, security and cost flags.",
+  "description": "Live map of your codebase, infrastructure and integrations — with PR diffs, security and cost flags.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc && node scripts/copy-viewer.mjs",
@@ -16,6 +16,8 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "@vercel/functions": "^3.10.5",
     "roughjs": "^4.6.6",
     "tar": "^7.5.22",
     "yaml": "^2.9.1"

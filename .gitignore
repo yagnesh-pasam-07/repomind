@@ -7,3 +7,7 @@ dist/
 public/
 .vercel/
 .vercel
+# Database URLs and other secrets. Never committed.
+.env
+.env.*
+!.env.example

@@ -42,10 +42,28 @@ function chipsOf(before: Graph, after: Graph): Chip[] {
   return chips.slice(0, 4);
 }
 
-export function overview(store: Store, scanningRepos: Set<string>) {
+export async function overview(store: Store, scanningRepos: Set<string>) {
   const now = Date.now();
-  const all = store.all().filter((i) => i.versions.length);
-  const graphOf = (i: RepoIndex, sha: string) => store.graph(i.repo.owner, i.repo.repo, sha);
+  const all = (await store.all()).filter((i) => i.versions.length);
+  // Load every graph this page needs up front (one round trip each, in parallel), then compute synchronously.
+  const cache = new Map<string, Graph | null>();
+  const keyOf = (i: RepoIndex, sha: string) => `${i.repo.owner}/${i.repo.repo}@${sha}`;
+  const need: [RepoIndex, string][] = [];
+  for (const i of all) {
+    i.versions.slice(0, 1).forEach((v) => need.push([i, v.sha]));
+    const old = i.versions.find((x) => now - Date.parse(x.committedAt) >= WEEK);
+    if (old) need.push([i, old.sha]);
+    i.versions.forEach((v, k) => {
+      const prev = i.versions[k + 1];
+      if (prev && v.changes > 0 && now - Date.parse(v.committedAt) <= 2 * WEEK) need.push([i, v.sha], [i, prev.sha]);
+    });
+  }
+  for (const { i, v } of all.flatMap((i) => i.versions.map((v) => ({ i, v }))).sort((a, b) => b.v.committedAt.localeCompare(a.v.committedAt)).slice(0, 8)) need.push([i, v.sha]);
+  await Promise.all(need.filter(([i, sha]) => !cache.has(keyOf(i, sha))).map(async ([i, sha]) => {
+    cache.set(keyOf(i, sha), null);
+    cache.set(keyOf(i, sha), await store.graph(i.repo.owner, i.repo.repo, sha));
+  }));
+  const graphOf = (i: RepoIndex, sha: string) => cache.get(keyOf(i, sha)) ?? null;
 
   const rows = [];
   const sev: Record<Severity, number> = { critical: 0, high: 0, medium: 0, low: 0 };

@@ -4,6 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RepoMind — your codebase, as a living map</title>
+<meta name="description" content="Every app, database, cloud service and integration on one hand-drawn map, redrawn on every commit." />
+<meta property="og:title" content="RepoMind — your codebase, as a living map" />
+<meta property="og:description" content="Every app, database, cloud service and integration on one hand-drawn map, redrawn on every commit." />
+<meta property="og:image" content="https://repomind-pi.vercel.app/social-preview.png" />
+<meta name="twitter:card" content="summary_large_image" />
 <link rel="icon" type="image/svg+xml" href="/*__FAVICON__*/" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -30,7 +35,44 @@
   .icon-btn { width: 34px; height: 34px; display: inline-grid; place-items: center; border: 1px solid var(--line-soft); border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; }
   .icon-btn:hover { border-color: var(--pencil); }
 
-  .hero { text-align: center; padding: 72px 0 0; }
+  .hero { position: relative; text-align: center; padding: 72px 0 0; }
+  .hero > *:not(.flock) { position: relative; z-index: 1; }
+  /* Flying weaverbirds (D33). Each bird glides across the hero on its own path; wings flap; a dotted thread trails behind. */
+  :root { --b-body: #4F46E5; --b-eye: #FFFFFF; --b-trail: rgba(79,70,229,.32); }
+  :root.dark { --b-body: #818CF8; --b-eye: #0F172A; --b-trail: rgba(165,180,252,.30); }
+  .flock { position: absolute; inset: 0 -12vw 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .fly { position: absolute; left: 0; display: flex; align-items: center; opacity: 0; will-change: transform, opacity; animation: glide var(--dur) linear var(--delay) infinite; }
+  .fly .bird { width: var(--size); height: var(--size); flex: none; animation: bob 1.8s ease-in-out infinite; }
+  .fly .trail { width: calc(var(--size) * 3.2); height: calc(var(--size) * 1.1); margin-right: -6px; overflow: visible; }
+  .fly .trail path { fill: none; stroke: var(--b-trail); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 2 7; animation: thread .9s linear infinite; }
+  .fly .flap { transform-box: fill-box; transform-origin: 85% 100%; animation: flap .42s ease-in-out infinite alternate; }
+  /* Every bird stays clear of the centred text: two cross the open sky above the headline;
+     the others fly only within the left or right margin (each with its own start/end). */
+  .f1 { top: 2%;  --size: 28px; --dur: 24s; --delay: -6s;  --rise: -18px; --from: -25vw; --to: 135vw; }
+  .f5 { top: 9%;  --size: 15px; --dur: 36s; --delay: -30s; --rise: 14px;  --from: -25vw; --to: 135vw; }
+  .f2 { top: 30%; --size: 18px; --dur: 16s; --delay: -9s;  --rise: -30px; --from: -18vw; --to: 26vw; }
+  .f3 { top: 52%; --size: 22px; --dur: 19s; --delay: -3s;  --rise: 22px;  --from: 66vw;  --to: 118vw; }
+  .f4 { top: 70%; --size: 14px; --dur: 22s; --delay: -15s; --rise: -16px; --from: -18vw; --to: 24vw; }
+  .f2 .flap, .f4 .flap { animation-duration: .36s; }
+  @keyframes glide {
+    0%   { transform: translate(var(--from), 0); opacity: 0; }
+    12%  { opacity: .9; }
+    50%  { transform: translate(calc((var(--from) + var(--to)) / 2), var(--rise)); }
+    88%  { opacity: .9; }
+    100% { transform: translate(var(--to), 0); opacity: 0; }
+  }
+  @keyframes flap { from { transform: rotate(10deg) scaleY(.82); } to { transform: rotate(-22deg) scaleY(1.04); } }
+  @keyframes bob { 50% { transform: translateY(-3px); } }
+  @keyframes thread { to { stroke-dashoffset: -9; } }
+  /* Smaller, farther birds read as depth. */
+  .f2 .bird, .f4 .bird, .f5 .bird { opacity: .7; }
+  @media (prefers-reduced-motion: reduce) {
+    .fly { animation: none; opacity: .55; }
+    .f1 { transform: translate(8vw, 0); } .f2 { transform: translate(70vw, 0); } .f3 { transform: translate(14vw, 0); }
+    .f4 { transform: translate(78vw, 0); } .f5 { transform: translate(60vw, 0); }
+    .fly .bird, .fly .flap, .fly .trail path { animation: none; }
+  }
+  @media (max-width: 760px) { .f2, .f4, .f5 { display: none; } }
   .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 10px; border: 1px solid var(--line-soft); border-radius: 999px; background: var(--card); font-size: 13px; color: var(--pencil); }
   .eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: #34D399; }
   h1.big { margin: 22px auto 20px; font-weight: 700; font-size: clamp(44px, 6.4vw, 72px); line-height: 1.02; letter-spacing: -.045em; max-width: 760px; }
@@ -162,6 +204,18 @@
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="wb" viewBox="30 40 160 160">
+      <path fill="var(--b-body)" d="M34 173 C35 132 61 101 103 92 L103 173 Z" />
+      <circle fill="var(--b-body)" cx="133" cy="77" r="34" />
+      <rect fill="var(--b-body)" x="103" y="92" width="30" height="81" />
+      <g class="flap"><path fill="#FF6B6B" d="M34 173 C35 140 63 119 103 118 L103 173 Z" /></g>
+      <path fill="#FBBF24" d="M165.5 69 L187 82 L165.5 90 Z" />
+      <circle fill="var(--b-eye)" cx="140" cy="74" r="6.5" />
+    </symbol>
+  </defs>
+</svg>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="/"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="" width="26" height="26" />RepoMind</a>
@@ -177,6 +231,14 @@
 
   <div id="home">
     <section class="hero">
+      <!-- Hero flock (D33): weaverbirds flying through, each trailing a dotted thread like a link on the map. -->
+      <div class="flock" aria-hidden="true">
+        <span class="fly f1"><svg viewBox="0 0 120 40" class="trail"><path d="M2 30 C30 34 60 20 118 18"/></svg><svg class="bird"><use href="#wb"/></svg></span>
+        <span class="fly f2"><svg viewBox="0 0 120 40" class="trail"><path d="M2 26 C34 30 64 14 118 16"/></svg><svg class="bird"><use href="#wb"/></svg></span>
+        <span class="fly f3"><svg viewBox="0 0 120 40" class="trail"><path d="M2 32 C26 28 70 26 118 20"/></svg><svg class="bird"><use href="#wb"/></svg></span>
+        <span class="fly f4"><svg viewBox="0 0 120 40" class="trail"><path d="M2 24 C40 32 66 18 118 22"/></svg><svg class="bird"><use href="#wb"/></svg></span>
+        <span class="fly f5"><svg viewBox="0 0 120 40" class="trail"><path d="M2 28 C30 22 72 30 118 18"/></svg><svg class="bird"><use href="#wb"/></svg></span>
+      </div>
       <span class="eyebrow"><i></i>Updates on every commit</span>
       <h1 class="big">Your codebase,<br>as a living map.</h1>
       <p class="lead">Every app, database, cloud service and integration — on one map your whole team can read.</p>
