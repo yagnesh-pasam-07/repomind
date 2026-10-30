@@ -241,7 +241,9 @@ const DATA = /*__REPOMIND_DATA__*/null;
     L.lanes.forEach((k, i) => {
       const x = i * (LANE_W + LANE_GAP);
       if (sk) {
-        lanesG.appendChild(rc.rectangle(x, 0, LANE_W, L.laneH, { seed: seedOf('lane:' + k), stroke: pencil, strokeWidth: 1.3, roughness: 1.4, strokeLineDash: [8, 7] }));
+        // Lane = soft column like the landing preview (D28), with a faint hand-drawn edge.
+        el('rect', { x, y: 0, width: LANE_W, height: L.laneH, rx: 4, class: 'lane-bg-sk' }, lanesG);
+        lanesG.appendChild(rc.rectangle(x, 0, LANE_W, L.laneH, { seed: seedOf('lane:' + k), stroke: pencil, strokeWidth: 0.8, roughness: 1.2, strokeLineDash: [6, 8] }));
         el('text', { x: x + LANE_PAD, y: 32, class: 'lane-title' }, lanesG).textContent = LAYER_NAME[k];
         el('text', { x: x + LANE_W - LANE_PAD, y: 32, class: 'lane-count', 'text-anchor': 'end' }, lanesG).textContent = L.cols[i].length;
         return;

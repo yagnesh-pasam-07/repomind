@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Overview · RepoMind</title>
+<link rel="icon" type="image/svg+xml" href="/*__FAVICON__*/" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<style>/*__THEME_CSS__*/</style>
+<!-- Workspace · Overview + Component · Sidebar from the v2 design artifact (D29). All numbers come from /api/overview. -->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: flex; background: var(--paper); color: var(--ink); font-family: var(--ui); -webkit-font-smoothing: antialiased; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { color: var(--link-hover); }
+  :root { --surface: #FAF8F4; --hair: #E4DFD4; --hair2: #F0ECE4; --track: #EDE9E0; --mute2: #78716C; --body2: #57534E; }
+  :root.dark { --surface: #0B1120; --hair: #1E293B; --hair2: #1E293B; --track: #334155; --mute2: #94A3B8; --body2: #CBD5E1; }
+
+  /* Sidebar */
+  nav.side { width: 248px; flex: none; position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 4px; padding: 16px 12px; background: var(--surface); border-right: 1px solid var(--hair); }
+  .side .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 14px; color: var(--ink); font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+  .side .brand img { width: 26px; height: 26px; }
+  .ws { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 10px; margin-bottom: 10px; border: 1px solid var(--hair); border-radius: 10px; background: var(--card); }
+  .ws .av { width: 26px; height: 26px; border-radius: 7px; background: #0F172A; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  :root.dark .ws .av { background: #6366F1; }
+  .ws b { display: block; font-size: 13.5px; font-weight: 600; }
+  .ws span { font-size: 12px; color: var(--mute2); }
+  .side .item { display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 10px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--body2); }
+  .side .item svg { flex: none; stroke: var(--mute2); }
+  .side .item:hover { background: var(--hair2); color: var(--ink); }
+  .side .item.on { background: #EEF2FF; color: #3730A3; font-weight: 600; }
+  .side .item.on svg { stroke: #4F46E5; }
+  :root.dark .side .item.on { background: #1E293B; color: #fff; }
+  :root.dark .side .item.on svg { stroke: #A5B4FC; }
+  .side .item .badge { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--mute2); }
+  .side .item .badge.risk { color: #C92A2A; }
+  :root.dark .side .item .badge.risk { color: #FF8787; }
+  .side .grow { flex: 1; }
+  .side .note { padding: 12px; border: 1px solid var(--hair); border-radius: 10px; background: var(--card); font-size: 12.5px; display: grid; gap: 8px; }
+  .side .note b { font-weight: 600; }
+  .side .note span { font-size: 12px; color: var(--mute2); }
+  .side .bar { height: 6px; border-radius: 99px; background: var(--track); overflow: hidden; }
+  .side .bar div { height: 100%; background: #6366F1; }
+  .side .me { display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; }
+  .side .me .av { width: 30px; height: 30px; border-radius: 50%; background: #E0E7FF; color: #3730A3; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .side .me b { display: block; font-size: 13px; font-weight: 600; }
+  .side .me span { font-size: 12px; color: var(--mute2); }
+  .side .theme { margin-left: auto; width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--hair); border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; }
+
+  /* Main */
+  main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  header.top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 20px 32px; border-bottom: 1px solid var(--hair); background: var(--surface); }
+  header.top h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+  header.top .sub { font-size: 13.5px; color: var(--mute2); }
+  .grow { flex: 1; }
+  .search { display: flex; align-items: center; gap: 8px; min-width: 260px; height: 40px; padding: 0 12px; border: 1px solid var(--hair); border-radius: 10px; background: var(--card); }
+  .search input { flex: 1; border: 0; outline: 0; background: transparent; font: 14px var(--ui); color: var(--ink); }
+  .search kbd { font: 12px var(--ui); color: var(--mute2); border: 1px solid var(--hair); border-radius: 6px; padding: 1px 6px; }
+  .btn-primary { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 10px; background: #4F46E5; color: #fff; font-size: 14px; font-weight: 600; }
+  .btn-primary:hover { color: #fff; filter: brightness(1.07); }
+  .content { padding: 24px 32px 32px; display: flex; flex-direction: column; gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--hair); border-radius: 14px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .kpi { display: flex; flex-direction: column; gap: 10px; padding: 18px; box-shadow: 0 1px 2px rgba(38,38,38,.04); }
+  .kpi .l { font-size: 13px; font-weight: 500; color: var(--body2); }
+  .kpi .v { display: flex; align-items: baseline; gap: 10px; }
+  .kpi .v b { font-size: 32px; font-weight: 700; letter-spacing: -.03em; }
+  .trend { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
+  .t-good { color: #047857; background: #ECFDF5; }
+  .t-bad { color: #C92A2A; background: #FFF1F1; }
+  .t-info { color: #3730A3; background: #EEF2FF; }
+  :root.dark .t-good { color: #34D399; background: rgba(52,211,153,.12); }
+  :root.dark .t-bad { color: #FF8787; background: rgba(255,135,135,.12); }
+  :root.dark .t-info { color: #A5B4FC; background: rgba(99,102,241,.18); }
+  .spark { display: flex; align-items: flex-end; gap: 4px; height: 28px; }
+  .spark span { flex: 1; border-radius: 3px; background: #E7E2D8; min-height: 3px; }
+  :root.dark .spark span { background: #334155; }
+  .kpi .n { font-size: 12.5px; color: var(--mute2); }
+  .row2 { display: flex; gap: 20px; flex-wrap: wrap; }
+  .sec { padding: 20px; }
+  .sec-h { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .sec-h h2 { margin: 0; font-size: 16px; font-weight: 650; }
+  .sec-h .s { font-size: 12.5px; color: var(--mute2); }
+  .sec-h a { margin-left: auto; font-size: 13.5px; font-weight: 600; }
+  ol.feed { list-style: none; margin: 0; padding: 0; }
+  ol.feed li { display: flex; gap: 14px; padding: 14px 0; border-top: 1px solid var(--hair2); }
+  .avatar { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; }
+  .feed .top { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .feed .top b { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .feed .top .sha { font: 12.5px var(--mono); color: var(--body2); }
+  .feed .top .msg { font-size: 13.5px; color: var(--body2); }
+  .feed .top .when { margin-left: auto; font-size: 12.5px; color: var(--mute2); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .chip { font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 99px; border: 1px solid; }
+  .c-add { color: #047857; background: #ECFDF5; border-color: #A7F3D0; }
+  .c-rem { color: #57534E; background: #F5F5F4; border-color: #E7E5E4; }
+  .c-risk { color: #C92A2A; background: #FFF1F1; border-color: #FFD6D6; }
+  .c-fix { color: #3730A3; background: #EEF2FF; border-color: #C7D2FE; }
+  :root.dark .c-add { color: #34D399; background: rgba(52,211,153,.1); border-color: rgba(52,211,153,.3); }
+  :root.dark .c-rem { color: #CBD5E1; background: #1E293B; border-color: #334155; }
+  :root.dark .c-risk { color: #FF8787; background: rgba(255,135,135,.1); border-color: rgba(255,135,135,.3); }
+  :root.dark .c-fix { color: #A5B4FC; background: rgba(99,102,241,.15); border-color: rgba(99,102,241,.35); }
+  .live { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 99px; color: #047857; background: #ECFDF5; }
+  .live i { width: 7px; height: 7px; border-radius: 50%; background: #34D399; }
+  .live.off { color: var(--body2); background: var(--hair2); }
+  .live.off i { background: #A8A29E; }
+  .mini { display: block; height: 230px; border: 1px solid var(--hair); border-radius: 10px; overflow: hidden; background: var(--paper); position: relative; }
+  .mini iframe { width: 200%; height: 200%; border: 0; transform: scale(.5); transform-origin: 0 0; pointer-events: none; }
+  .mini::after { content: ""; position: absolute; inset: 0; }
+  .stats3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .stats3 div { padding: 10px 12px; background: var(--surface); border-radius: 10px; }
+  .stats3 b { display: block; font-size: 20px; font-weight: 700; }
+  .stats3 span { font-size: 12.5px; color: var(--body2); }
+  .stats3 .bad { background: #FFF1F1; }
+  .stats3 .bad b { color: #C92A2A; }
+  :root.dark .stats3 .bad { background: rgba(255,135,135,.08); }
+  :root.dark .stats3 .bad b { color: #FF8787; }
+  .tip { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 14px; border: 1px dashed #C7D2FE; border-radius: 10px; background: #EEF2FF; font-size: 13.5px; color: #3730A3; }
+  :root.dark .tip { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.4); color: #C7D2FE; }
+  .tip span { flex: 1; }
+  .tip a { font-size: 13px; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px; }
+  thead tr { text-align: left; color: var(--mute2); font-size: 12.5px; background: var(--surface); }
+  th { padding: 10px 12px; font-weight: 600; }
+  th:first-child, td:first-child { padding-left: 20px; }
+  th:last-child, td:last-child { padding-right: 20px; }
+  tbody tr { border-top: 1px solid var(--hair2); }
+  tbody tr:hover { background: var(--surface); }
+  td { padding: 12px; }
+  td .name { color: var(--ink); font-weight: 600; }
+  td .stack { font-size: 12.5px; color: var(--mute2); }
+  .st { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; }
+  .st i { width: 7px; height: 7px; border-radius: 50%; }
+  .hb { display: flex; align-items: center; gap: 10px; }
+  .hb .t { flex: 1; height: 6px; border-radius: 99px; background: var(--track); overflow: hidden; }
+  .hb .t div { height: 100%; }
+  .hb b { font-size: 13px; font-weight: 600; width: 32px; }
+  .mono { font: 12.5px var(--mono); }
+  .empty { padding: 40px 20px; text-align: center; color: var(--mute2); font-size: 14px; }
+  .empty a { font-weight: 600; }
+  .hidden { display: none !important; }
+  @media (max-width: 900px) { nav.side { display: none; } header.top, .content { padding-left: 16px; padding-right: 16px; } }
+</style>
+</head>
+<body>
+<nav class="side" aria-label="Workspace">
+  <a class="brand" href="/app"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="" />RepoMind</a>
+  <div class="ws"><span class="av" id="wsInitial">R</span><div><b id="wsName">This server</b><span id="wsSub">Self-hosted</span></div></div>
+  <a class="item on" href="/app"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/></svg>Overview</a>
+  <a class="item" href="#repos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"/></svg>Repositories<span class="badge" id="navRepos"></span></a>
+  <a class="item" href="#feed"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 3v5h5M4 13a8 8 0 0 0 14.3 4.9L20 16M20 21v-5h-5"/></svg>Changes<span class="badge" id="navChanges"></span></a>
+  <a class="item" id="navRisksLink" href="#repos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20zM12 10v4M12 17h.01"/></svg>Risks<span class="badge risk" id="navRisks"></span></a>
+  <a class="item" href="https://github.com/yagnesh-pasam-07/repomind#github-action" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M6 9a3 3 0 1 0 0-6M18 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 15V9a3 3 0 0 0-3-3h-4"/></svg>Pull requests</a>
+  <a class="item" href="/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Map a repository</a>
+  <div class="grow"></div>
+  <div class="note"><b>Scans stored</b><div class="bar"><div id="scanBar" style="width:0%"></div></div><span id="scanNote">—</span></div>
+  <div class="me"><span class="av">R</span><div><b>RepoMind</b><span>Self-hosted · no sign-in yet</span></div><button class="theme" id="themeBtn" type="button" aria-label="Toggle dark mode" title="Light / dark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+</nav>
+
+<main>
+  <header class="top">
+    <div>
+      <h1 id="greet">Overview</h1>
+      <div class="sub" id="greetSub">Loading…</div>
+    </div>
+    <div class="grow"></div>
+    <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--mute2)"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" placeholder="Search repos…" aria-label="Search repositories" autocomplete="off"><kbd>⌘K</kbd></label>
+    <a class="btn-primary" href="/">+ Map repository</a>
+  </header>
+
+  <div class="content">
+    <section class="kpis" aria-label="Key numbers">
+      <div class="card kpi"><span class="l">Architecture health</span><div class="v"><b id="kHealth">—</b><span class="trend" id="tHealth"></span></div><div class="spark" id="sHealth"></div><span class="n" id="nHealth">Score across repos: open risks by severity</span></div>
+      <div class="card kpi"><span class="l">Open risks</span><div class="v"><b id="kRisks">—</b><span class="trend" id="tRisks"></span></div><div class="spark" id="sRisks"></div><span class="n" id="nRisks"></span></div>
+      <div class="card kpi"><span class="l">Architecture changes</span><div class="v"><b id="kChanges">—</b><span class="trend t-info">this week</span></div><div class="spark" id="sChanges"></div><span class="n" id="nChanges"></span></div>
+      <div class="card kpi"><span class="l">Paid services</span><div class="v"><b id="kPaid">—</b><span class="trend" id="tPaid"></span></div><div class="spark" id="sPaid"></div><span class="n">Cost tiers from detected SDKs and infra</span></div>
+    </section>
+
+    <div class="row2">
+      <section class="card sec" id="feed" aria-label="This week" style="flex: 1 1 520px; min-width: 0">
+        <div class="sec-h"><h2>What changed recently</h2><span class="s">only commits that changed the architecture</span></div>
+        <ol class="feed" id="feedList"></ol>
+      </section>
+      <section class="card sec" aria-label="Live map" style="flex: 1 1 380px; min-width: 0" id="spot">
+        <div class="sec-h"><h2 id="spotName">—</h2><span class="live" id="spotLive"><i></i>Live</span><a id="spotOpen" href="#">Open map →</a></div>
+        <a class="mini" id="spotMini" href="#"><iframe id="spotFrame" title="Map preview" tabindex="-1" loading="lazy"></iframe></a>
+        <div class="stats3"><div><b id="spotComp">—</b><span>components</span></div><div><b id="spotSvc">—</b><span>services</span></div><div class="bad"><b id="spotRisk">—</b><span>open risks</span></div></div>
+        <div class="tip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v18M6 9a3 3 0 1 0 0-6M18 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 15V9a3 3 0 0 0-3-3h-4"/></svg><span>Add the GitHub Action to get this as a comment on every PR.</span><a href="https://github.com/yagnesh-pasam-07/repomind#github-action" target="_blank" rel="noopener">Set up</a></div>
+      </section>
+    </div>
+
+    <section class="card" id="repos" aria-label="Repositories" style="overflow: hidden">
+      <div class="sec-h" style="padding: 16px 20px 0"><h2>Repositories</h2><span class="s" id="repoCount"></span></div>
+      <div style="overflow-x: auto; margin-top: 12px">
+        <table>
+          <thead><tr><th>Repository</th><th>Status</th><th>Last change</th><th>Components</th><th>Risks</th><th style="width: 200px">Health</th></tr></thead>
+          <tbody id="repoRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const dark = () => document.documentElement.classList.contains('dark');
+  const ago = (t) => {
+    const s = Math.max(0, (Date.now() - new Date(t).getTime()) / 1000);
+    if (s < 3600) return `${Math.max(1, Math.round(s / 60))} min ago`;
+    if (s < 86400) return `${Math.round(s / 3600)} h ago`;
+    if (s < 2 * 86400) return 'Yesterday';
+    if (s < 7 * 86400) return new Date(t).toLocaleDateString(undefined, { weekday: 'short' });
+    return new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  };
+  const AVATAR = [['#E0E7FF', '#3730A3'], ['#FDE68A', '#92400E'], ['#BAE6FD', '#075985'], ['#FED7AA', '#9A3412'], ['#A7F3D0', '#065F46']];
+  const avatarOf = (name) => AVATAR[[...String(name)].reduce((s, c) => s + c.charCodeAt(0), 0) % AVATAR.length];
+  const healthColor = (n) => (n >= 85 ? '#34D399' : n >= 70 ? '#6366F1' : '#FF6B6B');
+
+  function spark(el, vals, color) {
+    if (!vals.length) { el.innerHTML = ''; return; }
+    const max = Math.max(1, ...vals);
+    el.innerHTML = vals.map((v, i) => `<span style="height:${Math.max(10, (v / max) * 100)}%;${i === vals.length - 1 ? `background:${color}` : ''}"></span>`).join('');
+  }
+  function trend(el, delta, goodWhenUp, suffix = ' this week') {
+    if (delta == null || delta === 0) { el.textContent = delta === 0 ? 'no change' : ''; el.className = 'trend t-info'; if (delta == null) el.className = 'trend'; return; }
+    const good = goodWhenUp ? delta > 0 : delta < 0;
+    el.textContent = `${delta > 0 ? '+' : '−'}${Math.abs(delta)}${suffix}`;
+    el.className = 'trend ' + (good ? 't-good' : 't-bad');
+  }
+
+  let data = null;
+  function render() {
+    const d = data;
+    const h = new Date().getHours();
+    $('#greet').textContent = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    $('#greetSub').textContent = `${new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })} · ${d.changedRepos} ${d.changedRepos === 1 ? 'repository' : 'repositories'} changed their architecture this week`;
+    $('#navRepos').textContent = d.repoCount || '';
+    $('#navChanges').textContent = d.kpis.changes.value || '';
+    $('#navRisks').textContent = d.kpis.risks.value || '';
+
+    const k = d.kpis;
+    $('#kHealth').textContent = d.repoCount ? k.health.value : '—';
+    trend($('#tHealth'), k.health.delta, true);
+    spark($('#sHealth'), d.series.map((x) => x.health), '#34D399');
+    $('#nHealth').textContent = `Score across ${d.repoCount} ${d.repoCount === 1 ? 'repo' : 'repos'}: 100 minus open risks by severity`;
+    $('#kRisks').textContent = k.risks.value;
+    trend($('#tRisks'), k.risks.delta, false);
+    spark($('#sRisks'), d.series.map((x) => x.risks), '#FF6B6B');
+    const sv = k.risks.bySeverity;
+    $('#nRisks').textContent = ['critical', 'high', 'medium', 'low'].filter((s) => sv[s]).map((s) => `${sv[s]} ${s}`).join(' · ') || 'None open';
+    $('#kChanges').textContent = k.changes.value;
+    spark($('#sChanges'), d.series.map((x) => x.changes), '#6366F1');
+    $('#nChanges').textContent = `Out of ${k.changes.of} scanned ${k.changes.of === 1 ? 'commit' : 'commits'} this week`;
+    $('#kPaid').textContent = k.paid.value;
+    const tp = $('#tPaid');
+    tp.textContent = k.paid.added.length ? `+${k.paid.added.length} ${k.paid.added[0]}${k.paid.added.length > 1 ? '…' : ''}` : '';
+    tp.className = 'trend' + (k.paid.added.length ? ' t-bad' : '');
+    spark($('#sPaid'), d.series.map((x) => x.paid), '#FBBF24');
+
+    $('#feedList').innerHTML = d.feed.length
+      ? d.feed.map((f) => {
+          const [bg, fg] = avatarOf(f.author || f.repo);
+          return `<li><span class="avatar" style="background:${bg};color:${fg}">${esc((f.author || '?').trim()[0] || '?').toUpperCase()}</span><div style="flex:1;min-width:0"><div class="top"><a href="${esc(f.url)}"><b>${esc(f.repo)}</b></a><span class="sha">${esc(f.sha)}</span><span class="msg">${esc(f.msg)}</span><span class="when">${esc(ago(f.committedAt))}</span></div><div class="chips">${f.chips.map((c) => `<span class="chip c-${c.kind}">${esc(c.text)}</span>`).join('')}</div></div></li>`;
+        }).join('')
+      : `<li class="empty" style="border:0">No architecture changes in the last two weeks. Connect a repo for live updates and changes show up here.</li>`;
+
+    // Spotlight: the most recently changed live repo (fall back to the most recent one).
+    const top = d.repos.find((r) => r.status === 'Live') || d.repos[0];
+    $('#spot').classList.toggle('hidden', !top);
+    if (top) {
+      $('#spotName').textContent = `${top.owner}/${top.repo}`;
+      $('#spotLive').className = 'live' + (top.status === 'Live' ? '' : ' off');
+      $('#spotLive').innerHTML = `<i></i>${esc(top.status)}`;
+      $('#spotOpen').href = $('#spotMini').href = top.url;
+      const src = top.url + '/download.html?sha=' + encodeURIComponent(top.sha);
+      if ($('#spotFrame').dataset.src !== src) { $('#spotFrame').dataset.src = src; $('#spotFrame').src = top.url.replace('/r/', '/r/') + '?embed=1'; }
+      $('#spotComp').textContent = top.components;
+      $('#spotSvc').textContent = top.services;
+      $('#spotRisk').textContent = top.risks;
+      $('#navRisksLink').href = top.url + '#risks';
+    }
+
+    renderRows();
+    $('#repoCount').textContent = `${d.repoCount} mapped · ${d.liveCount} live`;
+  }
+
+  function renderRows() {
+    const q = $('#q').value.trim().toLowerCase();
+    const rows = data.repos.filter((r) => !q || `${r.owner}/${r.repo} ${r.stack}`.toLowerCase().includes(q));
+    const ST = { Live: ['#34D399', dark() ? '#34D399' : '#047857'], Snapshot: ['#A8A29E', 'var(--body2)'], Scanning: ['#6366F1', dark() ? '#A5B4FC' : '#3730A3'] };
+    $('#repoRows').innerHTML = rows.length
+      ? rows.map((r) => {
+          const [dot, fg] = ST[r.status] || ST.Snapshot;
+          return `<tr><td><a class="name" href="${esc(r.url)}">${esc(r.owner)}/${esc(r.repo)}</a><div class="stack">${esc(r.stack)}</div></td><td><span class="st" style="color:${fg}"><i style="background:${dot}"></i>${esc(r.status)}</span></td><td style="color:var(--body2)"><span class="mono">${esc(r.sha)}</span> · ${esc(ago(r.committedAt))}</td><td>${r.components}</td><td style="font-weight:600;color:${r.risks ? (dark() ? '#FF8787' : '#C92A2A') : 'var(--body2)'}">${r.risks}</td><td><div class="hb"><div class="t"><div style="width:${r.health}%;background:${healthColor(r.health)}"></div></div><b>${r.health}</b></div></td></tr>`;
+        }).join('')
+      : `<tr><td colspan="6" class="empty">${data.repos.length ? 'No repositories match.' : 'No repositories yet. <a href="/">Map your first repo →</a>'}</td></tr>`;
+  }
+
+  async function load() {
+    try {
+      const r = await fetch('/api/overview');
+      data = await r.json();
+      render();
+      const total = data.repos.length;
+      $('#scanNote').textContent = `${total} ${total === 1 ? 'repo' : 'repos'} · stored on this server`;
+      $('#scanBar').style.width = Math.min(100, total * 10) + '%';
+    } catch (e) {
+      $('#greetSub').textContent = 'Could not load the workspace.';
+    }
+  }
+
+  $('#q').addEventListener('input', () => data && renderRows());
+  document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('#q').focus(); } });
+
+  // Theme (shared key with the landing page and the map).
+  const syncLogo = () => document.querySelectorAll('img.logo').forEach((i) => (i.src = i.dataset[dark() ? 'dark' : 'light']));
+  let saved = null;
+  try { saved = localStorage.getItem('repomind-theme'); } catch (e) {}
+  document.documentElement.classList.toggle('dark', saved ? saved === 'dark' : !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
+  syncLogo();
+  $('#themeBtn').onclick = () => {
+    document.documentElement.classList.toggle('dark');
+    syncLogo();
+    try { localStorage.setItem('repomind-theme', dark() ? 'dark' : 'light'); } catch (e) {}
+    try { $('#spotFrame').contentWindow.postMessage({ repomindTheme: dark() ? 'dark' : 'light' }, location.origin); } catch (e) {}
+    if (data) renderRows();
+  };
+
+  load();
+  setInterval(load, 30000);
+})();
+</script>
+</body>
+</html>

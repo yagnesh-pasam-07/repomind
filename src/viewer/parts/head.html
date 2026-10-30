@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
 <style>/*__THEME_CSS__*/</style>
 <style>
   :root {
@@ -74,23 +74,16 @@
     --s-critical: #E03131; --s-high: #C2410C; --s-medium: #B45309; --s-low: var(--pencil);
     --c-added: #10B981; --c-removed: #E03131; --c-changed: #FF6B6B;
   }
-  body.sketch .brand h1, body.sketch .tab, body.sketch .btn, body.sketch .seg button, body.sketch aside h2, body.sketch aside h3, body.sketch .tl-title, body.sketch .lane-title, body.sketch .lane-count, body.sketch .card .label, body.sketch .card .tech, body.sketch .card .cost, body.sketch #caption .title, body.sketch #modal h1, body.sketch #modal h2, body.sketch .fmt b, body.sketch .delta b { font-family: var(--hand); font-weight: 400; }
+  /* D28: the interface is Inter in both styles; Excalifont is only on the drawing (lanes and cards). */
+  body.sketch .lane-title, body.sketch .lane-count, body.sketch .card .label, body.sketch .card .tech, body.sketch .card .cost { font-family: var(--hand); font-weight: 400; }
   body.sketch #stage { background-color: var(--paper); background-image: radial-gradient(var(--paper2-stroke) 1.1px, transparent 1.3px); background-size: 22px 22px; }
   body.sketch header, body.sketch aside { border-color: var(--paper2-stroke); }
-  body.sketch .brand h1 { font-family: var(--title); font-size: 21px; line-height: 1; font-weight: 400; }
-  body.sketch .tab { font-weight: 400; font-size: 15px; }
-  body.sketch .btn { border: var(--line) solid var(--ink); border-radius: var(--radius); font-size: 15px; }
-  body.sketch .btn.primary { border-color: var(--ink); }
-  body.sketch .btn.primary { background: var(--brand); border-color: var(--brand-stroke); }
   body.sketch .card .label { font-family: var(--hand); font-size: 15px; font-weight: 400; }
   body.sketch .card .tech, body.sketch .card .cost { font-family: var(--hand); font-size: 12.5px; }
-  body.sketch .lane-title { font-family: var(--title); font-size: 21px; font-weight: 400; letter-spacing: 0; fill: var(--ink); }
-  body.sketch .lane-count { font-family: var(--title); font-size: 18px; }
+  body.sketch .lane-title { font-family: var(--hand); font-size: 17px; font-weight: 400; letter-spacing: 0; fill: var(--ink); text-decoration: underline; }
+  body.sketch .lane-count { font-family: var(--ui); font-size: 11px; fill: var(--muted); }
   body.sketch .mono, body.sketch .ev, body.sketch .finding .f { font-family: var(--mono); }
-  body.sketch aside h2 { font-family: var(--title); font-size: 28px; font-weight: 400; }
-  body.sketch aside h3 { font-family: var(--title); font-size: 20px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink); }
   body.sketch .stat, body.sketch .chip { border: 1px solid var(--paper2-stroke); }
-  body.sketch #caption .title { font-family: var(--title); font-size: 28px; font-weight: 400; }
   .card .ring { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 4; opacity: 0; }
   body:not(.sketch) .card .ring { display: none; }
   body.sketch .card:hover .ring { opacity: .5; }
@@ -106,7 +99,6 @@
   body.live #exportWrap { display: none; }
   body.live header { gap: 10px; flex-wrap: wrap; }
   body.live .search input { width: 150px; }
-  body.live .brand .sub { display: none; }
   body.live .tabs { margin-left: 0; }
   .badge { align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--muted); padding: 4px 10px; border-radius: 99px; background: var(--lane); white-space: nowrap; }
   .badge .pulse { width: 8px; height: 8px; border-radius: 99px; background: var(--pencil); }
@@ -169,6 +161,49 @@
   .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px; border: var(--line) solid #10B981; border-radius: 99px; background: #ECFDF5; color: #047857; font-weight: 700; font-size: 14px; }
   .pill.off { border-color: var(--pencil); background: var(--paper2); color: var(--pencil); }
 
+  /* D28 chrome (owner's landing screenshots): Inter, hairline borders, compact controls. */
+  header .crumb { font-size: 12px; color: var(--muted); line-height: 1.2; }
+  header .crumb a { color: var(--muted); }
+  header .crumb a:hover { color: var(--text); }
+  body.live .brand h1 { font-size: 17px; }
+  body.live .brand .sub { display: none; }
+  #liveBadge { background: transparent !important; border: 0 !important; padding: 0 !important; font-size: 12px; }
+  #liveBadge.on { color: var(--live); }
+  header .home { display: block; flex: none; }
+  .btn.round { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 99px; }
+  body.sketch header, body.sketch aside, body.sketch #timeline { background: var(--card2); }
+  body.sketch header { border-bottom: 1px solid var(--line-soft); }
+  body.sketch aside { border-left: 1px solid var(--line-soft); }
+  body.sketch #timeline { border-top: 1px solid var(--line-soft) !important; }
+  body.sketch .tabs, body.sketch .seg { background: transparent; border: 1px solid var(--line-soft); border-radius: 9px; padding: 2px; }
+  body.sketch .tab { font-size: 12.5px; font-weight: 500; padding: 5px 10px; }
+  body.sketch .tab.on, body.sketch .seg button.on { background: var(--card); color: var(--text); border: 1px solid var(--line-soft); box-shadow: 0 1px 2px rgba(38,38,38,.06); border-radius: 7px; }
+  body.sketch .seg button { font-size: 12.5px; font-weight: 500; padding: 5px 10px; }
+  body.sketch .btn { border: 1px solid var(--line-soft); border-radius: 8px; background: var(--card); font-size: 12.5px; font-weight: 600; }
+  body.sketch .btn:hover { border-color: var(--pencil); }
+  body.sketch .btn.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  body.sketch .search input { background: var(--card); border: 1px solid var(--line-soft); border-radius: 8px; }
+  body.sketch .lane-bg-sk { fill: var(--paper2); opacity: .55; }
+  :root.dark body.sketch .lane-bg-sk { fill: #1E293B; opacity: .6; }
+  aside h3 { font-family: var(--ui) !important; font-size: 10.5px !important; font-weight: 600 !important; letter-spacing: .1em !important; text-transform: uppercase !important; color: var(--muted) !important; margin: 20px 0 8px; }
+  aside h2 { font-family: var(--ui); font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+  body.sketch .stat { background: var(--paper2); border: 0; border-radius: 8px; }
+  body.sketch .stat b { font-size: 17px; font-weight: 700; }
+  body.sketch .chip { background: var(--paper2); border: 1px solid var(--line-soft); font-weight: 500; }
+  body.sketch .finding { background: var(--card); border-color: var(--line-soft); }
+  body.sketch .legend { background: var(--card); border: 1px solid var(--line-soft); box-shadow: none; }
+  #caption .title { font-family: var(--ui); font-weight: 700; letter-spacing: -.02em; }
+  #modal h1, #modal h2 { font-family: var(--ui) !important; font-weight: 700 !important; letter-spacing: -.02em; }
+  #modal h1 { font-size: 26px !important; }
+  #modal h2 { font-size: 16px !important; }
+  .fmt b { font-family: var(--ui); font-weight: 700; }
+  .tl-head .tl-title { font-family: var(--ui) !important; font-size: 12px !important; font-weight: 600 !important; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  body.embed .live-only, body.embed #presentBtn { display: none !important; }
+  /* Embedded previews (landing hero, Overview card, sign-in): the map fills the frame, no side panel. */
+  body.embed main { grid-template-columns: 1fr !important; }
+  body.embed aside { display: none !important; }
+  @media (max-width: 700px) { body.embed header, body.embed .legend, body.embed .zoom { display: none !important; } body.embed #app { grid-template-rows: 1fr; } }
+
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 13.5px/1.45 var(--ui); }
   button, input { font: inherit; color: inherit; }
@@ -178,8 +213,8 @@
   .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
   /* Logo = the weaverbird (D26). */
   .logo { width: 58px; height: 36px; display: block; flex: none; }
-  .brand h1 { font-size: 14px; margin: 0; font-weight: 700; white-space: nowrap; }
-  .brand .sub { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brand h1 { font-size: 14px; margin: 0; font-weight: 700; white-space: nowrap; letter-spacing: -.01em; }
+  .brand .sub { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .tabs { display: flex; gap: 2px; background: var(--lane); padding: 3px; border-radius: 10px; margin-left: 8px; }
   .tab { border: 0; background: transparent; padding: 6px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
   .tab:hover { color: var(--text); }
@@ -201,6 +236,9 @@
   .menu-list button:hover { background: var(--lane); }
 
   main { display: grid; grid-template-columns: 1fr 380px; min-height: 0; }
+  /* Flow 4 · Compare versions: the change summary sits on the left. */
+  body.view-changes main { grid-template-columns: 380px 1fr; }
+  body.view-changes aside { order: -1; border-left: 0 !important; border-right: 1px solid var(--line-soft); }
   #stage { position: relative; overflow: hidden; cursor: grab; }
   #stage.dragging { cursor: grabbing; }
   #canvas { width: 100%; height: 100%; display: block; user-select: none; }
@@ -283,10 +321,12 @@
 <div id="app">
   <header>
     <div class="brand">
-      <img class="logo" src="/*__LOGO__*/" data-light="/*__LOGO__*/" data-dark="/*__LOGO_DARK__*/" alt="RepoMind" width="58" height="36" />
+      <a href="/" class="home" title="RepoMind home"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="RepoMind" width="24" height="24" /></a>
       <div style="min-width:0">
+        <div class="crumb" id="crumb">RepoMind /</div>
         <h1 id="repoName">RepoMind</h1>
         <div class="sub" id="repoSub"></div>
+        <span class="badge live-only" id="liveBadge" title="Live updates"><span class="pulse"></span><span id="liveText">Snapshot</span></span>
       </div>
     </div>
     <nav class="tabs" id="tabs"></nav>
@@ -295,7 +335,6 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Search components…  ( / )" autocomplete="off" />
     </label>
-    <span class="badge live-only" id="liveBadge" title="Live updates"><span class="pulse"></span><span id="liveText">Snapshot</span></span>
     <button class="btn live-only" id="refreshBtn" title="Check GitHub for a new commit now">↻</button>
     <div class="seg" id="styleSeg" role="group" aria-label="Drawing style (S)"><button data-s="sketch">Sketch</button><button data-s="clean">Clean</button></div>
     <button class="btn primary" id="presentBtn" title="Presentation mode (P)">▶ Present</button>
@@ -308,7 +347,7 @@
         <button data-x="json">Graph JSON</button>
       </div>
     </div>
-    <button class="btn" id="themeBtn" title="Toggle theme (T)">Theme</button>
+    <button class="btn round" id="themeBtn" title="Toggle theme (T)" aria-label="Toggle theme"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
   </header>
   <main>
     <div id="stage">

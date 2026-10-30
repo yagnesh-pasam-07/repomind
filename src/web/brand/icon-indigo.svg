@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220">
+  <!-- RepoMind app icon, indigo (D28), traced from the owner's logo-sheet.png. -->
+  <rect width="220" height="220" rx="48" fill="#4F46E5" />
+  <g transform="translate(0 6)">
+    <path fill="#FFFFFF" d="M34 173 C35 132 61 101 103 92 L103 173 Z" />
+    <circle fill="#FFFFFF" cx="133" cy="77" r="34" />
+    <rect fill="#FFFFFF" x="103" y="92" width="30" height="81" />
+    <path fill="#FF6B6B" d="M34 173 C35 140 63 119 103 118 L103 173 Z" />
+    <path fill="#FBBF24" d="M165.5 69 L187 82 L165.5 90 Z" />
+    <circle fill="#4F46E5" cx="140" cy="74" r="6.5" />
+  </g>
+</svg>

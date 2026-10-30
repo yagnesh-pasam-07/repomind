@@ -73,7 +73,14 @@ npm install && npm run build
 GITHUB_TOKEN=$(gh auth token) node bin/repomind.js serve   # → http://127.0.0.1:4242
 ```
 
-Paste `github.com/owner/repo`, watch it scan, and get a hand-drawn (Excalidraw-style) map. Screens follow the v2 designs: **Landing → Scanning → Map → Changes → Download & share**.
+Paste `github.com/owner/repo`, watch the map weave itself, and get a hand-drawn map. Screens follow the [v2 designs](docs/design/README.md):
+
+| Page | What it is |
+| --- | --- |
+| `/` | Website: paste a repo, live example map |
+| `/login` | Sign in |
+| `/app` | Workspace overview: health, risks, changes, all repos |
+| `/r/owner/repo` | Live map with version timeline, compare, download & share |
 
 - **Live:** tick *Keep it live* to poll the branch every 5 minutes, or add the webhook shown under **Download → Keep it live** (`/api/webhook/github`, HMAC-signed) for instant updates.
 - **Versions:** each commit is a dot on the timeline at the bottom; big dots changed the map. Click a dot to load it, shift-click a second one to compare.

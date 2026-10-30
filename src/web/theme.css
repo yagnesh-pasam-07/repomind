@@ -1,6 +1,6 @@
 /* Shared by the landing page and the map viewer (injected at build time by scripts/copy-viewer.mjs).
-   Fonts per the v2 designs (D23); colours per the weaverbird brand (D26): Excalifont (Excalidraw's hand) for headings, buttons, brand and the map;
-   IBM Plex Sans for interface text; IBM Plex Mono for paths and shas.
+   D28 (owner's landing-light/landing-dark/logo-sheet PNGs): Inter for the whole interface, Excalifont (Excalidraw's hand)
+   only inside the map drawing, IBM Plex Mono for paths, shas and inputs.
    Excalifont loads from the @excalidraw/excalidraw npm package on jsDelivr and is not bundled: its embedded
    notice reserves rights. IBM Plex (OFL) loads from Google Fonts via the <link> in each page. */
 @font-face {
@@ -19,7 +19,7 @@
 :root {
   --hand: Excalifont, Virgil, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
   --title: var(--hand);
-  --ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ui: Inter, "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --radius: 8px; --line: 1.5px; --soft-shadow: 0 2px 14px rgba(43, 43, 43, .07);
 }
@@ -27,9 +27,9 @@
 /* Light palette per the "Brand · the weaverbird" and "Palette & type" designs (D26).
    Indigo is the brand. Green only means live or success; coral means a warning or a change. */
 :root {
-  --paper: #FDFBF7; --card: #FBFAF7; --paper2: #F4F1EA; --paper2-stroke: #D9D3C7; --dot: #E4DED2;
-  --ink: #262626; --pencil: #5F5F5F; --body: #4A4A4A; --muted: #5F5F5F;
-  --brand: #6366F1; --brand-stroke: #4F46E5; --brand-soft: #E0E7FF; --link: #4F46E5; --link-hover: #4338CA; --live: #047857; --honey: #FBBF24;
+  --paper: #F4F1EA; --card: #FFFFFF; --card2: #FBFAF7; --paper2: #EDE9E1; --paper2-stroke: #DDD8CE; --line-soft: #E4DFD5; --dot: #E4DED2;
+  --ink: #262626; --pencil: #6B6862; --body: #6B6862; --muted: #8D8B86;
+  --brand: #4F46E5; --brand-stroke: #4338CA; --brand-soft: #E0E7FF; --link: #4F46E5; --link-hover: #4338CA; --live: #047857; --honey: #FBBF24; --coral: #FF6B6B;
   --f-client: #E7E5E4; --k-client: #57534E; --f-app: #C7D2FE; --k-app: #4F46E5; --f-module: #E0E7FF; --k-module: #6366F1;
   --f-data: #BAE6FD; --k-data: #0284C7; --f-cloud: #A5F3FC; --k-cloud: #0E7490; --f-external: #FDE68A; --k-external: #B45309;
   --f-cicd: #FED7AA; --k-cicd: #C2410C; --f-risk: #FFD6D6; --k-risk: #E03131;
@@ -39,13 +39,13 @@
 /* Dark = "Night" from the designs (slate/navy, indigo brand). The --gh-* names are kept as the
    dark-surface tokens the pages already use; their values are the Night palette now (D26). */
 :root.dark {
-  --gh-canvas: #0F172A; --gh-subtle: #1E293B; --gh-inset: #0F172A; --gh-overlay: #1E293B; --gh-header: #0B1120;
+  --gh-canvas: #0F172A; --gh-subtle: #1E293B; --gh-inset: #111C33; --gh-overlay: #1E293B; --gh-header: #0B1120;
   --gh-border: #334155; --gh-border-muted: #1E293B; --gh-fg: #E2E8F0; --gh-muted: #94A3B8;
   --gh-accent: #A5B4FC; --gh-success: #34D399; --gh-danger: #FF8787; --gh-attention: #FDBA74; --gh-done: #A5B4FC; --gh-btn: #1E293B; --gh-btn-primary: #6366F1;
 
-  --paper: var(--gh-canvas); --card: var(--gh-subtle); --paper2: var(--gh-subtle); --paper2-stroke: var(--gh-border); --dot: #1E293B;
-  --ink: var(--gh-fg); --pencil: var(--gh-muted); --body: var(--gh-muted); --muted: var(--gh-muted);
-  --brand: #6366F1; --brand-stroke: #818CF8; --brand-soft: rgba(99,102,241,.25); --link: #A5B4FC; --link-hover: #C7D2FE; --live: #34D399;
+  --paper: var(--gh-canvas); --card: #111C33; --card2: #111C33; --paper2: var(--gh-subtle); --paper2-stroke: var(--gh-border); --line-soft: #1E293B; --dot: #1E293B;
+  --ink: var(--gh-fg); --pencil: var(--gh-muted); --body: var(--gh-muted); --muted: #64748B;
+  --brand: #6366F1; --brand-stroke: #818CF8; --brand-soft: rgba(99,102,241,.25); --link: #A5B4FC; --link-hover: #C7D2FE; --live: #34D399; --coral: #FF8787;
 
   /* Same layer hues, brighter strokes for the dark canvas; fills are drawn at low strength. */
   --f-client: #A8A29E; --k-client: #D6D3D1; --f-app: #818CF8; --k-app: #A5B4FC; --f-module: #A5B4FC; --k-module: #C7D2FE;

@@ -23,7 +23,9 @@ export function detectWorkspace(ctx: Ctx) {
       ...Object.keys(pkg.peerDependencies ?? {}),
     ]);
     const runtimeDeps = new Set<string>(Object.keys(pkg.dependencies ?? {}));
-    const framework = FRAMEWORKS.find((f) => f.packages.some((p) => runtimeDeps.has(p) || deps.has(p)));
+    // Server frameworks must be runtime deps: libraries often list express/koa only to run their tests (D30).
+    // Build-time frameworks (Next.js, Vite, Expo…) are commonly devDependencies of real apps, so those still count.
+    const framework = FRAMEWORKS.find((f) => f.packages.some((p) => runtimeDeps.has(p) || (f.role !== 'server' && deps.has(p))));
     const isWorkspaceRoot = dir === '' && (pkg.workspaces || repo.files.includes('pnpm-workspace.yaml') || repo.files.includes('turbo.json'));
     const hasSource = repo.files.some((f) => (dir === '' || f.startsWith(dir + '/')) && SOURCE_EXT.test(f));
 

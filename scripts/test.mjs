@@ -97,3 +97,19 @@ t2('viewer embeds rough.js, live settings and escapes data', () => {
   assert.equal((html.match(/<\/script>/g) || []).length, 2);
 });
 console.log(`${v2} v2 checks passed`);
+
+// D30: a dev-only server framework (used by tests) must not turn a library into a server.
+{
+  const { mkdtempSync, writeFileSync, rmSync, mkdirSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'rm-lib-'));
+  try {
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'http-client', devDependencies: { express: '^4' } }));
+    mkdirSync(join(dir, 'source'));
+    writeFileSync(join(dir, 'source', 'index.ts'), 'export const get = () => fetch("/");\n');
+    const lib = scan(dir, { repoName: 'lib' }).nodes.find((n) => n.layer === 'app');
+    assert.notEqual(lib?.tech, 'Express');
+    console.log('  ✓ dev-only express does not make a library a server (D30)');
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+}

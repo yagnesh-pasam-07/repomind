@@ -26,7 +26,9 @@ export interface Job {
   status: 'running' | 'done' | 'error';
   error?: string;
   steps: { key: StepKey; label: string; state: 'todo' | 'doing' | 'done'; ms?: number }[];
-  found: { name: string; what: string; layer: string; tech?: string }[];
+  found: { name: string; what: string; layer: string; tech?: string; risk?: boolean }[];
+  /** Live counts for the Scanning screen (D29). */
+  counts?: { components: number; links: number; risks: number; paid: number };
   startedAt: string;
 }
 
@@ -60,7 +62,7 @@ export class Scanner {
     const short = commit.sha.slice(0, 7);
     if (existing && this.store.graph(owner, repo, existing.sha)) {
       if (job) job.steps.forEach((s) => (s.state = 'done'));
-      if (job) job.found = foundOf(this.store.graph(owner, repo, existing.sha)!);
+      if (job) Object.assign(job, foundOf(this.store.graph(owner, repo, existing.sha)!));
       return existing;
     }
     const step = async <T>(key: StepKey, fn: () => Promise<T> | T): Promise<T> => {
@@ -82,7 +84,7 @@ export class Scanner {
         if (r) r.label = `Read ${dl.files.toLocaleString('en')} files`;
       });
       const g = await step('detect', () => scan(dir, { repoName: `${owner}/${repo}`, commit: short }));
-      if (job) job.found = foundOf(g);
+      if (job) Object.assign(job, foundOf(g));
       // Rules run inside scan(); this step reports them separately to match the Scanning screen.
       await step('risks', () => undefined);
       const v = await step('draw', () => this.record(idx, commit, g));
@@ -139,16 +141,23 @@ export function recount(store: Store, idx: RepoIndex) {
   }
 }
 
-/** "Found so far" list for the Scanning screen. */
+/** Lanes of found components + live counts for the Scanning screen (D29). Ordered like the map's lanes. */
 function foundOf(g: Graph) {
-  const rank: Record<string, number> = { app: 0, data: 1, cloud: 2, external: 3, cicd: 4, client: 5 };
-  return g.nodes
-    .filter((n) => n.layer in rank && n.kind !== 'library')
+  const rank: Record<string, number> = { client: 0, app: 1, data: 2, cloud: 3, external: 4, cicd: 5 };
+  const risky = new Set(g.findings.filter((f) => f.severity === 'critical' || f.severity === 'high').map((f) => f.node));
+  const found = g.nodes
+    .filter((n) => n.layer in rank)
     .sort((a, b) => rank[a.layer] - rank[b.layer] || a.label.localeCompare(b.label))
-    .slice(0, 8)
     .map((n) => {
       const m: any = n.meta || {};
       const what = m.routeCount ? `${n.tech ?? ''} · ${m.routeCount} routes` : m.models?.length ? `${n.tech ?? ''} · ${m.models.length} models` : n.tech ?? n.category ?? '';
-      return { name: n.label, what, layer: n.layer, tech: n.tech };
+      return { name: n.label, what, layer: n.layer, tech: n.tech, risk: risky.has(n.id) };
     });
+  const counts = {
+    components: g.nodes.filter((n) => n.kind !== 'module').length,
+    links: g.edges.filter((e) => e.kind !== 'contains').length,
+    risks: g.findings.length,
+    paid: g.nodes.filter((n) => n.cost && n.cost.tier !== 'free' && ['external', 'cloud', 'data'].includes(n.layer)).length,
+  };
+  return { found, counts };
 }

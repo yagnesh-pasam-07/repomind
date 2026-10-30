@@ -24,7 +24,11 @@
     if (state.view === 'changes' && DIFF) {
       const comps0 = (ids) => ids.map((id) => allNodes.get(id)).filter((n) => n && n.kind !== 'module');
       const nNew = G.findings.filter((f) => newFindings.has(f.id)).length;
-      if (DIFF.baseCommit) h += `<div class="range"><span>${esc(DIFF.baseCommit)}</span>→<span class="to">${esc(DIFF.headCommit || 'now')}</span></div>`;
+      // Flow 4 · Compare versions: title + dated range chips (dates come from the live timeline when served).
+      const vDate = (sha) => (window.__rmVersions || []).find((v) => v.sha === sha);
+      const dateOf = (sha) => { const v = vDate(sha); return v ? ' · ' + new Date(v.committedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : ''; };
+      h += `<h2 style="margin:4px 0 0">What changed</h2>`;
+      if (DIFF.baseCommit) h += `<div class="range"><span>${esc(DIFF.baseCommit)}${esc(dateOf(DIFF.baseCommit))}</span>→<span class="to">${esc(DIFF.headCommit || 'now')}${esc(dateOf(DIFF.headCommit))}</span></div>`;
       h += `<div class="deltas"><div class="delta add"><b>+${comps0(DIFF.added).length}</b><span>added</span></div><div class="delta rem"><b>−${comps0(DIFF.removed).length}</b><span>removed</span></div><div class="delta risk"><b>${nNew}</b><span>new risks</span></div></div>`;
       const list = (ids, c) =>
         ids.map((id) => allNodes.get(id)).filter((n) => n && n.kind !== 'module')
@@ -130,7 +134,7 @@
   const contentBox = () => ({ x: -20, y: -20, w: state.L.width + 40, h: state.L.laneH + 40 });
   function zoomTo(box, minK) {
     const r = stage.getBoundingClientRect();
-    const padB = document.body.classList.contains('presenting') ? 170 : 70;
+    const padB = document.body.classList.contains('presenting') ? 170 : document.body.classList.contains('embed') ? 40 : 70;
     let k = Math.min(r.width / box.w, (r.height - padB) / box.h);
     if (minK) k = Math.max(k, Math.min(minK, 1.4));
     k = Math.max(0.12, Math.min(k, 1.4));
@@ -141,6 +145,8 @@
   }
   const fit = () => zoomTo(contentBox());
   stage.addEventListener('wheel', (ev) => {
+    // Embedded previews: let a plain wheel scroll the host page; only pinch / ctrl+wheel zooms the map.
+    if (DATA.embed && !ev.ctrlKey) return;
     ev.preventDefault();
     const r = stage.getBoundingClientRect();
     const mx = ev.clientX - r.left, my = ev.clientY - r.top;
@@ -207,6 +213,7 @@
   }
   function setView(k) {
     state.view = k;
+    document.body.classList.toggle('view-changes', k === 'changes');
     state.selected = null;
     hoverId = null;
     renderTabs();
@@ -244,6 +251,8 @@
   let savedTheme = null;
   try { savedTheme = localStorage.getItem('repomind-theme'); } catch (e) {}
   setTheme(savedTheme ? savedTheme === 'dark' : !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches));
+  // Another RepoMind tab/frame changed the theme: follow it.
+  window.addEventListener('storage', (e) => { if (e.key === 'repomind-theme' && e.newValue) setTheme(e.newValue === 'dark'); });
   $('#themeBtn').onclick = () => setTheme(!document.documentElement.classList.contains('dark'));
 
   // ---------- Export ----------
@@ -346,6 +355,7 @@
     const st = steps[stepIdx];
     if (state.view !== st.view) {
       state.view = st.view;
+      document.body.classList.toggle('view-changes', st.view === 'changes');
       state.selected = null;
       renderTabs();
       render();
@@ -404,6 +414,15 @@
     if (VIEWS[k] && k !== state.view) setView(k);
   });
   window.addEventListener('resize', () => { if (!document.body.classList.contains('presenting')) fit(); });
+  // Embedded frames often start tiny (lazy iframes): refit whenever the stage changes size, until the user moves the map.
+  let userMoved = false;
+  stage.addEventListener('wheel', (ev) => { if (!DATA.embed || ev.ctrlKey) userMoved = true; }, { passive: true });
+  stage.addEventListener('pointerdown', () => (userMoved = true));
+  if (window.ResizeObserver) new ResizeObserver(() => { if (!userMoved && !document.body.classList.contains('presenting')) fit(); }).observe(stage);
+  // Late layout (lazy iframe sizing, web fonts): fit again once things settle.
+  const settle = () => { if (!userMoved && !document.body.classList.contains('presenting')) fit(); };
+  window.addEventListener('load', () => { settle(); setTimeout(settle, 300); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(settle, 50));
 
   // ---------- Sketch / Clean (PRD v2, R3) ----------
   function setStyle(sketch) {
@@ -421,6 +440,16 @@
   // Hand fonts change text widths; redraw once they arrive.
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => state.L && render());
 
+  // ---------- Embedded preview (landing page iframe) ----------
+  if (DATA.embed) {
+    document.body.classList.add('embed');
+    // Follow the landing page's theme toggle (same origin only).
+    window.addEventListener('message', (ev) => {
+      if (ev.origin !== location.origin || !ev.data || !ev.data.repomindTheme) return;
+      setTheme(ev.data.repomindTheme === 'dark');
+    });
+  }
+
   // ---------- Boot ----------
   function header() {
     $('#repoName').textContent = G.meta.repo;
@@ -435,6 +464,8 @@
   // ---------- Live mode (served by `repomind serve`, PRD v2) ----------
   if (LIVE) {
     document.body.classList.add('live');
+    $('#crumb').innerHTML = '<a href="/app">Workspace</a> / <a href="/app#repos">Repositories</a> /';
+    $('#repoName').textContent = `${LIVE.owner}/${LIVE.repo}`;
     const api = (p, opts) => fetch(p, opts).then(async (r) => {
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.error || r.statusText);
@@ -487,6 +518,7 @@
       const r = await api(`/api/repos/${repoPath}/versions`);
       const prevTop = live.versions[0]?.sha;
       live.versions = r.versions;
+      window.__rmVersions = r.versions;
       live.info = r.repo;
       badge();
       timeline();
@@ -508,6 +540,7 @@
       renderTabs();
       state.view = VIEWS[keepView] ? keepView : 'overview';
       if (base && VIEWS.changes) state.view = 'changes';
+      document.body.classList.toggle('view-changes', state.view === 'changes');
       render();
       Object.assign(view, keepXf);
       applyView(false);

@@ -3,18 +3,16 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 const parts = ['head.html', 'app1.js', 'app2.js'].map((p) => readFileSync(`src/viewer/parts/${p}`, 'utf8'));
 const theme = readFileSync('src/web/theme.css', 'utf8');
 // Favicon and logo as data URIs so the offline HTML map keeps them.
-// The SVGs carry a prefers-color-scheme block; an <img> follows the OS, not RepoMind's own theme toggle,
-// so we also emit a dark variant (media query forced on) and the pages swap src when the theme changes.
+// Light and dark marks are separate files; pages swap <img> src with RepoMind's own theme toggle (D27).
 const clean = (svg) => svg.replace(/<!--[\s\S]*?-->/g, '').replace(/\s+/g, ' ').trim();
-const darkOf = (svg) => svg.replace(/@media \(prefers-color-scheme: dark\) \{([\s\S]*?\})\s*\}/, '$1');
-const lightOf = (svg) => svg.replace(/@media \(prefers-color-scheme: dark\) \{[\s\S]*?\}\s*\}/, '');
 const uri = (svg) => 'data:image/svg+xml,' + encodeURIComponent(clean(svg));
 const read = (f) => readFileSync(f, 'utf8');
-const favicon = uri(read('src/web/favicon.svg'));
-const logo = uri(lightOf(read('src/web/logo.svg')));
-const logoDark = uri(darkOf(read('src/web/logo.svg')));
-const fill = (html) => html.replace('/*__THEME_CSS__*/', () => theme).replaceAll('/*__FAVICON__*/', () => favicon).replaceAll('/*__LOGO__*/', () => logo).replaceAll('/*__LOGO_DARK__*/', () => logoDark).replace('/*__ROUGH_JS__*/', () => rough);
+// Brand from the owner's logo-sheet.png (D28): src/web/brand/. Favicon = indigo app icon; header = the bird mark.
+const favicon = uri(read('src/web/brand/icon-indigo.svg'));
+const mark = uri(read('src/web/brand/mark.svg'));
+const markDark = uri(read('src/web/brand/mark-dark.svg'));
+const fill = (html) => html.replace('/*__THEME_CSS__*/', () => theme).replaceAll('/*__FAVICON__*/', () => favicon).replaceAll('/*__MARK__*/', () => mark).replaceAll('/*__MARK_DARK__*/', () => markDark).replace('/*__ROUGH_JS__*/', () => rough);
 const rough = readFileSync('node_modules/roughjs/bundled/rough.js', 'utf8').replace(/<\/script/gi, '<\\/script');
 mkdirSync('dist/viewer', { recursive: true });
 writeFileSync('dist/viewer/template.html', fill(parts.join('\n')));
-writeFileSync('dist/viewer/landing.html', fill(readFileSync('src/web/landing.html', 'utf8')));
+for (const f of ['landing.html', 'app.html', 'login.html']) writeFileSync(`dist/viewer/${f}`, fill(readFileSync(`src/web/${f}`, 'utf8')));

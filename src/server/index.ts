@@ -4,9 +4,11 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { diffGraphs } from '../diff.js';
+import { scan } from '../scan.js';
 import { renderViewer, viewerDiff } from '../viewer.js';
 import { GitHub, parseRepoUrl } from './github.js';
 import { Scanner } from './jobs.js';
+import { overview } from './overview.js';
 import { publicRepo, Store, type RepoIndex } from './store.js';
 
 export interface ServeOptions {
@@ -27,7 +29,17 @@ export function startServer(opts: ServeOptions = {}) {
   const backfillN = opts.backfill ?? 10;
   const store = new Store(resolve(opts.dataDir ?? '.repomind-data'));
   const scanner = new Scanner(store);
-  const landing = () => readFileSync(join(here, '..', 'viewer', 'landing.html'), 'utf8');
+  const page = (f: string) => readFileSync(join(here, '..', 'viewer', f), 'utf8');
+  const landing = () => page('landing.html');
+  // Landing-page preview (D28): the built-in example repo, scanned once and rendered with the real viewer.
+  let exampleHtml: string | null = null;
+  const example = () => {
+    if (exampleHtml) return exampleHtml;
+    const exDir = join(here, '..', '..', 'examples', 'sumitra-like');
+    const g = scan(exDir, { repoName: 'sumitra (example)' });
+    exampleHtml = renderViewer(g, { embed: true });
+    return exampleHtml;
+  };
 
   const send = (res: ServerResponse, status: number, body: unknown, type = 'application/json; charset=utf-8', extra: Record<string, string> = {}) => {
     res.writeHead(status, { 'content-type': type, 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', ...extra });
@@ -156,6 +168,14 @@ export function startServer(opts: ServeOptions = {}) {
 
       if (req.method === 'GET' && (p === '/' || p === '/index.html')) return send(res, 200, landing(), 'text/html; charset=utf-8');
       if (req.method === 'GET' && p === '/healthz') return send(res, 200, { ok: true });
+      if (req.method === 'GET' && p === '/example') return send(res, 200, example(), 'text/html; charset=utf-8');
+      // Workspace and sign-in pages (D29).
+      if (req.method === 'GET' && (p === '/app' || p === '/app/')) return send(res, 200, page('app.html'), 'text/html; charset=utf-8');
+      if (req.method === 'GET' && p === '/login') return send(res, 200, page('login.html'), 'text/html; charset=utf-8');
+      if (req.method === 'GET' && p === '/api/overview') {
+        const scanning = new Set([...scanner.jobs.values()].filter((j) => j.status === 'running').map((j) => `${j.owner}/${j.repo}`.toLowerCase()));
+        return send(res, 200, overview(store, scanning));
+      }
 
       if (req.method === 'POST' && p === '/api/maps') {
         const b = await json(req);
@@ -251,6 +271,8 @@ export function startServer(opts: ServeOptions = {}) {
           const html = renderViewer(g.graph, { base: g._base ?? undefined, diff: g._d ?? undefined, blobBase: blobBase(idx, g.version.sha) });
           return send(res, 200, html, 'text/html; charset=utf-8', { 'content-disposition': `attachment; filename="${idx.repo.repo}-${g.version.sha}.html"` });
         }
+        // ?embed=1: preview inside the workspace Overview (no polling, no chrome).
+        if (url.searchParams.get('embed') === '1') return send(res, 200, renderViewer(g.graph, { embed: true }), 'text/html; charset=utf-8');
         const html = renderViewer(g.graph, {
           base: g._base ?? undefined,
           diff: g._d ?? undefined,

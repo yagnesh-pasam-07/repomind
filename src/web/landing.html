@@ -3,197 +3,257 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RepoMind — draw any GitHub repo</title>
+<title>RepoMind — your codebase, as a living map</title>
 <link rel="icon" type="image/svg+xml" href="/*__FAVICON__*/" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" />
 <style>/*__THEME_CSS__*/</style>
-<!-- Landing + Scanning screens. Layout and palette follow the "RepoMind — v2 designs" artifact. -->
+<!-- Landing + Scanning. Built to the owner's landing-light.png / landing-dark.png (docs/design/, D28). -->
 <style>
-  /* Palette comes from theme.css (weaverbird brand, D26). */
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; background-color: var(--paper); background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size: 22px 22px; font-family: var(--ui); color: var(--ink); }
-  a { color: var(--link); }
-  a:hover { color: var(--link-hover, #3B38A8); }
-  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
-  header.top { padding: 22px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
-  /* Logo = the weaverbird (D26); follows dark mode on its own. */
-  .logo { width: 64px; height: 40px; display: block; flex: none; }
-  .brand b { font-family: var(--title); font-size: 25px; font-weight: 400; }
-  nav.main { display: flex; align-items: center; gap: 22px; font-size: 18px; flex-wrap: wrap; }
-  nav.main a { color: var(--ink); text-decoration: none; }
-  nav.main a.pill { padding: 8px 18px; border: var(--line) solid var(--ink); border-radius: var(--radius); font-weight: 700; }
-  .hero { padding: 24px 24px 56px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center; }
-  .hero > section:first-child { flex: 1 1 480px; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
-  h1.big { margin: 0; font-family: var(--title); font-weight: 400; font-size: clamp(44px, 5vw, 59px); line-height: 1.15; }
-  h1.big span { color: var(--brand); }
-  p.lead { margin: 0; font-size: 22px; line-height: 1.45; color: var(--body); max-width: 560px; }
-  form.card, .panel { display: flex; flex-direction: column; gap: 14px; padding: 22px; background: var(--card); border: var(--line) solid var(--ink); border-radius: var(--radius); box-shadow: var(--soft-shadow); }
-  label.k { font-size: 19px; font-weight: 700; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  input.url { flex: 1 1 300px; min-width: 0; min-height: 52px; padding: 0 16px; font-family: var(--mono); font-size: 17px; color: var(--ink); background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--radius); }
-  input.url:focus, select:focus, input.tok:focus { outline: 3px solid var(--brand-soft); outline-offset: 1px; }
-  button.go { min-height: 56px; padding: 0 28px; font-family: var(--hand); font-weight: 400; font-size: 21px; color: #fff; background: var(--brand); border: var(--line) solid var(--ink); border-radius: var(--radius); cursor: pointer; }
-  button.go:disabled { opacity: .6; cursor: wait; }
-  .opts { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; font-size: 16px; color: var(--body); }
-  .opts label { display: flex; align-items: center; gap: 8px; }
-  select { min-height: 40px; font-family: var(--ui); font-size: 16px; padding: 0 10px; border: var(--line) solid var(--ink); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
-  input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--brand); }
-  input.tok { width: 100%; min-height: 44px; padding: 0 12px; font-family: var(--mono); font-size: 14px; border: var(--line) solid var(--ink); border-radius: var(--radius); background: var(--paper); color: var(--ink); }
-  .err { color: var(--err, #B42318); font-size: 16px; }
-  .try { display: flex; gap: 10px; flex-wrap: wrap; font-size: 16px; color: var(--body); align-items: center; }
-  .try a { font-family: var(--mono); font-size: 14px; padding: 4px 10px; border: var(--line) dashed var(--dash, #B8B1A3); border-radius: 9px; text-decoration: none; color: var(--ink); }
-  .example { flex: 1 1 520px; min-width: 0; position: relative; }
-  .example .frame { border: var(--line) solid var(--ink); border-radius: var(--radius); overflow: hidden; background: var(--paper); box-shadow: var(--soft-shadow); }
-  .example svg { display: block; width: 100%; height: 440px; }
-  .sticky { position: absolute; left: -18px; bottom: -26px; padding: 10px 16px; background: var(--f-external); border: var(--line) solid var(--ink); border-radius: 6px; transform: rotate(-3deg); font-family: var(--title); font-size: 18px; max-width: 260px; line-height: 1.15; }
-  .recent { padding: 8px 24px 64px; display: flex; flex-direction: column; gap: 16px; }
-  h2.t { margin: 0; font-family: var(--title); font-weight: 400; font-size: 28px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
-  .rcard { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; background: var(--card); border: var(--line) solid var(--ink); border-radius: var(--radius); text-decoration: none; color: var(--ink); }
-  .rcard:hover { color: var(--ink); box-shadow: 4px 4px 0 var(--f-app); }
-  .rcard .n { font-family: var(--mono); font-weight: 700; font-size: 15px; }
-  .rcard .s { font-size: 16px; color: var(--body); }
-  .rcard .l { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; }
-  .rcard .l i { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
-  .empty { color: var(--body); font-size: 17px; }
-  #how { padding: 0 24px 72px; }
-  #how ol { margin: 0; padding-left: 22px; font-size: 19px; line-height: 1.7; color: var(--body); max-width: 760px; }
-  #how code { font-family: var(--mono); font-size: 14px; background: var(--paper2); padding: 1px 6px; border-radius: 6px; }
-
-  /* Scanning screen */
-  #scanning { display: none; }
-  body.scanning #home { display: none; }
-  body.scanning #scanning { display: block; }
-  .scan { padding: 24px; display: flex; flex-wrap: wrap; gap: 48px; align-items: center; min-height: calc(100vh - 100px); }
-  .scan > section { flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
-  .scan .ref { font-family: var(--mono); font-size: 16px; color: var(--body); }
-  .scan h1 { margin: 0; font-family: var(--title); font-weight: 400; font-size: clamp(40px, 5vw, 56px); line-height: 1.1; }
-  .bar { height: 22px; border: var(--line) solid var(--ink); border-radius: var(--radius); background: var(--card); overflow: hidden; }
-  .bar div { width: 4%; height: 100%; background-color: var(--paper); background-image: repeating-linear-gradient(-41deg, var(--brand) 0 3px, transparent 3px 9px); border-right: var(--line) solid var(--ink); transition: width .5s; }
-  ol.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 19px; }
-  ol.steps li { display: flex; align-items: center; gap: 14px; }
-  ol.steps .m { width: 30px; height: 30px; flex: none; border: var(--line) solid currentColor; border-radius: var(--radius); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-  ol.steps .t { margin-left: auto; font-family: var(--mono); font-size: 14px; color: var(--muted); }
-  ol.steps li.done .m { background: var(--k-live); }
-  ol.steps li.doing { color: var(--ink); font-weight: 600; }
-  ol.steps li.doing .m { background: var(--brand-soft); }
-  ol.steps li.todo { color: var(--pencil); }
-  .panel h2 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 28px; }
-  .found { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: var(--line) solid var(--ink); border-radius: var(--radius); background-color: var(--paper); animation: pop .3s ease-out both; }
-  .found .ic { width: 34px; height: 34px; flex: none; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--paper); font-family: var(--mono); font-size: 11px; display: flex; align-items: center; justify-content: center; }
-  .found b { font-size: 18px; font-weight: 700; }
-  .found span.w { margin-left: auto; font-size: 16px; color: var(--body); text-align: right; }
-  @keyframes pop { from { opacity: 0; transform: translateY(6px) rotate(-.5deg); } }
+  [hidden] { display: none !important; }
+  body { margin: 0; min-height: 100vh; background: var(--paper); font-family: var(--ui); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { color: var(--link-hover); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
   .sr { position: absolute; left: -9999px; }
-  .theme { width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; border: var(--line) solid var(--ink); border-radius: var(--radius); background: transparent; color: var(--ink); cursor: pointer; font-size: 18px; }
 
-  /* Night dark (variables from theme.css). */
-  :root.dark { --err: #FF8787; --dash: #475569; }
-  :root.dark body { background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); }
-  :root.dark header.top { border-bottom: 1px solid var(--gh-border); }
-  :root.dark nav.main a.pill, :root.dark .theme { border: var(--line) solid var(--gh-border); background: var(--gh-btn); border-radius: var(--radius); }
-  :root.dark form.card, :root.dark .panel { border: var(--line) solid var(--gh-border); box-shadow: var(--soft-shadow); background: var(--gh-subtle); }
-  :root.dark input.url, :root.dark select, :root.dark input.tok { background: var(--gh-canvas); border: var(--line) solid var(--gh-border); }
-  :root.dark input.url:focus, :root.dark select:focus, :root.dark input.tok:focus { outline: 2px solid var(--gh-accent); outline-offset: -1px; }
-  :root.dark button.go { background: var(--brand); border: var(--line) solid var(--gh-border); }
-  :root.dark .example .frame { border: var(--line) solid var(--gh-border); background: var(--gh-canvas); }
-  :root.dark .sticky { background: #B45309; color: #FEF3C7; border-color: var(--gh-border); }
-  :root.dark .rcard { border: var(--line) solid var(--gh-border); background: var(--gh-subtle); }
-  :root.dark .rcard:hover { box-shadow: 0 0 0 1px var(--gh-accent); }
-  :root.dark .bar { border: 1px solid var(--gh-border); background: var(--gh-inset); }
-  :root.dark .bar div { background-color: transparent; background-image: repeating-linear-gradient(-41deg, var(--brand) 0 3px, transparent 3px 9px); border-right-color: var(--gh-border); }
-  :root.dark ol.steps li.done .m { background: rgba(52,211,153,.3); }
-  :root.dark ol.steps li.doing .m { background: rgba(99,102,241,.35); }
-  :root.dark .found, :root.dark .found .ic { border: var(--line) solid var(--gh-border); background-color: var(--gh-canvas); }
-  :root.dark #how code { background: var(--gh-subtle); border: 1px solid var(--gh-border); }
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 17px; letter-spacing: -.025em; }
+  .brand:hover { color: var(--ink); }
+  .brand img { width: 26px; height: 26px; display: block; }
+  nav.main { display: flex; align-items: center; gap: 26px; font-size: 14.5px; }
+  nav.main a { color: var(--pencil); }
+  nav.main a:hover { color: var(--ink); }
+  .icon-btn { width: 34px; height: 34px; display: inline-grid; place-items: center; border: 1px solid var(--line-soft); border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; }
+  .icon-btn:hover { border-color: var(--pencil); }
+
+  .hero { text-align: center; padding: 72px 0 0; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 10px; border: 1px solid var(--line-soft); border-radius: 999px; background: var(--card); font-size: 13px; color: var(--pencil); }
+  .eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: #34D399; }
+  h1.big { margin: 22px auto 20px; font-weight: 700; font-size: clamp(44px, 6.4vw, 72px); line-height: 1.02; letter-spacing: -.045em; max-width: 760px; }
+  p.lead { margin: 0 auto; max-width: 520px; font-size: 18.5px; line-height: 1.55; color: var(--pencil); }
+
+  form.go { margin: 36px auto 0; max-width: 560px; text-align: left; }
+  .bar-in { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 16px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 14px; box-shadow: 0 24px 60px -24px rgba(38,38,38,.22); }
+  .bar-in:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+  .bar-in svg { flex: none; color: var(--muted); }
+  .bar-in input { flex: 1; min-width: 0; height: 44px; border: 0; outline: 0; background: transparent; font: 500 15px var(--mono); color: var(--ink); padding: 0 2px; }
+  .bar-in input::placeholder { color: var(--muted); }
+  button.primary { height: 44px; border: 0; border-radius: 10px; background: var(--brand); color: #fff; font: 600 15px var(--ui); padding: 0 20px; cursor: pointer; }
+  button.primary:hover { filter: brightness(1.07); }
+  button.primary:disabled { opacity: .6; cursor: wait; }
+  .below { display: flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 13.5px; color: var(--pencil); flex-wrap: wrap; }
+  .chip { font: 500 12.5px var(--mono); padding: 3px 9px; border: 1px solid var(--line-soft); border-radius: 999px; color: var(--ink); background: transparent; cursor: pointer; }
+  .chip:hover { border-color: var(--pencil); }
+  .opt-toggle { margin-left: auto; background: none; border: 0; color: var(--pencil); font: 13.5px var(--ui); cursor: pointer; }
+  .opt-toggle:hover { color: var(--ink); }
+  .options { margin-top: 12px; padding: 14px 16px; border: 1px solid var(--line-soft); border-radius: 12px; background: var(--card); display: grid; gap: 12px; font-size: 14px; color: var(--pencil); }
+  .options .row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .options label { display: flex; align-items: center; gap: 8px; }
+  .options select, .options input.tok { font: 14px var(--ui); color: var(--ink); background: var(--paper); border: 1px solid var(--line-soft); border-radius: 8px; padding: 7px 10px; }
+  .options input.tok { width: 100%; font-family: var(--mono); font-size: 13px; }
+  .options input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--brand); }
+  .err { color: #E03131; font-size: 14px; margin-top: 10px; min-height: 1em; }
+
+  .preview-wrap { position: relative; margin: 64px auto 0; max-width: 1080px; }
+  .preview-wrap .glow { position: absolute; inset: 12% 6% -4%; background: radial-gradient(60% 60% at 50% 40%, rgba(99,102,241,.28), transparent 70%); filter: blur(30px); }
+  .preview { position: relative; border: 1px solid var(--line-soft); border-radius: 14px; overflow: hidden; background: var(--card); box-shadow: 0 24px 60px -24px rgba(38,38,38,.22); }
+  .chrome { position: relative; display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-bottom: 1px solid var(--line-soft); }
+  .chrome i { width: 10px; height: 10px; border-radius: 50%; background: var(--line-soft); }
+  .chrome span { position: absolute; left: 50%; transform: translateX(-50%); font: 500 12px var(--mono); color: var(--muted); }
+  .preview iframe { display: block; width: 100%; height: 620px; border: 0; background: var(--paper); }
+
+  .uses { text-align: center; margin: 56px 0 64px; }
+  .uses h2 { margin: 0 0 18px; font-size: 12.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .uses ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 14px 40px; flex-wrap: wrap; font-size: 19px; font-weight: 650; letter-spacing: -.02em; color: var(--pencil); }
+
+  .features { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line-soft); border: 1px solid var(--line-soft); border-radius: 14px; overflow: hidden; }
+  .features div { padding: 28px; background: var(--paper); }
+  .features h3 { margin: 0 0 6px; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
+  .features p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--pencil); }
+
+  .recent { padding: 96px 0 0; }
+  .recent h2 { margin: 0 0 14px; font-size: 15px; font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .empty { margin: 0; font-size: 14px; color: var(--muted); }
+  .rcard { display: flex; flex-direction: column; gap: 5px; padding: 16px 18px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 12px; color: var(--ink); }
+  .rcard:hover { color: var(--ink); border-color: var(--brand); }
+  .rcard .n { font-family: var(--mono); font-weight: 500; font-size: 14px; }
+  .rcard .s { font-size: 13.5px; color: var(--pencil); }
+  .rcard .l { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+  .rcard .l i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  footer { margin-top: 96px; padding: 28px 0 40px; border-top: 1px solid var(--line-soft); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); }
+  footer .brand { font-size: 14px; font-weight: 700; color: var(--pencil); }
+  footer .brand img { width: 18px; height: 18px; }
+
+  /* Flow 2 · Scanning: the map weaves itself (D29). */
+  #scanning { display: none; }
+  body.scanning #home, body.scanning footer, body.scanning header.top { display: none; }
+  body.scanning #scanning { display: block; }
+  .scan-top { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .scan-top .ref { font: 500 13px var(--mono); color: var(--pencil); }
+  .scan-top button { background: none; border: 0; font: 14px var(--ui); color: var(--pencil); cursor: pointer; }
+  .scan-top button:hover { color: var(--ink); }
+  .scan-head { text-align: center; padding: 28px 0 26px; }
+  .scan-head h1 { margin: 0; font-size: 40px; line-height: 1.05; font-weight: 700; letter-spacing: -.04em; }
+  .scan-head p { margin: 12px 0 0; font-size: 16px; color: var(--pencil); }
+  .counts { display: inline-flex; gap: 28px; margin-top: 22px; font-size: 14px; color: var(--pencil); flex-wrap: wrap; justify-content: center; }
+  .counts b { font-size: 22px; color: var(--ink); letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin-right: 4px; }
+  .counts b.bad { color: #C92A2A; }
+  :root.dark .counts b.bad { color: #FF8787; }
+  .loom { position: relative; height: 420px; background-color: var(--card2); border: 1px solid var(--line-soft); border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px -28px rgba(38,38,38,.25); background-image: radial-gradient(var(--line-soft) 1px, transparent 1px); background-size: 20px 20px; }
+  .loom-lanes { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; padding: 0 16px; overflow-y: auto; }
+  .lane h3 { display: flex; justify-content: space-between; margin: 0; padding: 16px 8px 8px; font-size: 12px; font-weight: 600; color: var(--pencil); letter-spacing: .02em; }
+  .lane h3 span { color: var(--muted); font-weight: 500; }
+  .nd { display: flex; align-items: center; gap: 8px; height: 48px; margin: 0 0 16px; padding: 0 10px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 10px; box-shadow: 0 1px 2px rgba(38,38,38,.05), 0 6px 16px -8px rgba(38,38,38,.18); opacity: 0; transform: translateY(6px) scale(.97); animation: pop .5s cubic-bezier(.2,.8,.2,1) forwards; }
+  .nd.risk { border-color: #FF6B6B; }
+  .nd .ic { width: 22px; height: 22px; flex: none; border-radius: 6px; display: grid; place-items: center; font: 600 10px var(--ui); }
+  .nd .tx { display: grid; line-height: 1.15; min-width: 0; }
+  .nd b { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nd .tx span { font-size: 11px; color: var(--pencil); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nd .rk { margin-left: auto; font-size: 10px; font-weight: 700; color: #C92A2A; background: #FFE4E4; padding: 1px 6px; border-radius: 999px; }
+  .ghost { height: 48px; margin: 0 0 16px; border: 1.5px dashed var(--paper2-stroke); border-radius: 10px; display: flex; align-items: center; gap: 8px; padding: 0 10px; animation: breathe 1.6s ease-in-out infinite; }
+  .ghost i { width: 22px; height: 22px; border-radius: 6px; background: var(--paper2); }
+  .ghost u { width: 70px; height: 8px; border-radius: 4px; background: var(--paper2); text-decoration: none; }
+  @keyframes pop { to { opacity: 1; transform: none; } }
+  @keyframes breathe { 50% { opacity: .45; } }
+  .bird { position: absolute; right: 24px; bottom: 20px; width: 34px; height: 34px; }
+  .bird .wing { transform-origin: 7px 86px; animation: beat 1.1s ease-in-out infinite; }
+  @keyframes beat { 50% { transform: rotate(-9deg); } }
+  .status-pill { display: flex; justify-content: center; margin-top: -22px; position: relative; }
+  .status-pill > div { display: inline-flex; align-items: center; gap: 14px; padding: 10px 16px 10px 12px; background: #262626; color: #F4F1EA; border-radius: 999px; font-size: 13.5px; box-shadow: 0 12px 30px -10px rgba(38,38,38,.5); }
+  .status-pill .spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #A5B4FC; border-right-color: transparent; animation: spin .9s linear infinite; }
+  .status-pill .done { width: 14px; height: 14px; border-radius: 50%; background: #34D399; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .status-pill .track { width: 120px; height: 4px; border-radius: 4px; background: #44403C; overflow: hidden; }
+  .status-pill .track span { display: block; height: 100%; background: #818CF8; transition: width .5s; }
+  .status-pill .of { font: 500 12px var(--mono); color: #A8A29E; }
+  .scan-err { text-align: center; margin-top: 18px; }
+  :root.dark .status-pill > div { background: #E2E8F0; color: #0F172A; }
+  :root.dark .status-pill .track { background: #94A3B8; }
+  :root.dark .status-pill .of { color: #475569; }
+  :root.dark .nd .rk { background: rgba(255,135,135,.15); color: #FF8787; }
+
+  /* Night (dark), from landing-dark.png. */
+  :root.dark .bar-in, :root.dark .options, :root.dark .rcard, :root.dark .panel, :root.dark .eyebrow { background: var(--card); border-color: var(--line-soft); box-shadow: none; }
+  :root.dark .preview { box-shadow: 0 24px 60px -24px rgba(2,6,23,.8); }
+  :root.dark .features div { background: var(--paper); }
+  :root.dark .options select, :root.dark .options input.tok { background: var(--paper); }
+
+  @media (max-width: 760px) {
+    .features { grid-template-columns: 1fr; }
+    .scan { grid-template-columns: 1fr; }
+    .preview iframe { height: 420px; }
+    nav.main a.hide-sm { display: none; }
+  }
 </style>
 </head>
 <body>
-<header class="top wrap">
-  <a class="brand" href="/"><img class="logo" src="/*__LOGO__*/" data-light="/*__LOGO__*/" data-dark="/*__LOGO_DARK__*/" alt="RepoMind" width="64" height="40" /><b>RepoMind</b></a>
-  <nav class="main" aria-label="Main">
-    <a href="#how">How it works</a>
-    <a href="#recent">Examples</a>
-    <a href="https://github.com/yagnesh-pasam-07/repomind#github-action" target="_blank" rel="noopener">GitHub Action</a>
-    <a class="pill" href="#recent">My maps</a>
-    <button class="theme" id="themeBtn" type="button" aria-label="Toggle dark mode" title="Light / GitHub dark">◐</button>
-  </nav>
-</header>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="" width="26" height="26" />RepoMind</a>
+    <nav class="main" aria-label="Main">
+      <a href="/app">Maps</a>
+      <a class="hide-sm" href="/login">Sign in</a>
+      <a class="hide-sm" href="https://github.com/yagnesh-pasam-07/repomind#github-action" target="_blank" rel="noopener">GitHub Action</a>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Toggle dark mode" title="Light / dark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </header>
 
-<div id="home">
-  <main class="hero wrap">
-    <section>
-      <h1 class="big">Draw any GitHub repo.<br><span>Keep it live.</span></h1>
-      <p class="lead">Paste a repo link. RepoMind sketches its apps, data, cloud, integrations and pipelines on one page, then redraws it on every commit.</p>
-      <form class="card" id="form">
-        <label class="k" for="repo-url">GitHub repository</label>
-        <div class="row">
-          <input id="repo-url" class="url" type="text" placeholder="github.com/owner/repo" autocomplete="off" spellcheck="false" required>
-          <button class="go" type="submit" id="goBtn">Draw my repo →</button>
+  <div id="home">
+    <section class="hero">
+      <span class="eyebrow"><i></i>Updates on every commit</span>
+      <h1 class="big">Your codebase,<br>as a living map.</h1>
+      <p class="lead">Every app, database, cloud service and integration — on one map your whole team can read.</p>
+
+      <form class="go" id="form">
+        <label class="sr" for="repo-url">GitHub repository</label>
+        <div class="bar-in">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+          <input id="repo-url" type="text" placeholder="github.com/owner/repo" autocomplete="off" spellcheck="false" required>
+          <button class="primary" type="submit" id="goBtn">Map it</button>
         </div>
-        <div class="opts">
-          <label for="branch">Branch
-            <select id="branch"><option value="">default</option></select>
-          </label>
-          <label><input type="checkbox" id="live" checked>Keep it live (watch commits)</label>
-          <a href="#" id="tokLink">Private repo? Add a token</a>
+        <div class="below">
+          <span>Try</span>
+          <button type="button" class="chip" data-try="vercel/commerce">vercel/commerce</button>
+          <button type="button" class="chip" data-try="calcom/cal.com">calcom/cal.com</button>
+          <button type="button" class="opt-toggle" id="optBtn" aria-expanded="false" aria-controls="options">Options</button>
         </div>
-        <div id="tokBox" hidden>
-          <label class="sr" for="token">GitHub token</label>
-          <input id="token" class="tok" type="password" placeholder="ghp_… or github_pat_… (read access; kept on this server only)" autocomplete="off">
+        <div class="options" id="options" hidden>
+          <div class="row">
+            <label for="branch">Branch <select id="branch"><option value="">default</option></select></label>
+            <label><input type="checkbox" id="live" checked>Keep it live (watch commits)</label>
+          </div>
+          <div>
+            <label class="sr" for="token">GitHub token</label>
+            <input id="token" class="tok" type="password" placeholder="Private repo? GitHub token with read access (kept on this server only)" autocomplete="off">
+          </div>
         </div>
         <div class="err" id="err" role="alert"></div>
       </form>
-      <div class="try"><span>Try:</span>
-        <a href="#" data-try="vercel/commerce">vercel/commerce</a>
-        <a href="#" data-try="expo/examples">expo/examples</a>
-        <a href="#" data-try="calcom/cal.com">calcom/cal.com</a>
+    </section>
+
+    <div class="preview-wrap">
+      <div class="glow"></div>
+      <section class="preview" aria-label="Example map">
+        <div class="chrome"><i></i><i></i><i></i><span>repomind / example / sumitra</span></div>
+        <iframe id="exampleFrame" src="/example" title="Example RepoMind map" loading="lazy"></iframe>
+      </section>
+    </div>
+
+    <section class="uses">
+      <h2>Reads what you already use</h2>
+      <ul><li>GitHub</li><li>Google Cloud</li><li>AWS</li><li>Vercel</li><li>Expo</li><li>Terraform</li><li>Slack</li></ul>
+    </section>
+
+    <section class="features" id="how">
+      <div><h3>Map</h3><p>Apps, data, cloud and services, drawn from code.</p></div>
+      <div><h3>Live</h3><p>Redrawn on every commit. Scroll back through versions.</p></div>
+      <div><h3>Review</h3><p>Each PR shows what changed, what it costs and what's at risk.</p></div>
+    </section>
+
+    <section class="recent" id="recent">
+      <h2>Your maps</h2>
+      <div class="grid" id="recentGrid"><p class="empty">Nothing yet — paste a repo above.</p></div>
+    </section>
+  </div>
+
+  <div id="scanning">
+    <div class="scan-top">
+      <a class="brand" href="/"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="" width="26" height="26" />RepoMind</a>
+      <span class="ref" id="scanRef"></span>
+      <button type="button" id="cancelBtn">Cancel</button>
+    </div>
+    <section class="scan-head">
+      <h1 id="scanTitle">Weaving your system.</h1>
+      <p>Every box appears as RepoMind finds it in your code.</p>
+      <div class="counts" aria-live="polite">
+        <span><b id="cComp">0</b>components</span>
+        <span><b id="cLinks">0</b>connections</span>
+        <span><b id="cRisks" class="bad">0</b>risks</span>
+        <span><b id="cPaid">0</b>paid services</span>
       </div>
     </section>
-    <section class="example" aria-label="Example map">
-      <div class="frame"><svg id="exampleSvg" viewBox="0 0 640 440" role="img" aria-label="A hand-drawn RepoMind map showing apps connected to Postgres, Redis, Cloud KMS and Cloud Storage"></svg></div>
-      <div class="sticky">every box links to the file that proves it</div>
-    </section>
-  </main>
+    <div class="loom">
+      <div class="loom-lanes" id="lanes"></div>
+      <svg class="bird" viewBox="0 0 100 100" aria-hidden="true"><path fill="#4F46E5" d="M63 54L63 86L7 86A56 56 0 0 1 43 40Z"/><path fill="#4F46E5" fill-rule="evenodd" d="M83 34a20 20 0 1 1-40 0a20 20 0 1 1 40 0ZM71 30a4 4 0 1 0-8 0a4 4 0 1 0 8 0Z"/><path class="wing" fill="#FF6B6B" d="M7 86A40 40 0 0 1 47 54L47 86Z"/><path fill="#FBBF24" d="M82 27L94 35L81 40Z"/></svg>
+    </div>
+    <div class="status-pill"><div><span class="spin" id="pSpin"></span><span id="pLabel">Starting…</span><span class="track"><span id="pTrack" style="width:4%"></span></span><span class="of" id="pOf">step 1 of 5</span></div></div>
+    <div class="err scan-err" id="scanErr" role="alert"></div>
+  </div>
 
-  <section class="recent wrap" id="recent">
-    <h2 class="t">Recent maps</h2>
-    <div class="grid" id="recentGrid"><p class="empty">No maps yet — paste a repo above.</p></div>
-  </section>
-
-  <section class="wrap" id="how">
-    <h2 class="t">How it works</h2>
-    <ol>
-      <li>RepoMind downloads the commit from GitHub and reads its code, Docker, Terraform and CI files. No AI guesses: every box comes from a file and line.</li>
-      <li>It draws apps, modules, data, cloud, external services and pipelines on one map, with risks and cost tiers.</li>
-      <li>With <b>Keep it live</b>, it checks the branch every 5 minutes, or instantly with a GitHub webhook, and adds each commit to a version timeline.</li>
-      <li>Prefer CI? Run <code>npx repomind map .</code> or add the GitHub Action for a comment on every PR.</li>
-    </ol>
-  </section>
+  <footer>
+    <a class="brand" href="/"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="" width="20" height="20" />RepoMind</a>
+    <span>Self-hosted · Open source · Your code never leaves your server</span>
+  </footer>
 </div>
 
-<div id="scanning">
-  <main class="scan wrap">
-    <section>
-      <span class="ref" id="scanRef"></span>
-      <h1 id="scanTitle">Weaving your repo…</h1>
-      <div class="bar"><div id="bar"></div></div>
-      <ol class="steps" id="steps"></ol>
-      <p style="margin:0;font-size:17px;color:var(--body)" id="scanNote">Usually under a minute. You can leave; the map keeps updating once it's connected.</p>
-      <div class="err" id="scanErr" role="alert"></div>
-    </section>
-    <section class="panel" aria-label="Found so far">
-      <h2>Found so far</h2>
-      <div id="found" style="display:flex;flex-direction:column;gap:10px"><p class="empty">Looking…</p></div>
-    </section>
-  </main>
-</div>
-
-<script>/*__ROUGH_JS__*/</script>
 <script>
 (function () {
   'use strict';
@@ -207,53 +267,6 @@
   const FILL = { app: ['--f-app', '--k-app'], data: ['--f-data', '--k-data'], cloud: ['--f-cloud', '--k-cloud'], external: ['--f-external', '--k-external'], cicd: ['--f-cicd', '--k-cicd'], client: ['--f-client', '--k-client'] };
   const ICON = { 'Cloud Run': 'RUN', 'Cloud SQL': 'SQL', 'Next.js': 'NXT', 'Expo / React Native': 'RN', Express: 'API', 'GitHub Actions': 'GHA' };
   const LAYER_ICON = { app: 'APP', data: 'DB', cloud: 'CLD', external: 'EXT', cicd: 'CI', client: 'USR' };
-  const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-
-  // ---------- Example sketch (drawn live with rough.js, fixed seeds) ----------
-  function drawExample() {
-    const svg = $('#exampleSvg');
-    if (typeof rough === 'undefined') return;
-    svg.innerHTML = '';
-    const rc = rough.svg(svg);
-    // Night dark: slate outlines, like the map viewer.
-    const ink = document.documentElement.classList.contains('dark') ? '#94A3B8' : cssVar('--ink');
-    const NS = 'http://www.w3.org/2000/svg';
-    const text = (x, y, s, size, fam, fill, anchor) => {
-      const t = document.createElementNS(NS, 'text');
-      t.setAttribute('x', x); t.setAttribute('y', y); t.setAttribute('font-size', size); t.setAttribute('font-family', fam); t.setAttribute('fill', fill || ink);
-      if (anchor) t.setAttribute('text-anchor', anchor);
-      t.textContent = s;
-      svg.appendChild(t);
-    };
-    const lanes = [['Apps', 20], ['Data', 230], ['Cloud', 440]];
-    lanes.forEach(([n, x], i) => {
-      svg.appendChild(rc.rectangle(x, 16, 180, 408, { seed: 10 + i, stroke: cssVar('--pencil'), strokeWidth: 1.2, strokeLineDash: [8, 7], roughness: 1.4 }));
-      text(x + 14, 46, n, 22, cssVar('--hand'));
-    });
-    const boxes = [
-      ['api', 'Express', 'app', 32, 80], ['web', 'Next.js', 'app', 32, 180], ['mobile', 'Expo', 'app', 32, 280],
-      ['PostgreSQL', 'Prisma · 6 models', 'data', 242, 110], ['Redis', 'cache', 'data', 242, 250],
-      ['Cloud KMS', 'payroll key', 'cloud', 452, 110], ['Storage', 'payslips', 'cloud', 452, 250],
-    ];
-    const pos = {};
-    const arrow = (a, b, color, seed) => {
-      const [x1, y1] = [a[0] + 156, a[1] + 32], [x2, y2] = [b[0], b[1] + 32];
-      svg.appendChild(rc.curve([[x1, y1], [(x1 + x2) / 2, (y1 + y2) / 2 + (seed % 2 ? 14 : -14)], [x2 - 4, y2]], { seed, stroke: color, strokeWidth: 1.8, roughness: 1 }));
-      svg.appendChild(rc.linearPath([[x2 - 14, y2 - 7], [x2 - 3, y2], [x2 - 14, y2 + 7]], { seed: seed + 50, stroke: color, strokeWidth: 1.8, roughness: .6 }));
-    };
-    boxes.forEach(([l, t, layer, x, y], i) => { pos[l] = [x, y]; });
-    arrow(pos.api, pos.PostgreSQL, cssVar('--k-data'), 31);
-    arrow(pos.api, pos.Redis, cssVar('--k-data'), 32);
-    arrow(pos.web, pos.PostgreSQL, cssVar('--k-data'), 33);
-    arrow(pos.PostgreSQL, pos['Cloud KMS'], cssVar('--k-cloud'), 34);
-    arrow(pos.Redis, pos.Storage, cssVar('--k-cloud'), 35);
-    boxes.forEach(([l, t, layer, x, y], i) => {
-      const dark = document.documentElement.classList.contains('dark');
-      svg.appendChild(rc.rectangle(x, y, 156, 64, { seed: 20 + i, fill: cssVar(FILL[layer][0]) + (dark ? '59' : ''), fillStyle: 'hachure', hachureGap: 6, hachureAngle: -41, stroke: ink, strokeWidth: 1.8, roughness: 1.1 }));
-      text(x + 14, y + 29, l, 17, cssVar('--hand'));
-      text(x + 14, y + 50, t, 13, cssVar('--hand'), cssVar('--pencil'));
-    });
-  }
 
   // ---------- Recent maps ----------
   const ago = (t) => {
@@ -275,8 +288,12 @@
   }
 
   // ---------- Form ----------
-  $('#tokLink').onclick = (e) => { e.preventDefault(); $('#tokBox').hidden = !$('#tokBox').hidden; if (!$('#tokBox').hidden) $('#token').focus(); };
-  document.querySelectorAll('[data-try]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); $('#repo-url').value = 'github.com/' + a.dataset.try; loadBranches(); }));
+  $('#optBtn').onclick = () => {
+    const o = $('#options');
+    o.hidden = !o.hidden;
+    $('#optBtn').setAttribute('aria-expanded', String(!o.hidden));
+  };
+  document.querySelectorAll('[data-try]').forEach((a) => (a.onclick = () => { $('#repo-url').value = 'github.com/' + a.dataset.try; loadBranches(); $('#repo-url').focus(); }));
   let branchTimer = null;
   function loadBranches() {
     const v = $('#repo-url').value.trim();
@@ -308,45 +325,74 @@
     }
   });
 
-  // ---------- Scanning ----------
+  // ---------- Scanning (Flow 2: boxes appear lane by lane as they are found) ----------
+  const LANES = [['client', 'Users'], ['app', 'Apps & services'], ['data', 'Data'], ['cloud', 'Cloud'], ['external', 'External services'], ['cicd', 'CI / CD']];
+  const PER_LANE = 5;
+  function drawLanes(found, done) {
+    const by = Object.fromEntries(LANES.map(([k]) => [k, []]));
+    found.forEach((f) => by[f.layer] && by[f.layer].push(f));
+    let delay = 0;
+    $('#lanes').innerHTML = LANES.map(([k, name]) => {
+      const list = by[k];
+      const shown = list.slice(0, PER_LANE);
+      const more = list.length - shown.length;
+      const [fill, stroke] = FILL[k] || FILL.app;
+      const boxes = shown.map((f) => {
+        const d = (delay++ * 0.12).toFixed(2);
+        return `<div class="nd${f.risk ? ' risk' : ''}" style="animation-delay:${d}s"><span class="ic" style="background:var(${fill});color:var(${stroke})">${esc((ICON[f.tech] || f.name || '?').slice(0, 3).toUpperCase())}</span><span class="tx"><b>${esc(f.name)}</b><span>${esc(f.what || '')}</span></span>${f.risk ? '<span class="rk">risk</span>' : ''}</div>`;
+      }).join('');
+      const ghosts = done ? '' : '<div class="ghost"><i></i><u></u></div>'.repeat(Math.max(1, Math.min(2, PER_LANE - shown.length)));
+      return `<div class="lane"><h3>${name}<span>${done || list.length ? list.length : '…'}</span></h3>${boxes}${more > 0 ? `<div class="tx" style="padding:0 8px;font-size:12px;color:var(--muted)">+ ${more} more</div>` : ''}${ghosts}</div>`;
+    }).join('');
+  }
+  let cancelled = false;
+  $('#cancelBtn').onclick = () => { cancelled = true; location.href = '/'; };
   function showScanning(r) {
     document.body.classList.add('scanning');
+    window.scrollTo(0, 0);
     $('#scanRef').textContent = `${r.owner}/${r.repo} · ${r.branch}`;
+    drawLanes([], false);
+    let shown = 0;
     const tick = async () => {
+      if (cancelled) return;
       let j;
       try { j = await api('/api/jobs/' + r.job); } catch (e) { $('#scanErr').textContent = e.message; return; }
       $('#scanRef').textContent = `${r.owner}/${r.repo} · ${r.branch}${j.sha ? ' · ' + j.sha : ''}`;
-      const done = j.steps.filter((s) => s.state === 'done').length;
-      $('#bar').style.width = Math.max(4, (done / j.steps.length) * 100) + '%';
-      $('#steps').innerHTML = j.steps.map((s) => `<li class="${s.state}"><span class="m">${s.state === 'done' ? '✓' : s.state === 'doing' ? '…' : ''}</span><span>${esc(s.label)}</span><span class="t">${s.ms != null ? (s.ms / 1000).toFixed(1) + ' s' : ''}</span></li>`).join('');
-      if (j.found.length) {
-        $('#found').innerHTML = j.found.map((f, i) => {
-          const [fill, stroke] = FILL[f.layer] || FILL.app;
-          return `<div class="found" style="animation-delay:${i * 60}ms;background-image:repeating-linear-gradient(-41deg,var(${fill}) 0 2px,transparent 2px 9px)"><span class="ic" style="color:var(${stroke})">${esc(ICON[f.tech] || LAYER_ICON[f.layer] || 'NOD')}</span><b>${esc(f.name)}</b><span class="w">${esc(f.what)}</span></div>`;
-        }).join('');
-      }
+      const i = j.steps.findIndex((s) => s.state !== 'done');
+      const cur = i < 0 ? j.steps.length - 1 : i;
+      const doneN = j.steps.filter((s) => s.state === 'done').length;
+      $('#pLabel').textContent = j.status === 'done' ? 'Done — opening the map' : j.steps[cur].label;
+      $('#pOf').textContent = `step ${Math.min(cur + 1, j.steps.length)} of ${j.steps.length}`;
+      $('#pTrack').style.width = Math.max(4, (doneN / j.steps.length) * 100) + '%';
+      if (j.counts) { $('#cComp').textContent = j.counts.components; $('#cLinks').textContent = j.counts.links; $('#cRisks').textContent = j.counts.risks; $('#cPaid').textContent = j.counts.paid; }
+      if (j.found.length !== shown) { shown = j.found.length; drawLanes(j.found, j.status === 'done'); }
       if (j.status === 'error') {
-        $('#scanTitle').textContent = 'Could not draw this repo';
+        $('#scanTitle').textContent = 'Could not map this repo';
+        $('#pSpin').className = 'done';
+        $('#pSpin').style.background = '#FF6B6B';
         $('#scanErr').innerHTML = `${esc(j.error)} <a href="/">Try another →</a>`;
         return;
       }
       if (j.status === 'done') {
-        $('#scanTitle').textContent = 'Done — opening the map…';
-        setTimeout(() => (location.href = `/r/${encodeURIComponent(r.owner)}/${encodeURIComponent(r.repo)}`), 700);
+        $('#pSpin').className = 'done';
+        drawLanes(j.found, true);
+        setTimeout(() => (location.href = `/r/${encodeURIComponent(r.owner)}/${encodeURIComponent(r.repo)}`), Math.min(2600, 900 + j.found.length * 60));
         return;
       }
-      setTimeout(tick, 700);
+      setTimeout(tick, 600);
     };
     tick();
   }
 
+  // ---------- Theme (shared with the map via localStorage) ----------
   // The logo is an <img>, so it can't see the .dark class: swap to its dark drawing.
   const syncLogo = () => document.querySelectorAll('img.logo').forEach((i) => (i.src = i.dataset[document.documentElement.classList.contains('dark') ? 'dark' : 'light']));
   const setTheme = (dark) => {
     document.documentElement.classList.toggle('dark', dark);
     syncLogo();
     try { localStorage.setItem('repomind-theme', dark ? 'dark' : 'light'); } catch (e) {}
-    drawExample();
+    // The example map is same-origin and reads the same key; tell it to follow.
+    try { $('#exampleFrame').contentWindow.postMessage({ repomindTheme: dark ? 'dark' : 'light' }, location.origin); } catch (e) {}
   };
   let saved = null;
   try { saved = localStorage.getItem('repomind-theme'); } catch (e) {}
@@ -354,8 +400,6 @@
   syncLogo();
   $('#themeBtn').onclick = () => setTheme(!document.documentElement.classList.contains('dark'));
 
-  drawExample();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawExample);
   loadRecent();
 })();
 </script>
