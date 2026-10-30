@@ -204,10 +204,10 @@ The map looks drawn by hand on paper: one ink colour for every outline and word,
 ### Style rules
 
 - Shapes and arrows are drawn with rough.js: slightly wobbly strokes, hachure (diagonal hatch) fills, 2 px ink outlines.
-- Words are handwritten in Excalidraw's own fonts: Excalifont for all text, Comic Shanns for file paths and commit ids (see D21).
+- Words: Excalifont (Excalidraw's own font) for map labels, titles, the brand and buttons; IBM Plex Sans for small interface text; IBM Plex Mono for file paths and commit ids (see D23).
 - The canvas is warm paper with a faint dot grid. Lanes are dashed pencil boxes with a handwritten title.
 - Colour only carries meaning: layer fill, risk, or change. Everything else is ink or pencil grey.
-- Dark mode follows GitHub's dark theme (canvas `#0d1117`, borders `#30363d`, text `#e6edf3`, green primary button), with the same layer fills at lower strength, so the map feels like part of GitHub (see D22).
+- Dark mode follows GitHub's dark theme (Primer) so the map feels like part of GitHub: `#0D1117` canvas, `#010409` header, `#161B22` panels, `#30363D` borders, `#E6EDF3` text, green primary buttons and brand, blue links; layer fills at lower strength (see D22, D23).
 
 ### Palette
 
@@ -337,10 +337,13 @@ A running log of choices made while building. Newest last.
 | D21 | 2026-10-30 | Fonts are Excalidraw's own: **Excalifont** for all words and **Comic Shanns** for code, replacing Kalam, Caveat and JetBrains Mono. Loaded from the `@excalidraw/excalidraw@0.18.0` npm package on jsDelivr with a handwriting fallback; not bundled into the repo. Excalifont has one weight, so no bold. Shared in `src/web/theme.css`. | Owner asked for a more artistic, Excalidraw look. Excalifont's embedded notice reserves rights, so we link to Excalidraw's published copy instead of shipping it. |
 | D22 | 2026-10-30 | Dark mode uses GitHub's dark palette (Primer): canvas `#0d1117`, panels `#161b22`, borders `#30363d`, text `#e6edf3`, green primary button, flat 1px borders. Sketch outlines become GitHub grey `#8b949e`. Landing page has its own toggle and shares the setting with the map. Replaces the "chalkboard" dark mode. | Owner asked for dark mode to feel like part of GitHub, not a separate product. |
 
+| D23 | 2026-10-30 | Follow the updated v2 designs (Landing, LandingDark, Map, MapDark): Excalifont only for headings, brand, buttons, tabs and map labels; **IBM Plex Sans** for interface text and **IBM Plex Mono** for code (both OFL, Google Fonts). Thin 1.5px lines, 8px corners, soft shadow instead of hard ink offsets. Dark mode: `#010409` header, `#161B22` panels, GitHub green (`#238636`) as the brand and primary colour, current version dot green with a blue ring. Supersedes the Comic Shanns part of D21. | The design artifact and PRD were updated to this split; all-handwritten body text was hard to read at small sizes. |
+| D24 | 2026-10-30 | Recent-map summaries count shared packages as apps and use singular/plural ("1 app · 1 risk"). | Found in the browser: a library repo (expressjs/express) showed "0 apps". |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).
 - Mapped `expressjs/express` from its URL: scan ~1 s, 10 versions backfilled, map page with no console errors.
 - Webhook: bad signature → 401; valid HMAC → accepted. Token/secret absent from all API responses; `index.json` is mode 0600.
 - Browser: Landing, Scanning (→ redirect to map), Map (sketch, timeline, live badge), Changes (`?base=`), Share dialog, live toast on a new version all render as designed.
-- Browser (D21–D22): Excalifont and Comic Shanns load on Landing and Map; Landing, Scanning and Map checked in light and GitHub dark, no console errors.
+- Browser (D21–D24): Excalifont, IBM Plex Sans and IBM Plex Mono load; Landing, Scanning and Map checked in light and GitHub dark against the Landing/LandingDark/Map/MapDark designs, no console errors.

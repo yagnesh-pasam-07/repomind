@@ -296,8 +296,10 @@ function blobBase(idx: RepoIndex, sha: string) {
 
 function summaryOf(g: { nodes: { layer: string; kind: string }[]; findings: unknown[] } | null) {
   if (!g) return '';
-  const c = (l: string) => g.nodes.filter((n) => n.layer === l && n.kind !== 'library').length;
-  const parts = [`${c('app')} apps`, `${c('cloud')} cloud`, `${c('external')} services`, `${g.findings.length} risks`];
+  // Count shared packages as apps too: a library-only repo (e.g. express) would otherwise read "0 apps".
+  const c = (l: string) => g.nodes.filter((n) => n.layer === l).length;
+  const plural = (n: number, one: string, many = one + 's') => `${n} ${n === 1 ? one : many}`;
+  const parts = [plural(c('app'), 'app'), `${c('cloud')} cloud`, plural(c('external'), 'service'), plural(g.findings.length, 'risk')];
   return parts.join(' · ');
 }
 

@@ -1,6 +1,8 @@
 /* Shared by the landing page and the map viewer (injected at build time by scripts/copy-viewer.mjs).
-   Fonts: Excalidraw's own hand-drawn faces, loaded from the @excalidraw/excalidraw npm package on jsDelivr (D21).
-   Not bundled: Excalifont's embedded notice reserves rights, so we link to Excalidraw's published copy instead. */
+   Fonts per the v2 designs (D23): Excalifont (Excalidraw's hand) for headings, buttons, brand and the map;
+   IBM Plex Sans for interface text; IBM Plex Mono for paths and shas.
+   Excalifont loads from the @excalidraw/excalidraw npm package on jsDelivr and is not bundled: its embedded
+   notice reserves rights. IBM Plex (OFL) loads from Google Fonts via the <link> in each page. */
 @font-face {
   font-family: "Excalifont";
   src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw@0.18.0/dist/prod/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2") format("woff2");
@@ -13,18 +15,13 @@
   font-display: swap;
   unicode-range: U+100-130, U+132-137, U+139-149, U+14c-151, U+154-17e, U+192, U+1fc-1ff, U+218-21b, U+237, U+1e80-1e85, U+1ef2-1ef3, U+2113;
 }
-@font-face {
-  font-family: "Comic Shanns";
-  src: url("https://cdn.jsdelivr.net/npm/@excalidraw/excalidraw@0.18.0/dist/prod/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2") format("woff2");
-  font-display: swap;
-  unicode-range: U+20-7e, U+a1-a6, U+a8, U+ab-ac, U+af-b1, U+b4, U+b8, U+bb-bc, U+bf-cf, U+d1-d7, U+d9-de, U+e0-ef, U+f1-f7, U+f9-ff, U+131, U+152-153, U+2c6, U+2da, U+2dc, U+2013-2014, U+2018-201a, U+201c-201d, U+2020-2022, U+2026, U+2039-203a, U+2044, U+20ac, U+2191, U+2193, U+2212;
-}
 
 :root {
-  /* One hand for everything, like Excalidraw: Excalifont for words, Comic Shanns for paths and shas. */
   --hand: Excalifont, Virgil, "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
   --title: var(--hand);
-  --mono: "Comic Shanns", "Comic Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius: 8px; --line: 1.5px; --soft-shadow: 0 2px 14px rgba(43, 43, 43, .07);
 }
 
 /* Dark = GitHub's dark default palette, so the map feels like part of GitHub (D22).
@@ -36,7 +33,8 @@
 
   --paper: var(--gh-canvas); --card: var(--gh-subtle); --paper2: var(--gh-subtle); --paper2-stroke: var(--gh-border); --dot: #1c2129;
   --ink: var(--gh-fg); --pencil: var(--gh-muted); --body: var(--gh-muted); --muted: var(--gh-muted);
-  --brand: #8957e5; --brand-stroke: var(--gh-done); --brand-soft: rgba(163,113,247,.25); --link: var(--gh-accent); --live: var(--gh-success);
+  --gh-header: #010409;
+  --brand: #238636; --brand-stroke: #2ea043; --brand-soft: rgba(46,160,67,.25); --link: var(--gh-accent); --live: var(--gh-success);
 
   /* Fills stay pastel-in-spirit but drawn at low strength on the dark canvas; strokes use Primer hues. */
   --f-client: #4493f8; --k-client: #4493f8; --f-app: #a371f7; --k-app: #a371f7; --f-module: #db61a2; --k-module: #db61a2;
