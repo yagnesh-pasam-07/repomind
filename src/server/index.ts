@@ -187,15 +187,30 @@ export function createApp(opts: AppOptions) {
   }
 
   const SOURCE_REPO = 'yagnesh-pasam-07/repomind';
-  let stats: { at: number; data: { stars: number | null; forks: number | null; url: string } } | null = null;
+  // Stars, forks and contributors for the website (D50, D51). Cached briefly so visitors don't hit
+  // GitHub's rate limit, but short enough that a new star shows within minutes.
+  const STATS_TTL = 5 * 60_000;
+  type Contributor = { login: string; avatar: string; url: string; contributions: number };
+  let stats: { at: number; data: { stars: number | null; forks: number | null; url: string; contributors: Contributor[] } } | null = null;
   async function githubStats() {
-    if (stats && Date.now() - stats.at < 3600_000) return stats.data;
-    let stars: number | null = null, forks: number | null = null;
+    if (stats && Date.now() - stats.at < STATS_TTL) return stats.data;
+    const headers = { accept: 'application/vnd.github+json', 'user-agent': 'repomind' };
+    let stars: number | null = stats?.data.stars ?? null, forks: number | null = stats?.data.forks ?? null;
+    let contributors: Contributor[] = stats?.data.contributors ?? [];
     try {
-      const r = await fetch(`https://api.github.com/repos/${SOURCE_REPO}`, { headers: { accept: 'application/vnd.github+json', 'user-agent': 'repomind' } });
-      if (r.ok) { const j: any = await r.json(); stars = j.stargazers_count ?? null; forks = j.forks_count ?? null; }
+      const [r, c] = await Promise.all([
+        fetch(`https://api.github.com/repos/${SOURCE_REPO}`, { headers }),
+        fetch(`https://api.github.com/repos/${SOURCE_REPO}/contributors?per_page=24`, { headers }),
+      ]);
+      if (r.ok) { const j: any = await r.json(); stars = j.stargazers_count ?? stars; forks = j.forks_count ?? forks; }
+      if (c.ok) {
+        const list: any[] = await c.json();
+        contributors = list
+          .filter((x) => x.type !== 'Bot' && !/\[bot\]$/.test(x.login))
+          .map((x) => ({ login: x.login, avatar: `${x.avatar_url}&s=96`, url: x.html_url, contributions: x.contributions }));
+      }
     } catch {}
-    stats = { at: Date.now(), data: { stars, forks, url: `https://github.com/${SOURCE_REPO}` } };
+    stats = { at: Date.now(), data: { stars, forks, url: `https://github.com/${SOURCE_REPO}`, contributors } };
     return stats.data;
   }
 
@@ -211,7 +226,7 @@ export function createApp(opts: AppOptions) {
       if (req.method === 'GET' && (p === '/' || p === '/index.html')) return send(res, 200, landing(), 'text/html; charset=utf-8');
       if (req.method === 'GET' && p === '/healthz') return send(res, 200, { ok: true });
       // Star count for the header button (D50). Cached so visitors never hit GitHub's rate limit.
-      if (req.method === 'GET' && p === '/api/github-stats') return send(res, 200, await githubStats(), 'application/json; charset=utf-8', { 'cache-control': 'public, max-age=600' });
+      if (req.method === 'GET' && p === '/api/github-stats') return send(res, 200, await githubStats(), 'application/json; charset=utf-8');
       if (req.method === 'GET' && p === '/example') return send(res, 200, example(), 'text/html; charset=utf-8');
       // Workspace and sign-in pages (D29).
       if (req.method === 'GET' && (p === '/app' || p === '/app/')) return send(res, 200, page('app.html'), 'text/html; charset=utf-8');

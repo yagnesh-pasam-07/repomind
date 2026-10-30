@@ -129,6 +129,16 @@
   .features h3 { margin: 0 0 6px; font-size: 17px; font-weight: 700; letter-spacing: -.02em; }
   .features p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--pencil); }
 
+  .contrib { padding: 96px 0 0; }
+  .contrib-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .contrib h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .contrib-head a { font-size: 13.5px; font-weight: 600; }
+  .contrib-sub { margin: 6px 0 16px; font-size: 14px; color: var(--muted); }
+  .contrib-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 12px; }
+  .contrib-list a { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 6px; border: 1px solid var(--line-soft); border-radius: 999px; background: var(--card); color: var(--ink); font-size: 13.5px; font-weight: 600; }
+  .contrib-list a:hover { border-color: var(--pencil); color: var(--ink); }
+  .contrib-list img { width: 28px; height: 28px; border-radius: 50%; display: block; }
+  .contrib-list small { font-weight: 500; color: var(--muted); }
   .recent { padding: 96px 0 0; }
   .recent h2 { margin: 0 0 14px; font-size: 15px; font-weight: 600; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
@@ -311,6 +321,16 @@
       <div><h3>Map</h3><p>Apps, data, cloud and services, drawn from code.</p></div>
       <div><h3>Live</h3><p>Redrawn on every commit. Scroll back through versions.</p></div>
       <div><h3>Review</h3><p>Each PR shows what changed, what it costs and what's at risk.</p></div>
+    </section>
+
+    <!-- Open source (D51): live contributors from GitHub. -->
+    <section class="contrib" id="contributors" hidden>
+      <div class="contrib-head">
+        <h2>Built in the open</h2>
+        <a href="https://github.com/yagnesh-pasam-07/repomind/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribute →</a>
+      </div>
+      <p class="contrib-sub" id="contribSub">RepoMind is MIT-licensed. Thanks to everyone who has helped build it.</p>
+      <ul class="contrib-list" id="contribList"></ul>
     </section>
 
     <section class="recent" id="recent">
@@ -518,11 +538,18 @@
   $('#themeBtn').onclick = () => setTheme(!document.documentElement.classList.contains('dark'));
 
   loadRecent();
-  // Live star count (cached server-side); the button still works if this fails.
-  api('/api/github-stats').then((r) => {
-    if (typeof r.stars !== 'number') return;
-    $('#ghStars b').textContent = r.stars >= 1000 ? (r.stars / 1000).toFixed(1) + 'k' : String(r.stars);
-    $('#ghStars').hidden = false;
+  // Live star count and contributors (cached server-side); the page still works if GitHub is unreachable.
+  // `?v=2` skips copies browsers cached under the old max-age header; the server cache is enough.
+  api('/api/github-stats?v=2').then((r) => {
+    if (typeof r.stars === 'number') {
+      $('#ghStars b').textContent = r.stars >= 1000 ? (r.stars / 1000).toFixed(1) + 'k' : String(r.stars);
+      $('#ghStars').hidden = false;
+    }
+    const people = Array.isArray(r.contributors) ? r.contributors : [];
+    if (!people.length) return;
+    $('#contribList').innerHTML = people.map((c) => `<li><a href="${esc(c.url)}" target="_blank" rel="noopener" title="${esc(c.login)} · ${c.contributions} commit${c.contributions === 1 ? '' : 's'}"><img src="${esc(c.avatar)}" alt="" width="28" height="28" loading="lazy" />${esc(c.login)} <small>${c.contributions}</small></a></li>`).join('');
+    $('#contribSub').textContent = `RepoMind is MIT-licensed. ${people.length} contributor${people.length === 1 ? '' : 's'} so far — yours could be next.`;
+    $('#contributors').hidden = false;
   }).catch(() => {});
 })();
 </script>
