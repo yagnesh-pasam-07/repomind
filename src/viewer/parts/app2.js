@@ -452,7 +452,8 @@
 
   // ---------- Boot ----------
   function header() {
-    $('#repoName').textContent = G.meta.repo;
+    // Served maps always title as owner/repo; reloading a version (e.g. compare) must not swap in the scan's stored name.
+    $('#repoName').textContent = LIVE ? `${LIVE.owner}/${LIVE.repo}` : G.meta.repo;
     $('#repoSub').textContent = `RepoMind map${G.meta.commit ? ' · ' + G.meta.commit : ''} · ${G.nodes.filter((n) => n.kind !== 'module').length} components · ${G.edges.length} links`;
   }
   header();

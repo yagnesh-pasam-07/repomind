@@ -11,8 +11,10 @@ const read = (f) => readFileSync(f, 'utf8');
 const favicon = uri(read('src/web/brand/icon-indigo.svg'));
 const mark = uri(read('src/web/brand/mark.svg'));
 const markDark = uri(read('src/web/brand/mark-dark.svg'));
-const fill = (html) => html.replace('/*__THEME_CSS__*/', () => theme).replaceAll('/*__FAVICON__*/', () => favicon).replaceAll('/*__MARK__*/', () => mark).replaceAll('/*__MARK_DARK__*/', () => markDark).replace('/*__ROUGH_JS__*/', () => rough);
+// Maker avatar (black and white, 160px) for the footer credit (D31).
+const maker = 'data:image/jpeg;base64,' + readFileSync('src/web/brand/maker.jpg').toString('base64');
+const fill = (html, isStatic = false) => html.replace('/*__STATIC__*/false', String(isStatic)).replace('/*__THEME_CSS__*/', () => theme).replaceAll('/*__FAVICON__*/', () => favicon).replaceAll('/*__MARK__*/', () => mark).replaceAll('/*__MARK_DARK__*/', () => markDark).replaceAll('/*__MAKER__*/', () => maker).replace('/*__ROUGH_JS__*/', () => rough);
 const rough = readFileSync('node_modules/roughjs/bundled/rough.js', 'utf8').replace(/<\/script/gi, '<\\/script');
 mkdirSync('dist/viewer', { recursive: true });
 writeFileSync('dist/viewer/template.html', fill(parts.join('\n')));
-for (const f of ['landing.html', 'app.html', 'login.html']) writeFileSync(`dist/viewer/${f}`, fill(readFileSync(`src/web/${f}`, 'utf8')));
+for (const f of ['landing.html', 'app.html', 'login.html', 'social.html']) writeFileSync(`dist/viewer/${f}`, fill(readFileSync(`src/web/${f}`, 'utf8')));

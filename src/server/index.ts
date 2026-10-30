@@ -172,6 +172,7 @@ export function startServer(opts: ServeOptions = {}) {
       // Workspace and sign-in pages (D29).
       if (req.method === 'GET' && (p === '/app' || p === '/app/')) return send(res, 200, page('app.html'), 'text/html; charset=utf-8');
       if (req.method === 'GET' && p === '/login') return send(res, 200, page('login.html'), 'text/html; charset=utf-8');
+      if (req.method === 'GET' && p === '/social') return send(res, 200, page('social.html'), 'text/html; charset=utf-8');
       if (req.method === 'GET' && p === '/api/overview') {
         const scanning = new Set([...scanner.jobs.values()].filter((j) => j.status === 'running').map((j) => `${j.owner}/${j.repo}`.toLowerCase()));
         return send(res, 200, overview(store, scanning));

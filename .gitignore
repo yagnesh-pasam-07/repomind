@@ -4,3 +4,6 @@ dist/
 .repomind-out/
 *.log
 .repomind-data/
+public/
+.vercel/
+.vercel

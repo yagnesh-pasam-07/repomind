@@ -1,6 +1,29 @@
-# RepoMind
+<p align="center">
+  <img src="src/web/brand/icon-indigo.svg" alt="RepoMind" width="96" height="96" />
+</p>
 
-**A live map of your codebase, infrastructure and integrations, with a PR comment that shows what each change does to it.**
+<h1 align="center">RepoMind</h1>
+
+<p align="center"><b>Your codebase, as a living map.</b><br/>
+A live map of your code, infrastructure and integrations, with a PR comment that shows what each change does to it.</p>
+
+<p align="center">
+  <a href="https://repomind-pi.vercel.app"><b>Live demo</b></a> ·
+  <a href="https://repomind-pi.vercel.app/map">Example map</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="PRODUCT.md">Product spec</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-4F46E5" /></a>
+  <img alt="Node 20+" src="https://img.shields.io/badge/node-%E2%89%A520-262626" />
+  <img alt="Self-hosted" src="https://img.shields.io/badge/self--hosted-your%20code%20stays%20yours-34D399" />
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/landing.jpg" alt="RepoMind website: Your codebase, as a living map" width="900" />
+</p>
 
 RepoMind reads a repository (no cloud credentials, no code leaves your CI) and draws one map of:
 
@@ -18,6 +41,14 @@ Then on every pull request it posts **one comment** with:
 - a small diagram of only what changed
 
 Every box on the map has **evidence** (file and line), so you can check why it is there.
+
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Live map](docs/screenshots/map.jpg) **Live map** — every app, data store, cloud resource and service, with risks and cost | ![Compare versions](docs/screenshots/compare.jpg) **Compare versions** — what a change added, removed and put at risk |
+| ![Workspace overview](docs/screenshots/overview.jpg) **Workspace** — health, risks and architecture changes across every repo | ![Sign in](docs/screenshots/sign-in.jpg) **Sign in** |
+| ![Map in dark mode](docs/screenshots/map-dark.jpg) **Dark mode** | ![Website in dark mode](docs/screenshots/landing-dark.jpg) **Website, dark** |
 
 ---
 
@@ -67,6 +98,8 @@ One self-contained HTML file. Open it locally, attach it to a CI run, or host it
 Click a box for its details, risks, connections, routes, models and evidence. Press `/` to search, `1`–`6` to switch views, `F` to fit, `T` for theme, and **`P` to present**: a step-by-step walkthrough you can use in a review meeting. Export to PNG or SVG for slides.
 
 ## Web app (v2)
+
+Try the public showcase at **[repomind-pi.vercel.app](https://repomind-pi.vercel.app)**. It shows the website and an example map; mapping your own repos runs on your server (below), so your code never leaves it.
 
 ```bash
 npm install && npm run build
@@ -167,6 +200,15 @@ Add a provider in `src/catalog.ts` (one line), or a rule in `src/rules/security.
 - **v1.0** Python and AWS detectors as plugins
 
 v2 (web app, sketch style, live versions) is built; see [PRODUCT.md](PRODUCT.md).
+
+## Made by
+
+<img src="src/web/brand/maker.jpg" alt="Yagnesh Pasam" width="64" height="64" align="left" style="border-radius:50%; margin-right:12px" />
+
+**Yagnesh Pasam**<br/>
+[LinkedIn](https://www.linkedin.com/in/yagneshpasam/) · [yagneshpasam0@gmail.com](mailto:yagneshpasam0@gmail.com)
+
+<br clear="left"/>
 
 ## License
 
