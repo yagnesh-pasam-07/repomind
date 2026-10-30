@@ -431,6 +431,8 @@ A running log of choices made while building. Newest last.
 
 | D38 | 2026-10-30 | Hero birds redrawn as a **flying** weaverbird: side view, streamlined body, two wings (near coral, far deep indigo) that beat up and down, body rising on each downstroke, and the dotted thread leaving from the beak — the weaver carrying a strand. Replaces D33's sliding logo bird with a detached trail. | Owner: "bird should fly"; the sitting logo pose didn't read as flight. |
 
+| D39 | 2026-10-30 | The landing preview shows the full product again, map **plus** the side panel (at a glance, open risks, paid services), sized to fit the frame; the workspace card's small preview still shows the map only. The flock flies across the **whole screen** in a fixed layer behind the content, instead of being clipped to the hero. | Owner: images missing in prod (the panel from the landing screenshot was hidden), and "keep the bird animation full screen" (a bird was cut off at the hero's edge). |
+
 ### Verified (2026-10-30)
 
 - `npm test`: 13 checks pass (10 v1 + 3 v2: URL forms, store/recount, viewer embedding).

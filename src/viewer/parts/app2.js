@@ -443,6 +443,7 @@
   // ---------- Embedded preview (landing page iframe) ----------
   if (DATA.embed) {
     document.body.classList.add('embed');
+    if (DATA.embed === 'showcase') document.body.classList.add('showcase');
     // Follow the landing page's theme toggle (same origin only).
     window.addEventListener('message', (ev) => {
       if (ev.origin !== location.origin || !ev.data || !ev.data.repomindTheme) return;

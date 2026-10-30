@@ -36,26 +36,26 @@
   .icon-btn:hover { border-color: var(--pencil); }
 
   .hero { position: relative; text-align: center; padding: 72px 0 0; }
-  .hero > *:not(.flock) { position: relative; z-index: 1; }
+  /* Content sits above the full-screen flock. */
+  .wrap { position: relative; z-index: 1; }
   /* Flying weaverbirds (D33, redrawn D38). Each bird glides on its own lane, beats both wings, rises with
      the downstroke and carries a dotted thread from its beak — the weaver bringing a strand to the nest. */
   :root { --b-body: #4F46E5; --b-belly: #6366F1; --b-wing-far: #3730A3; --b-eye: #FFFFFF; --b-trail: rgba(79,70,229,.30); }
   :root.dark { --b-body: #818CF8; --b-belly: #A5B4FC; --b-wing-far: #6366F1; --b-eye: #0F172A; --b-trail: rgba(165,180,252,.32); }
-  .flock { position: absolute; inset: 0 -12vw 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .flock { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
   .fly { position: absolute; left: 0; opacity: 0; will-change: transform, opacity; animation: glide var(--dur) linear var(--delay) infinite; }
   .fly .bird { display: block; width: var(--size); height: calc(var(--size) * .6); overflow: visible; animation: lift var(--beat) ease-in-out infinite; }
   .fly .wing { transform-box: view-box; animation: beat var(--beat) ease-in-out infinite; }
   .fly .wing.near { transform-origin: 56px 28px; }
   .fly .wing.far { transform-origin: 52px 27px; animation-name: beat-far; }
   .fly .thread { fill: none; stroke: var(--b-trail); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1.5 6; vector-effect: non-scaling-stroke; animation: thread .8s linear infinite; }
-  /* Every bird stays clear of the centred text: two cross the open sky above the headline;
-     the others fly only within the left or right margin (each with its own start/end). */
-  .f1 { top: 2%;  --size: 64px; --dur: 24s; --delay: -6s;  --rise: -18px; --from: -25vw; --to: 135vw; --beat: .62s; }
-  .f5 { top: 9%;  --size: 34px; --dur: 36s; --delay: -30s; --rise: 14px;  --from: -25vw; --to: 135vw; --beat: .5s; }
-  .f2 { top: 30%; --size: 40px; --dur: 16s; --delay: -9s;  --rise: -30px; --from: -18vw; --to: 26vw;  --beat: .55s; }
-  .f3 { top: 52%; --size: 48px; --dur: 19s; --delay: -3s;  --rise: 22px;  --from: 66vw;  --to: 118vw; --beat: .58s; }
-  .f4 { top: 70%; --size: 30px; --dur: 22s; --delay: -15s; --rise: -16px; --from: -18vw; --to: 24vw;  --beat: .48s; }
-  .f2 .bird, .f4 .bird, .f5 .bird { opacity: .75; }
+  /* Every bird crosses the full width of the screen on its own height and speed (D39). */
+  .f1 { top: 9%;  --size: 64px; --dur: 26s; --delay: -6s;  --rise: -26px; --from: -12vw; --to: 112vw; --beat: .62s; }
+  .f2 { top: 31%; --size: 40px; --dur: 34s; --delay: -21s; --rise: 22px;  --from: -12vw; --to: 112vw; --beat: .55s; }
+  .f3 { top: 54%; --size: 52px; --dur: 30s; --delay: -12s; --rise: -20px; --from: -12vw; --to: 112vw; --beat: .58s; }
+  .f4 { top: 74%; --size: 30px; --dur: 40s; --delay: -30s; --rise: 18px;  --from: -12vw; --to: 112vw; --beat: .48s; }
+  .f5 { top: 18%; --size: 34px; --dur: 38s; --delay: -2s;  --rise: 30px;  --from: -12vw; --to: 112vw; --beat: .5s; }
+  .f2 .bird, .f4 .bird, .f5 .bird { opacity: .6; }
   @keyframes glide {
     0%   { transform: translate(var(--from), 0); opacity: 0; }
     12%  { opacity: 1; }
@@ -71,8 +71,8 @@
   @keyframes thread { to { stroke-dashoffset: -7.5; } }
   @media (prefers-reduced-motion: reduce) {
     .fly { animation: none; opacity: .6; }
-    .f1 { transform: translate(8vw, 0); } .f2 { transform: translate(4vw, 0); } .f3 { transform: translate(80vw, 0); }
-    .f4 { transform: translate(6vw, 0); } .f5 { transform: translate(70vw, 0); }
+    .f1 { transform: translate(8vw, 0); } .f2 { transform: translate(84vw, 0); } .f3 { transform: translate(6vw, 0); }
+    .f4 { transform: translate(80vw, 0); } .f5 { transform: translate(70vw, 0); }
     .fly .bird, .fly .wing, .fly .thread { animation: none; }
   }
   @media (max-width: 760px) { .f2, .f4, .f5 { display: none; } }
@@ -146,7 +146,7 @@
 
   /* Flow 2 · Scanning: the map weaves itself (D29). */
   #scanning { display: none; }
-  body.scanning #home, body.scanning footer, body.scanning header.top { display: none !important; }
+  body.scanning #home, body.scanning footer, body.scanning header.top, body.scanning .flock { display: none !important; }
   body.scanning #scanning { display: block; }
   .scan-top { display: flex; align-items: center; justify-content: space-between; height: 68px; }
   .scan-top .ref { font: 500 13px var(--mono); color: var(--pencil); }
@@ -228,6 +228,14 @@
     </symbol>
   </defs>
 </svg>
+<!-- Flock (D33, D38, D39): weaverbirds fly across the whole screen, behind the content, each trailing a thread from its beak. -->
+<div class="flock" aria-hidden="true">
+  <span class="fly f1"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
+  <span class="fly f2"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
+  <span class="fly f3"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
+  <span class="fly f4"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
+  <span class="fly f5"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
+</div>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="/"><img class="logo" src="/*__MARK__*/" data-light="/*__MARK__*/" data-dark="/*__MARK_DARK__*/" alt="" width="26" height="26" />RepoMind</a>
@@ -243,14 +251,6 @@
 
   <div id="home">
     <section class="hero">
-      <!-- Hero flock (D33): weaverbirds flying through, each trailing a dotted thread like a link on the map. -->
-      <div class="flock" aria-hidden="true">
-        <span class="fly f1"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
-        <span class="fly f2"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
-        <span class="fly f3"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
-        <span class="fly f4"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
-        <span class="fly f5"><svg class="bird" viewBox="0 0 100 60" overflow="visible"><path class="thread" fill="none" stroke="var(--b-trail)" d="M90 28 C70 30 50 40 30 44 C10 48 -20 52 -60 50 C-100 48 -140 44 -170 46"/><g class="wing far"><use href="#wb-wing-far"/></g><use href="#wb-body"/><g class="wing near"><use href="#wb-wing-near"/></g></svg></span>
-      </div>
       <span class="eyebrow"><i></i>Updates on every commit</span>
       <h1 class="big">Your codebase,<br>as a living map.</h1>
       <p class="lead">Every app, database, cloud service and integration — on one map your whole team can read.</p>

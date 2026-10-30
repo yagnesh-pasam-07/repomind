@@ -17,7 +17,7 @@ export interface LiveOptions {
   info?: unknown;
 }
 
-export function renderViewer(graph: Graph, opts: { diff?: GraphDiff; base?: Graph; blobBase?: string; live?: LiveOptions; embed?: boolean } = {}): string {
+export function renderViewer(graph: Graph, opts: { diff?: GraphDiff; base?: Graph; blobBase?: string; live?: LiveOptions; embed?: boolean | 'showcase' } = {}): string {
   const template = readFileSync(join(here, 'viewer', 'template.html'), 'utf8');
   const payload = {
     graph,
@@ -26,7 +26,7 @@ export function renderViewer(graph: Graph, opts: { diff?: GraphDiff; base?: Grap
     blobBase: opts.blobBase ?? null,
     live: opts.live ?? null,
     // Embedded preview on the landing page: no presenting/fullscreen, follows the parent's theme.
-    embed: !!opts.embed,
+    embed: opts.embed === 'showcase' ? 'showcase' : !!opts.embed,
   };
   // Safe to embed inside <script>: escape "<" so "</script>" in data can't break out.
   const json = JSON.stringify(payload).replace(/</g, '\\u003c').replace(new RegExp('\\u2028', 'g'), '\\u2028').replace(new RegExp('\\u2029', 'g'), '\\u2029');

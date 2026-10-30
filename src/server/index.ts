@@ -51,7 +51,7 @@ export function createApp(opts: AppOptions) {
     if (exampleHtml) return exampleHtml;
     const exDir = join(here, '..', '..', 'examples', 'sumitra-like');
     const g = scan(exDir, { repoName: 'sumitra (example)' });
-    exampleHtml = renderViewer(g, { embed: true });
+    exampleHtml = renderViewer(g, { embed: 'showcase' });
     return exampleHtml;
   };
 
